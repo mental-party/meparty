@@ -1,31 +1,17 @@
-apply plugin: 'java'
-
 jar {
     baseName = 'mehelper'
 }
-
-apply from: "https://raw.githubusercontent.com/mental-soft/gradle-config/master/global-config-jar.gradle"
-
-ext {
-    slf4jVersion = '1.7.25'
-    junitVersion = '4.12'
-}
-
-dependencies {
-    compile group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion
-    testCompile group: 'junit', name: 'junit', version: junitVersion
-}
-
-
-buildscript {
-    ext {
-        bintrayPluginVersion = '1.7.3'
-    }
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath("com.jfrog.bintray.gradle:gradle-bintray-plugin:${bintrayPluginVersion}")
-    }
-}
-apply from: 'deploy.gradle'
+//
+//
+//buildscript {
+//    ext {
+//        bintrayPluginVersion = '1.7.3'
+//    }
+//    repositories {
+//        jcenter()
+//    }
+//    dependencies {
+//        classpath("com.jfrog.bintray.gradle:gradle-bintray-plugin:${bintrayPluginVersion}")
+//    }
+//}
+//apply from: 'deploy.gradle'

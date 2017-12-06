@@ -2,5 +2,6 @@
 .gradle/
 build/
 classes/
+/*/config/
 /config/
 *.iml

@@ -1,9 +1,9 @@
 package com.teammental.memapper.util.mapping;
 
-import com.teammental.memapper.exception.TargetTypeInstantiationException;
-import com.teammental.memapper.util.FieldUtil;
 import com.teammental.mehelper.PrimitiveHelper;
 import com.teammental.mehelper.StringHelper;
+import com.teammental.memapper.exception.TargetTypeInstantiationException;
+import com.teammental.memapper.util.FieldUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -192,11 +192,6 @@ public class MapByFieldNameUtil {
           }
 
         }
-      } else {
-
-
-
-
       }
     }
     return target;

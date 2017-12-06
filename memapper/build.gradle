@@ -1,32 +1,10 @@
-apply plugin: 'java'
-//apply from: "https://raw.githubusercontent.com/mental-soft/gradle-config/master/global-config-jar.gradle"
-
-//pmd {
-//    ignoreFailures = true
-//}
-
-repositories {
-    jcenter()
-    maven {
-        url "https://dl.bintray.com/mental-soft/meparty"
-    }
+jar {
+    baseName = 'memapper'
+}
+pmd {
+    ignoreFailures = true
 }
 
 dependencies {
-
-    compile 'com.teammental:mehelper:1.0'
-    compile 'org.slf4j:slf4j-api:1.7.21'
-
-    testCompile 'junit:junit:4.12'
+    compile project(':mehelper')
 }
-
-
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
-    }
-}
-apply from: 'deploy.gradle'

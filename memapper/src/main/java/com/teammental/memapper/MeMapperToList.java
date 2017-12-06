@@ -1,8 +1,9 @@
 package com.teammental.memapper;
 
+import com.teammental.memapper.util.mapping.MapByFieldNameUtil;
+
 import java.util.Optional;
 
-import com.teammental.memapper.util.mapping.MapByFieldNameUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

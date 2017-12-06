@@ -1,0 +1,20 @@
+allprojects {
+    apply plugin: 'java'
+    group = 'com.teammental'
+}
+
+
+subprojects {
+    ext {
+        slf4jVersion = '1.7.25'
+        junitVersion = '4.12'
+    }
+
+    apply from: "https://raw.githubusercontent.com/mental-soft/gradle-config/master/global-config-jar.gradle"
+
+    dependencies {
+        compile group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion
+        testCompile group: 'junit', name: 'junit', version: junitVersion
+    }
+}
+

@@ -1,9 +1,10 @@
 package com.teammental.memapper;
 
-import java.util.Optional;
-
 import com.teammental.memapper.exception.TargetTypeInstantiationException;
 import com.teammental.memapper.util.mapping.MapByFieldNameUtil;
+
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
