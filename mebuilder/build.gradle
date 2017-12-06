@@ -1,0 +1,23 @@
+apply plugin: 'java'
+
+dependencies {
+    compile 'org.slf4j:slf4j-api:1.7.21'
+    testCompile 'junit:junit:4.12'
+}
+
+apply from: "https://raw.githubusercontent.com/mental-soft/gradle-config/master/global-config-jar.gradle"
+
+if (System.getProperties ()['bambooBuildNumber']) {
+    version = 'b' + System.getProperties ()['bambooBuildNumber']
+}
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+    }
+}
+
+apply from: 'deploy.gradle'
