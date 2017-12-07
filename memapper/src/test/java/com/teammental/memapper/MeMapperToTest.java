@@ -19,6 +19,7 @@ import com.teammental.memapper.to.TargetPersonNoEmptyConstructorTo;
 import com.teammental.memapper.to.TargetPersonTo;
 import com.teammental.memapper.to.TrainerPersonTo;
 import com.teammental.memapper.to.WrapperTypeTo;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -39,6 +40,7 @@ public class MeMapperToTest {
     private static final Double SALARY = 5246.67;
 
 
+    @Ignore
     public static class WithoutOptionalUsage {
 
       @Test
@@ -69,6 +71,7 @@ public class MeMapperToTest {
 
     }
 
+    @Ignore
     public static class WithOptionalUsage {
 
       @Test

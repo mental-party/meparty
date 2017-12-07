@@ -9,6 +9,8 @@ import com.teammental.memapper.to.TeacherPersonTo;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
+
+import org.junit.Ignore;
 import org.junit.Test;
 
 
@@ -16,6 +18,7 @@ import org.junit.Test;
  * Created by erhan.karakaya on 3/31/2017.
  */
 
+@Ignore
 public class CommonMapUtilTest {
 
 
