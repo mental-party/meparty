@@ -1,6 +1,5 @@
 package com.teammental.memapper;
 
-import com.teammental.memapper.exception.TargetTypeInstantiationException;
 import com.teammental.memapper.util.mapping.MapByFieldNameUtil;
 
 import java.util.Optional;

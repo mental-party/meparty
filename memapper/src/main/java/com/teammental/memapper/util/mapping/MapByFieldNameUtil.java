@@ -1,7 +1,7 @@
 package com.teammental.memapper.util.mapping;
 
-import com.teammental.mehelper.PrimitiveHelper;
-import com.teammental.mehelper.StringHelper;
+import com.teammental.helper.PrimitiveHelper;
+import com.teammental.helper.StringHelper;
 import com.teammental.memapper.exception.TargetTypeInstantiationException;
 import com.teammental.memapper.util.FieldUtil;
 

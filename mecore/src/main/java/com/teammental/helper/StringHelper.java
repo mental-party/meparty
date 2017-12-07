@@ -1,4 +1,4 @@
-package com.teammental.mehelper;
+package com.teammental.helper;
 
 import java.util.ArrayList;
 import java.util.List;
