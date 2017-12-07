@@ -1,3 +1,7 @@
 jar {
     baseName = 'medto'
 }
+
+dependencies {
+    compile project(':mevalidation')
+}

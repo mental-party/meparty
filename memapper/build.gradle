@@ -6,5 +6,5 @@ pmd {
 }
 
 dependencies {
-    compile project(':mehelper')
+    compile project(':meexception')
 }

@@ -1,3 +1,7 @@
 jar {
     baseName = 'meexception'
 }
+
+dependencies {
+    compile project(':mecore')
+}

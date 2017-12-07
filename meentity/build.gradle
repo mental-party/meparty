@@ -1,3 +1,7 @@
 jar {
     baseName = 'meentity'
 }
+
+dependencies {
+    compile project(':mevalidation')
+}

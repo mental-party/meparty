@@ -1,3 +1,8 @@
 jar {
     baseName = 'merepository'
 }
+
+dependencies {
+    compile project(':meentity')
+    compile project(':meexception')
+}
