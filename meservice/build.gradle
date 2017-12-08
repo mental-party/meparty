@@ -4,5 +4,6 @@ jar {
 
 dependencies {
     compile project(':merepository')
+    compile project(':medto')
     compile project(':memapper')
 }
