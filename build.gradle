@@ -8,7 +8,9 @@ subprojects {
     ext {
         slf4jVersion = '1.7.25'
         junitVersion = '4.12'
+        springVersion = '5.0.2.RELEASE'
         springDataJpaVersion = '2.0.2.RELEASE'
+        springBootAutoConfigurationVersion = '1.5.9.RELEASE'
     }
 
     apply from: "https://raw.githubusercontent.com/mental-soft/gradle-config/master/global-config-jar.gradle"

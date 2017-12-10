@@ -1,4 +1,4 @@
-package com.teammental.medto;
+package com.teammental.dto;
 
 import com.teammental.core.dto.Dto;
 

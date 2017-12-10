@@ -8,27 +8,32 @@ public class DtoCrudException extends RestfulException {
   protected Dto dto;
 
   public DtoCrudException(Dto dto) {
-    super(500);
+
+    super(500, dto, null, null);
     this.dto = dto;
   }
 
   public DtoCrudException(Dto dto, int statusCode) {
-    super(statusCode);
+
+    super(statusCode, dto, null, null);
     this.dto = dto;
   }
 
   public DtoCrudException(Dto dto, int statusCode, String message) {
-    super(statusCode, message);
+
+    super(statusCode, dto, message, null);
     this.dto = dto;
   }
 
   public DtoCrudException(Dto dto, int statusCode, String message, Throwable cause) {
-    super(statusCode, message, cause);
+
+    super(statusCode, dto, message, cause);
     this.dto = dto;
   }
 
   public DtoCrudException(Dto dto, int statusCode, Throwable cause) {
-    super(statusCode, cause);
+
+    super(statusCode, dto, null, cause);
     this.dto = dto;
   }
 }

@@ -5,7 +5,7 @@ import com.teammental.exception.dto.DtoCrudException;
 import com.teammental.exception.dto.DtoDeleteException;
 import com.teammental.exception.dto.DtoNotFoundException;
 import com.teammental.exception.dto.DtoUpdateException;
-import com.teammental.medto.IdDto;
+import com.teammental.dto.IdDto;
 import com.teammental.memapper.MeMapper;
 import com.teammental.memapper.util.mapping.MapByFieldNameUtil;
 import com.teammental.repository.BaseJpaRepository;

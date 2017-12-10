@@ -1,7 +1,7 @@
 package com.teammental.service;
 
 import com.teammental.exception.dto.DtoCrudException;
-import com.teammental.medto.IdDto;
+import com.teammental.dto.IdDto;
 
 import java.io.Serializable;
 import java.util.List;
