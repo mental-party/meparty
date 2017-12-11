@@ -1,5 +1,6 @@
 package com.teammental.meservice;
 
+import com.teammental.mecore.entity.Entity;
 import com.teammental.medto.IdDto;
 import com.teammental.meexception.dto.DtoCreateException;
 import com.teammental.meexception.dto.DtoCrudException;
@@ -186,9 +187,9 @@ public abstract class BaseCrudServiceImpl<DtoT extends IdDto<IdT>, IdT extends S
 
   protected abstract BaseJpaRepository getRepository();
 
-  protected abstract Class<?> getDtoClass();
+  protected abstract Class<? extends DtoT> getDtoClass();
 
-  protected abstract Class<?> getEntityClass();
+  protected abstract Class<? extends Entity> getEntityClass();
 
   // endregion abstract methods
 }

@@ -11,6 +11,7 @@ subprojects {
         springVersion = '5.0.2.RELEASE'
         springDataJpaVersion = '2.0.2.RELEASE'
         springBootAutoConfigurationVersion = '1.5.9.RELEASE'
+        springBootStarterTestVersion = '1.5.9.RELEASE'
     }
 
     apply from: "https://raw.githubusercontent.com/mental-soft/gradle-config/master/global-config-jar.gradle"

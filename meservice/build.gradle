@@ -6,4 +6,6 @@ dependencies {
     compile project(':merepository')
     compile project(':medto')
     compile project(':memapper')
+
+    testCompile ("org.springframework.boot:spring-boot-starter-test:${springBootStarterTestVersion}")
 }
