@@ -4,4 +4,5 @@ jar {
 
 dependencies {
     compile project(':meservice')
+    compile("org.springframework:spring-web:${springVersion}")
 }
