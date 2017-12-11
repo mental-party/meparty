@@ -22,11 +22,14 @@ import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+@RunWith(SpringJUnit4ClassRunner.class)
 public class BaseCrudServiceImplTest {
 
   @MockBean
@@ -117,7 +120,7 @@ public class BaseCrudServiceImplTest {
 
     final Integer id = 58439;
     when(testRepository.findById(id))
-        .thenReturn(Optional.empty());
+        .thenReturn(Optional.ofNullable(null));
 
     try {
       testCrudService.findById(id);
@@ -134,7 +137,7 @@ public class BaseCrudServiceImplTest {
   // region insert
 
   @Test
-  public void insert_shouldThrowInsertException_whenFails() {
+  public void create_shouldThrowcreateException_whenFails() {
 
     final TestDto testDto = TestDto.buildRandom();
 
@@ -152,7 +155,7 @@ public class BaseCrudServiceImplTest {
   }
 
   @Test
-  public void insert_shouldReturnId_whenSuccess() throws DtoCrudException {
+  public void create_shouldReturnId_whenSuccess() throws DtoCrudException {
 
     final TestEntity expectedEntity = TestEntity.buildRandom();
     final Integer expectedId = expectedEntity.getId();
@@ -170,7 +173,7 @@ public class BaseCrudServiceImplTest {
         .save(anyObject());
   }
 
-  // endregion insert
+  // endregion create
 
   // region update
 

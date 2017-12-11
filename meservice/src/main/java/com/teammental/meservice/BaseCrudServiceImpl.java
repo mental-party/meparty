@@ -124,7 +124,8 @@ public abstract class BaseCrudServiceImpl<DtoT extends IdDto<IdT>, IdT extends S
   protected DtoT doFindById(final IdT id) throws DtoCrudException {
 
     Optional optionalEntity = getRepository().findById(id);
-    Optional<DtoT> dto = MeMapper.from(optionalEntity.get()).toOptional(getDtoClass());
+
+    Optional<DtoT> dto = MeMapper.from(optionalEntity.orElse(null)).toOptional(getDtoClass());
 
     if (!dto.isPresent()) {
       throw new DtoNotFoundException();
