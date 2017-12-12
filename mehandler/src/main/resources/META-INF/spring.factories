@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.teammental.mehandler.RestfulExceptionHandler,\
+  com.teammental.mehandler.ValidationErrorHandler
