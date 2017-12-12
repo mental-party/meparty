@@ -1,0 +1,8 @@
+def packageDescription = 'Mental Party Exception Library'
+def packageName = 'com.teammental.meexception'
+def packageTitle = 'Mental Exception'
+def repoUrl = 'https://github.com/mental-party/meparty/tree/master/meexception'
+def repoVcsUrl = 'https://github.com/mental-party/meparty.git'
+def packageLabels = ['spring', 'spring-web', 'spring-webmvc', 'java', 'exception']
+def packageGroupId = 'com.teammental'
+def packageArtifactId = 'meexception'

@@ -5,3 +5,5 @@ jar {
 dependencies {
     compile project(':mecore')
 }
+
+apply from: 'deploy.gradle'

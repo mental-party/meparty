@@ -1,3 +1,5 @@
 jar {
     baseName = 'mecore'
 }
+
+apply from: 'deploy.gradle'

@@ -1,0 +1,8 @@
+def packageDescription = 'Mental Party Repository Library'
+def packageName = 'com.teammental.merepository'
+def packageTitle = 'Mental Repository'
+def repoUrl = 'https://github.com/mental-party/meparty/tree/master/merepository'
+def repoVcsUrl = 'https://github.com/mental-party/meparty.git'
+def packageLabels = ['spring', 'spring-web', 'spring-webmvc', 'java', 'repository']
+def packageGroupId = 'com.teammental'
+def packageArtifactId = 'merepository'

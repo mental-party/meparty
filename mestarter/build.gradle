@@ -1,0 +1,18 @@
+jar {
+    baseName = 'mestarter'
+}
+
+repositories {
+    jcenter()
+    maven {
+        url "https://dl.bintray.com/mental-soft/meparty"
+    }
+}
+
+dependencies {
+    compile project(':mebuilder')
+    compile project(':mecontroller')
+    compile project(':mehandler')
+}
+
+apply from: 'deploy.gradle'

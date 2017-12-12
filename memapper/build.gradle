@@ -8,3 +8,5 @@ pmd {
 dependencies {
     compile project(':meexception')
 }
+
+apply from: 'deploy.gradle'

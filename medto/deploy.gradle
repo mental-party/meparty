@@ -1,0 +1,8 @@
+def packageDescription = 'Mental Party Dto Library'
+def packageName = 'com.teammental.medto'
+def packageTitle = 'Mental Dto'
+def repoUrl = 'https://github.com/mental-party/meparty/tree/master/medto'
+def repoVcsUrl = 'https://github.com/mental-party/meparty.git'
+def packageLabels = ['spring', 'spring-web', 'spring-webmvc', 'java', 'dto']
+def packageGroupId = 'com.teammental'
+def packageArtifactId = 'medto'

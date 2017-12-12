@@ -6,3 +6,5 @@ dependencies {
     compile project(':mecore')
     compile("org.springframework:spring-context:${springVersion}")
 }
+
+apply from: 'deploy.gradle'

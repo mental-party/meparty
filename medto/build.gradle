@@ -5,3 +5,5 @@ jar {
 dependencies {
     compile project(':mevalidation')
 }
+
+apply from: 'deploy.gradle'

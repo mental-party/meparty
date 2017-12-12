@@ -13,3 +13,5 @@ dependencies {
     testCompile ("org.springframework.boot:spring-boot-starter-web:${springBootStarterTestVersion}")
     testCompile ("org.springframework.boot:spring-boot-starter-test:${springBootStarterTestVersion}")
 }
+
+apply from: 'deploy.gradle'

@@ -1,0 +1,8 @@
+def packageDescription = 'Mental Party Validation Library'
+def packageName = 'com.teammental.mevalidation'
+def packageTitle = 'Mental Validation'
+def repoUrl = 'https://github.com/mental-party/meparty/tree/master/mevalidation'
+def repoVcsUrl = 'https://github.com/mental-party/meparty.git'
+def packageLabels = ['spring', 'spring-web', 'spring-webmvc', 'java', 'validation']
+def packageGroupId = 'com.teammental'
+def packageArtifactId = 'mevalidation'

@@ -1,0 +1,8 @@
+def packageDescription = 'Mental Party Controller Library'
+def packageName = 'com.teammental.mecontroller'
+def packageTitle = 'Mental Controller'
+def repoUrl = 'https://github.com/mental-party/meparty/tree/master/mecontroller'
+def repoVcsUrl = 'https://github.com/mental-party/meparty.git'
+def packageLabels = ['spring', 'spring-web', 'spring-webmvc', 'java']
+def packageGroupId = 'com.teammental'
+def packageArtifactId = 'mecontroller'

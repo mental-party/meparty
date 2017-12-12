@@ -7,3 +7,5 @@ dependencies {
     compile project(':meexception')
     compile("org.springframework.data:spring-data-jpa:${springDataJpaVersion}")
 }
+
+apply from: 'deploy.gradle'
