@@ -18,12 +18,14 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Configuration
 @ConditionalOnWebApplication
 @ConditionalOnProperty(name = "enable-validationerror-handler",
     prefix = "com.teammental.handler",
     havingValue = "true", matchIfMissing = true)
+@RestControllerAdvice
 public class ValidationErrorHandler {
   private static final Logger LOGGER = LoggerFactory.getLogger(ValidationErrorHandler.class);
 
