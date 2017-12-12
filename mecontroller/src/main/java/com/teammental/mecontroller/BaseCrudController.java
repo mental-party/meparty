@@ -72,8 +72,8 @@ public abstract class BaseCrudController<ServiceT extends BaseCrudService,
   @PutMapping()
   public final ResponseEntity update(@Validated @RequestBody final DtoT dto)
       throws DtoCrudException {
-    DtoT dtoResult = doUpdate(dto);
-    return ResponseEntity.ok(dtoResult);
+    Serializable id = doUpdate(dto);
+    return ResponseEntity.ok(id);
   }
 
   /**
@@ -113,9 +113,9 @@ public abstract class BaseCrudController<ServiceT extends BaseCrudService,
     return id;
   }
 
-  protected DtoT doUpdate(final DtoT dto) throws DtoCrudException {
-    DtoT dtoResult = (DtoT) getCrudService().update(dto);
-    return dtoResult;
+  protected Serializable doUpdate(final DtoT dto) throws DtoCrudException {
+    Serializable id = getCrudService().update(dto);
+    return id;
   }
 
   protected boolean doDelete(final IdT id) throws DtoCrudException {

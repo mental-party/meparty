@@ -5,4 +5,8 @@ jar {
 dependencies {
     compile project(':meservice')
     compile("org.springframework:spring-web:${springVersion}")
+
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.1'
+    testCompile ("org.springframework.boot:spring-boot-starter-web:${springBootStarterTestVersion}")
+    testCompile ("org.springframework.boot:spring-boot-starter-test:${springBootStarterTestVersion}")
 }
