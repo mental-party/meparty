@@ -8,4 +8,8 @@ dependencies {
     compile("org.springframework:spring-context:${springVersion}")
     compile("org.springframework:spring-web:${springVersion}")
     compile("org.springframework.boot:spring-boot-autoconfigure:${springBootAutoConfigurationVersion}")
+
+    testCompile ("com.fasterxml.jackson.core:jackson-databind:${jacksonDatabindVersion}")
+    testCompile ("org.springframework.boot:spring-boot-starter-web:${springBootStarterTestVersion}")
+    testCompile ("org.springframework.boot:spring-boot-starter-test:${springBootStarterTestVersion}")
 }
