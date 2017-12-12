@@ -24,7 +24,7 @@ public class RestfulException extends java.lang.Exception implements Exception {
     return dto;
   }
 
-  public Builder getBuilder() {
+  public static Builder getBuilder() {
     return new Builder();
   }
 
