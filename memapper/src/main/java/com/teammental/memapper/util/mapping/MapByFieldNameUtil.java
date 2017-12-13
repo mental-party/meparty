@@ -143,7 +143,7 @@ public class MapByFieldNameUtil {
 
           Object sourceFieldVal;
           try {
-            sourceFieldVal = sourceGetMethod.invoke(source, null);
+            sourceFieldVal = sourceGetMethod.invoke(source);
           } catch (InvocationTargetException ex) {
             logger.debug("Invokation of  '" + sourceType.getName()
                 + " " + sourceGetMethodName + "' failed. "

@@ -40,7 +40,6 @@ public class MeMapperToTest {
     private static final Double SALARY = 5246.67;
 
 
-    @Ignore
     public static class WithoutOptionalUsage {
 
       @Test
@@ -71,7 +70,6 @@ public class MeMapperToTest {
 
     }
 
-    @Ignore
     public static class WithOptionalUsage {
 
       @Test

@@ -16,11 +16,11 @@ public class StringHelperTest {
 
     @Test
     public void shouldCapitalizeFirstLetter() {
-      String string = "abcdefgh";
+      String string = "ibcdefgh";
 
       String capitalizedString = StringHelper.capitalizeFirstLetter(string);
 
-      String expectedValue = "Abcdefgh";
+      String expectedValue = "Ibcdefgh";
 
       assertEquals(expectedValue, capitalizedString);
     }

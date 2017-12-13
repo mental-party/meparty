@@ -29,7 +29,7 @@ public class CommonMapUtil {
   /**
    * Gets all public, private, protected fields of the given type.
    *
-   * @param type The type which's fields will be returned.
+   * @param type               The type which's fields will be returned.
    * @param includeSuperFields if false, fields of superclass will not be included;
    *                           if true, fields of superclass will be included.
    * @return List of the fields of the given type.
@@ -42,18 +42,13 @@ public class CommonMapUtil {
     }
 
     List<Field> fieldsOfCurrent = Arrays.stream(type.getDeclaredFields())
-        .map(field -> {
-          Iterator<Field> iterator = fields.iterator();
-          while (iterator.hasNext()) {
-            Field tempField = iterator.next();
-            if (field.isSynthetic() || tempField.getName().equals(field.getName())) {
-              iterator.remove();
-              break;
-            }
-          }
-          return field;
-        }).collect(Collectors.toList());
+        .filter(field -> !field.isSynthetic())
+        .collect(Collectors.toList());
 
+    fields = fields.stream()
+        .filter(field -> !fieldsOfCurrent.stream()
+            .anyMatch(superField -> superField.getName().equals(field.getName())))
+        .collect(Collectors.toList());
     fields.addAll(fieldsOfCurrent);
 
     return fields;
@@ -66,7 +61,7 @@ public class CommonMapUtil {
    * the fields derived from the super class is extracted too.
    *
    * @param source The object which's fields are wanted to be extracted.
-   * @param <T> Generic type of source object.
+   * @param <T>    Generic type of source object.
    * @return a Map object which contains extracted fields names and values from the given object
    * @throws IllegalAccessException throws this when can't get one of the field's value of source.
    */
@@ -78,10 +73,10 @@ public class CommonMapUtil {
   /**
    * Extracts a map of fields in given T object.
    *
-   * @param source The object which's fields are wanted to be extracted.
+   * @param source             The object which's fields are wanted to be extracted.
    * @param includeSuperFields if false, fields of superclass will not be included;
    *                           if true, fields of superclass will be included.
-   * @param <T> Generic type of source object.
+   * @param <T>                Generic type of source object.
    * @return a Map object which contains extracted fields names and values from the given object
    * @throws IllegalAccessException throws this when can't get one of the field's value of source.
    */

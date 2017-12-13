@@ -18,7 +18,6 @@ import org.junit.Test;
  * Created by erhan.karakaya on 3/31/2017.
  */
 
-@Ignore
 public class CommonMapUtilTest {
 
 

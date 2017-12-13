@@ -27,7 +27,6 @@ import org.junit.Test;
 /**
  * Created by erhan.karakaya on 4/3/2017.
  */
-@Ignore
 public class MapByFieldNameUtilTest {
 
   private static final Integer ID = 31648;

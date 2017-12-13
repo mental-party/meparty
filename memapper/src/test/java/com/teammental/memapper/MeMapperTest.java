@@ -47,7 +47,6 @@ public class MeMapperTest {
     }
   }
 
-  @Ignore
   public static class WhenTargetClassIsGiven {
     private static final Integer ID = 31648;
     private static final String TITLE = "TITLE";
