@@ -6,7 +6,7 @@ ext {
     repoVcsUrl = 'https://github.com/mental-party/meparty.git'
     packageLabels = ['generic-builder', 'java', 'java-bean', 'object-builder']
     packageGroupId = 'com.teammental'
-    packageArtifactId = 'memapper'
+    packageArtifactId = 'mebuilder'
 }
 
 apply from: "${rootDir}/deploy.subprojects.gradle"
