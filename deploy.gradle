@@ -1,6 +1,6 @@
 
 ext {
-    releaseVersion = 'alpha.1'
+    releaseVersion = project.hasProperty('release-version') ? project.property('release-version') : System.getenv('release-version')
 }
 subprojects {
     apply plugin: 'maven-publish'
@@ -8,10 +8,10 @@ subprojects {
 }
 
 
-//task generatePomFileForAll {
-//    subprojects.each { subproject ->
-//        def name = subproject.name.capitalize()
-//        dependsOn "generatePomFileFor${name}Publication"
-//        println("generatePomFileFor${name}Publication")
-//    }
-//}
+task generatePomFileForAll {
+    subprojects.each { subproject ->
+        def name = subproject.name.capitalize()
+        dependsOn ":${subproject.name}:generatePomFileFor${name}Publication"
+        println("generatePomFileFor${name}Publication")
+    }
+}
