@@ -14,6 +14,7 @@ bintray {
     user = project.hasProperty('bintray-user') ? project.property('bintray-user') : System.getenv('bintray-user')
     key = project.hasProperty('bintray-key') ? project.property('bintray-key') : System.getenv('bintray-key')
     publications = [project.name]
+    override = true
     pkg {
         repo = 'meparty'
         name = packageName
@@ -26,6 +27,7 @@ bintray {
         version {
             name = rootProject.releaseVersion
             desc = packageDescription
+            released = new Date()
         }
     }
 }
