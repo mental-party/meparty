@@ -27,7 +27,6 @@ public class MeMapper<SourceT, TargetT> implements MapTo<TargetT>, MapToList<Tar
 
 
   /**
-   * Use {@link #from(SourceT)} instead.
    * Creates a new Mapper instance.
    *
    * @param source    SourceT object which will be used
@@ -41,7 +40,6 @@ public class MeMapper<SourceT, TargetT> implements MapTo<TargetT>, MapToList<Tar
   }
 
   /**
-   * Use {@link #from(Iterable)} instead.
    * Creates a new Mapper instance.
    *
    * @param sources   List&lt;SourceT&gt; object which will be used

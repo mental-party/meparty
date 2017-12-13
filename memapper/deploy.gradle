@@ -1,8 +1,94 @@
-def packageDescription = 'Mental Party Mapper Library'
-def packageName = 'com.teammental.memapper'
-def packageTitle = 'Mental Mapper'
-def repoUrl = 'https://github.com/mental-party/meparty/tree/master/memapper'
-def repoVcsUrl = 'https://github.com/mental-party/meparty.git'
-def packageLabels = ['spring', 'spring-web', 'spring-webmvc', 'java', 'generic-mapper', 'java-bean']
-def packageGroupId = 'com.teammental'
-def packageArtifactId = 'memapper'
+ext {
+    packageDescription = 'Mental Party Mapper Library'
+    packageName = 'com.teammental.memapper'
+    packageTitle = 'Mental Mapper'
+    repoUrl = 'https://github.com/mental-party/meparty/tree/master/memapper'
+    repoVcsUrl = 'https://github.com/mental-party/meparty.git'
+    packageLabels = ['spring', 'spring-web', 'spring-webmvc', 'java', 'generic-mapper', 'java-bean']
+    packageGroupId = 'com.teammental'
+    packageArtifactId = 'memapper'
+}
+
+bintray {
+    user = project.hasProperty('bintray-user') ? project.property('bintray-user') : System.getenv('bintray-user')
+    key = project.hasProperty('bintray-key') ? project.property('bintray-key') : System.getenv('bintray-key')
+    publications = [project.name]
+    pkg {
+        repo = 'meparty'
+        name = packageName
+        desc = packageDescription
+        licenses = ['Apache-2.0']
+        vcsUrl = repoVcsUrl
+        userOrg = 'mental-soft'
+        labels = packageLabels
+        publicDownloadNumbers = true
+        version {
+            name = rootProject.releaseVersion
+            desc = packageDescription
+        }
+    }
+}
+
+// Create the pom configuration:
+def pomConfig = {
+    licenses {
+        license {
+            name "The Apache Software License, Version 2.0"
+            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            distribution "repo"
+        }
+    }
+    developers {
+        developer {
+            id "er-han"
+            name "Erhan KARAKAYA"
+            email "erhan277@gmail.com"
+        }
+        developer {
+            id "coskundeniz89"
+            name "Coşkun DENİZ"
+            email "coskundeniz1989@gmail.com"
+        }
+    }
+
+    scm {
+        url repoUrl
+    }
+}
+
+// Create the publication with the pom configuration:
+publishing {
+    publications {
+        "${project.name}"(MavenPublication) {
+            artifact sourcesJar
+            artifact javadocJar
+            groupId packageGroupId
+            artifactId packageArtifactId
+            version rootProject.ext.releaseVersion
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', packageDescription)
+                root.appendNode('name', packageTitle)
+                root.appendNode('url', repoUrl)
+                root.children().last() + pomConfig
+            }
+            from components.java
+        }
+    }
+}
+
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}

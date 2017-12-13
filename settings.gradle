@@ -9,5 +9,6 @@ include 'memapper'
 include 'merepository'
 include 'meservice'
 include 'mevalidation'
+include 'mestarter'
 
 rootProject.name = 'meparty'
