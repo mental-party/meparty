@@ -1,6 +1,6 @@
 
 ext {
-    releaseVersion = project.hasProperty('release-version') ? project.property('release-version') : 'DEV.1'
+    releaseVersion = project.hasProperty('release-version') ? project.property('release-version') : 'DEV.2'
 }
 subprojects {
     apply plugin: 'maven-publish'
