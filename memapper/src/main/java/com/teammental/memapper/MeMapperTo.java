@@ -41,6 +41,19 @@ class MeMapperTo<SourceT, TargetT> implements To<TargetT> {
 
   /**
    * Maps the given source SourceT object
+   * to target object.
+   *
+   * @param target Target object.
+   * @return Optional of TargetT.
+   */
+  @Override
+  public TargetT to(TargetT target) {
+
+    return MapByFieldNameUtil.map(source, target);
+  }
+
+  /**
+   * Maps the given source SourceT object
    * to a newly instantiated object of the given TargetType.
    *
    * @param targetType Target object's class. Target type must have a public no-arg constructor.
@@ -57,19 +70,6 @@ class MeMapperTo<SourceT, TargetT> implements To<TargetT> {
       logger.debug(exception.getLocalizedMessage());
       return Optional.empty();
     }
-  }
-
-  /**
-   * Maps the given source SourceT object
-   * to target object.
-   *
-   * @param target Target object.
-   * @return Optional of TargetT.
-   */
-  @Override
-  public TargetT to(TargetT target) {
-
-    return MapByFieldNameUtil.map(source, target);
   }
 
   /**
