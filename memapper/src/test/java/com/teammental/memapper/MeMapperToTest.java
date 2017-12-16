@@ -117,6 +117,97 @@ public class MeMapperToTest {
   }
 
   @RunWith(Enclosed.class)
+  public static class WhenTargetObjectIsGiven {
+
+    private static final Integer ID = 31648;
+    private static final String TITLE = "TITLE";
+    private static final String FIRST_NAME = "FIRST_NAME";
+    private static final String MIDDLE_NAME = "MIDDLE_NAME";
+    private static final String LAST_NAME = "LAST_NAME";
+    private static final EnumGender GENDER = EnumGender.FEMALE;
+    private static final List<String> LESSONS = Arrays.asList("a", "b", "c", "d", "e");
+    private static final Double SALARY = 5246.67;
+
+
+    public static class WithoutOptionalUsage {
+
+      @Test
+      public void shouldMapAllFields() {
+        TrainerPersonTo trainerPersonTo = prepareTrainer();
+
+        TargetPersonTo targetPersonTo = new TargetPersonTo();
+        targetPersonTo = (TargetPersonTo) MeMapper.from(trainerPersonTo)
+            .to(targetPersonTo);
+
+        assertEquals(trainerPersonTo.getLessons(), targetPersonTo.getLessons());
+        assertEquals(trainerPersonTo.getSalary(), targetPersonTo.getSalary());
+        assertEquals(trainerPersonTo.getGender(), targetPersonTo.getGender());
+        assertEquals(trainerPersonTo.getId(), targetPersonTo.getId());
+        assertEquals(trainerPersonTo.getName(), targetPersonTo.getName());
+        assertEquals(trainerPersonTo.getTitle(), targetPersonTo.getTitle());
+      }
+
+      @Test
+      public void shouldReturnNull_whenTargetIsNull() {
+        TrainerPersonTo trainerPersonTo = prepareTrainer();
+        TargetPersonTo targetPersonTo = null;
+        targetPersonTo = (TargetPersonTo) MeMapper.from(trainerPersonTo)
+            .to(targetPersonTo);
+
+        assertNull(targetPersonTo);
+      }
+
+    }
+
+    public static class WithOptionalUsage {
+
+      @Test
+      public void shouldMapAllFields() {
+        TrainerPersonTo trainerPersonTo = prepareTrainer();
+
+        TargetPersonTo targetPersonTo = new TargetPersonTo();
+        Optional<TargetPersonTo> targetPersonToOptional = MeMapper.from(trainerPersonTo)
+            .toOptional(targetPersonTo);
+
+        targetPersonTo = targetPersonToOptional.get();
+        assertEquals(trainerPersonTo.getLessons(), targetPersonTo.getLessons());
+        assertEquals(trainerPersonTo.getSalary(), targetPersonTo.getSalary());
+        assertEquals(trainerPersonTo.getGender(), targetPersonTo.getGender());
+        assertEquals(trainerPersonTo.getId(), targetPersonTo.getId());
+        assertEquals(trainerPersonTo.getName(), targetPersonTo.getName());
+        assertEquals(trainerPersonTo.getTitle(), targetPersonTo.getTitle());
+      }
+
+      @Test
+      public void shouldReturnEmpty_whenTargetIsNull() {
+        TrainerPersonTo trainerPersonTo = prepareTrainer();
+
+        TargetPersonTo targetPersonTo = null;
+        Optional<TargetPersonTo> optional =
+            MeMapper.from(trainerPersonTo)
+                .toOptional(targetPersonTo);
+
+        assertFalse(optional.isPresent());
+      }
+
+    }
+
+    private static TrainerPersonTo prepareTrainer() {
+      TrainerPersonTo trainer = new TrainerPersonTo();
+
+      trainer.setId(ID);
+      trainer.setTitle(TITLE);
+      trainer.setName(new NameTo(FIRST_NAME, MIDDLE_NAME, LAST_NAME));
+      trainer.setLessons(LESSONS);
+      trainer.setSalary(SALARY);
+      trainer.setGender(GENDER);
+
+      return trainer;
+    }
+
+  }
+
+  @RunWith(Enclosed.class)
   public static class ConversionOfPrimitiveVsWrapperTypes {
 
     public static class WithoutOptionalUsage {

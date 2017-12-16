@@ -11,6 +11,10 @@ MeMapper is developed for a handy usage. It is as simple as this:
 * Example:
 > Target target = (Target) MeMapper.from(source).to(Target.class);
 
+or
+
+> Target target = new Target();<br/>
+> target = (Target) MeMapper.from(source).to(target);
 
 * Mapping with Lists:
 

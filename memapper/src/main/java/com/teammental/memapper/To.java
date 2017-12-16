@@ -26,4 +26,22 @@ public interface To<TargetT> {
    * @return Optional of TargetT.
    */
   Optional<TargetT> toOptional(Class<TargetT> targetType);
+
+  /**
+   * Maps the given source SourceT object
+   * to target object.
+   *
+   * @param target Target object.
+   * @return Optional of TargetT.
+   */
+  TargetT to(TargetT target);
+
+  /**
+   * Maps the given source SourceT object
+   * to target object.
+   *
+   * @param target Target object.
+   * @return Optional of TargetT.
+   */
+  Optional<TargetT> toOptional(TargetT target);
 }
