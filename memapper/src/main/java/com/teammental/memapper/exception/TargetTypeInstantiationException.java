@@ -1,9 +1,11 @@
 package com.teammental.memapper.exception;
 
+import com.teammental.mecore.exception.Exception;
+
 /**
  * author @er-han on 3/30/2017.
  */
-public class TargetTypeInstantiationException extends Exception {
+public class TargetTypeInstantiationException extends java.lang.Exception implements Exception {
 
   private static final String resultTypeInstantiationExceptionMessage = "Can not "
       + "instantiate a new object of given result type: "
