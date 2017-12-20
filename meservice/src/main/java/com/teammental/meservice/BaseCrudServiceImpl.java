@@ -1,6 +1,6 @@
 package com.teammental.meservice;
 
-import com.teammental.mecore.entity.Entity;
+import com.teammental.mecore.stereotype.entity.Entity;
 import com.teammental.medto.IdDto;
 import com.teammental.meexception.dto.DtoCreateException;
 import com.teammental.meexception.dto.DtoCrudException;

@@ -1,7 +1,7 @@
 package com.teammental.meexception;
 
-import com.teammental.mecore.dto.Dto;
-import com.teammental.mecore.exception.Exception;
+import com.teammental.mecore.stereotype.dto.Dto;
+import com.teammental.mecore.stereotype.exception.Exception;
 
 public class RestfulException extends java.lang.Exception implements Exception {
 

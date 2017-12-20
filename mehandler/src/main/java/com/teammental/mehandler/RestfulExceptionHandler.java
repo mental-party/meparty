@@ -1,6 +1,6 @@
 package com.teammental.mehandler;
 
-import com.teammental.mecore.dto.Dto;
+import com.teammental.mecore.stereotype.dto.Dto;
 import com.teammental.meexception.RestfulException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

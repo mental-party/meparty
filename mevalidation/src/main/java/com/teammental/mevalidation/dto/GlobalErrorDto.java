@@ -1,6 +1,6 @@
 package com.teammental.mevalidation.dto;
 
-import com.teammental.mecore.dto.Dto;
+import com.teammental.mecore.stereotype.dto.Dto;
 
 public class GlobalErrorDto implements Dto {
   private String message;

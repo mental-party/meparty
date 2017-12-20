@@ -1,6 +1,6 @@
 package com.teammental.mevalidation.dto;
 
-import com.teammental.mecore.dto.Dto;
+import com.teammental.mecore.stereotype.dto.Dto;
 import org.springframework.validation.FieldError;
 
 public class FieldErrorDto implements Dto {

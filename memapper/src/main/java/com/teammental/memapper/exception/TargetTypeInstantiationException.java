@@ -1,6 +1,6 @@
 package com.teammental.memapper.exception;
 
-import com.teammental.mecore.exception.Exception;
+import com.teammental.mecore.stereotype.exception.Exception;
 
 /**
  * author @er-han on 3/30/2017.

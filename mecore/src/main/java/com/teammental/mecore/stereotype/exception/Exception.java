@@ -1,4 +1,4 @@
-package com.teammental.mecore.exception;
+package com.teammental.mecore.stereotype.exception;
 
 public interface Exception {
   String getMessage();

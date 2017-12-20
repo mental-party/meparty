@@ -3,7 +3,7 @@ package com.teammental.mehandler.testapp;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.teammental.mecore.dto.Dto;
+import com.teammental.mecore.stereotype.dto.Dto;
 
 public class TestDto implements Dto {
 

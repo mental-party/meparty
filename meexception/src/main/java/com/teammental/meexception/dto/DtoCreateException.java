@@ -1,6 +1,6 @@
 package com.teammental.meexception.dto;
 
-import com.teammental.mecore.dto.Dto;
+import com.teammental.mecore.stereotype.dto.Dto;
 
 public class DtoCreateException extends DtoCrudException {
 

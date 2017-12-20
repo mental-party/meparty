@@ -1,6 +1,6 @@
 package com.teammental.meexception.dto;
 
-import com.teammental.mecore.dto.Dto;
+import com.teammental.mecore.stereotype.dto.Dto;
 import com.teammental.meexception.RestfulException;
 
 public class DtoCrudException extends RestfulException {
@@ -9,7 +9,7 @@ public class DtoCrudException extends RestfulException {
 
   /**
    * New DtoCrudException.
-   * @param dto a {@link com.teammental.mecore.dto.Dto Dto} object can be included.
+   * @param dto a {@link com.teammental.mecore.stereotype.dto.Dto Dto} object can be included.
    */
   public DtoCrudException(Dto dto) {
 
@@ -19,7 +19,7 @@ public class DtoCrudException extends RestfulException {
 
   /**
    * New DtoCrudException.
-   * @param dto a {@link com.teammental.mecore.dto.Dto Dto} object can be included.
+   * @param dto a {@link com.teammental.mecore.stereotype.dto.Dto Dto} object can be included.
    * @param statusCode HttpStatus code which will be used in Rest response.
    */
   public DtoCrudException(Dto dto, int statusCode) {
@@ -30,7 +30,7 @@ public class DtoCrudException extends RestfulException {
 
   /**
    * New DtoCrudException.
-   * @param dto a {@link com.teammental.mecore.dto.Dto Dto} object can be included.
+   * @param dto a {@link com.teammental.mecore.stereotype.dto.Dto Dto} object can be included.
    * @param statusCode HttpStatus code which will be used in Rest response.
    * @param message Exception message.
    */
@@ -42,7 +42,7 @@ public class DtoCrudException extends RestfulException {
 
   /**
    * New DtoCrudException.
-   * @param dto a {@link com.teammental.mecore.dto.Dto Dto} object can be included.
+   * @param dto a {@link com.teammental.mecore.stereotype.dto.Dto Dto} object can be included.
    * @param statusCode HttpStatus code which will be used in Rest response.
    * @param message Exception message.
    * @param cause a {@link java.lang.Throwable} object, cause for this exception.
@@ -55,7 +55,7 @@ public class DtoCrudException extends RestfulException {
 
   /**
    * New DtoCrudException.
-   * @param dto a {@link com.teammental.mecore.dto.Dto Dto} object can be included.
+   * @param dto a {@link com.teammental.mecore.stereotype.dto.Dto Dto} object can be included.
    * @param statusCode HttpStatus code which will be used in Rest response.
    * @param cause a {@link java.lang.Throwable} object, cause for this exception.
    */
