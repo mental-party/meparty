@@ -54,6 +54,22 @@ public class CommonMapUtil {
     return fields;
   }
 
+  /**
+   * Returns all fields and their types in a map.
+   * @param type the type whose fields will be mapped.
+   * @param includeSuperFields if true the fields of super classes will be included.
+   * @return map of fields and their types.
+   */
+  public static Map<String, Class<?>> getFieldsTypeMap(Class<?> type, boolean includeSuperFields) {
+    List<Field> fields = getAllFields(type, includeSuperFields);
+    Map<String, Class<?>> map = fields.stream()
+        .collect(Collectors.toMap(
+            field -> field.getName(),
+            field -> field.getType()
+        ));
+
+    return map;
+  }
 
   /**
    * Extracts a map of fields in given T object.

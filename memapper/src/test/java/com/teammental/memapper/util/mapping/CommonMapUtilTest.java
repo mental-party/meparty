@@ -9,6 +9,7 @@ import com.teammental.memapper.to.TeacherPersonTo;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -19,7 +20,6 @@ import org.junit.Test;
  */
 
 public class CommonMapUtilTest {
-
 
 
   @Test
@@ -64,6 +64,15 @@ public class CommonMapUtilTest {
     assertEquals(expectedFields, actualFields);
   }
 
+  @Test
+  public void shouldReturnFieldsAndTheirTypes_whenIncludeSuperFieldsIsFalse() {
+    final boolean includeSuperFields = false;
+    final Map<String, Class<?>> expectedMap = prepareHashMapOfFieldsInTeacherPersonTo(includeSuperFields);
+    final Map<String, Class<?>> actualMap = CommonMapUtil
+        .getFieldsTypeMap(TeacherPersonTo.class, includeSuperFields);
+
+    assertEquals(expectedMap, actualMap);
+  }
 
   private HashMap<String, Class<?>> prepareHashMapOfFieldsInTeacherPersonTo(
       boolean includeSuperfields) {
@@ -78,7 +87,6 @@ public class CommonMapUtilTest {
     expectedFields.put("salary", Double.class);
     return expectedFields;
   }
-
 
 
 }
