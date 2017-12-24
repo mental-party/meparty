@@ -4,11 +4,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import com.teammental.memapper.to.PersonTo;
 import com.teammental.memapper.to.PrimitiveTypeTo;
 import com.teammental.memapper.to.WrapperTypeTo;
 import com.teammental.memapper.util.mapping.CommonMapUtil;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Optional;
 
 import org.junit.Test;
@@ -27,6 +29,7 @@ public class FieldUtilTest {
 
     @Test
     public void shouldReturnTrue_whenFieldTypeIsPrimitive() {
+
       Optional<Field> primitiveBooleanField = CommonMapUtil.getAllFields(PrimitiveTypeTo.class)
           .stream().filter(field -> field.getType().equals(boolean.class)).findFirst();
       if (!primitiveBooleanField.isPresent()) {
@@ -40,6 +43,7 @@ public class FieldUtilTest {
 
     @Test
     public void shouldReturnTrue_whenFieldTypeIsWrapper() {
+
       Optional<Field> wrapperBooleanField = CommonMapUtil.getAllFields(WrapperTypeTo.class)
           .stream().filter(field -> field.getType().equals(Boolean.class)).findFirst();
       if (!wrapperBooleanField.isPresent()) {
@@ -56,6 +60,7 @@ public class FieldUtilTest {
 
     @Test
     public void shouldReturnFalse() {
+
       Optional<Field> notBooleanField = CommonMapUtil.getAllFields(PrimitiveTypeTo.class)
           .stream().filter(field -> !field.getType().equals(boolean.class)).findAny();
 
@@ -73,10 +78,88 @@ public class FieldUtilTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowIllegalArgumentException() {
+
       Field nullField = null;
 
       FieldUtil.isBoolean(nullField);
 
+    }
+  }
+
+  public static class FindField {
+
+    @Test
+    public void shouldReturnNotEmpty_whenFieldExists() {
+
+      Optional<Field> fieldOptional = FieldUtil.getField(PersonTo.class, "id");
+      assertTrue(fieldOptional.isPresent());
+    }
+
+    @Test
+    public void shouldReturnEmpty_whenFieldDoesntExist() {
+
+      Optional<Field> fieldOptional = FieldUtil.getField(PersonTo.class, "klfdjngofe");
+      assertFalse(fieldOptional.isPresent());
+    }
+  }
+
+  public static class FindSetMethod {
+
+    @Test
+    public void shouldReturnNotEmpty_whenMethodIsAccessible() {
+
+      Optional<Field> fieldOptional = FieldUtil.getField(PersonTo.class, "id");
+      Optional<Method> optional = FieldUtil.findSetMethod(fieldOptional.get());
+
+      assertTrue(optional.isPresent());
+    }
+
+    @Test
+    public void shouldReturnEmpty_whenMethodDoesntExist() {
+
+      Optional<Field> fieldOptional = FieldUtil.getField(PersonTo.class, "noSetter");
+      Optional<Method> optional = FieldUtil.findSetMethod(fieldOptional.get());
+
+      assertFalse(optional.isPresent());
+    }
+
+    @Test
+    public void shouldReturnEmpty_whenMethodIsNotAccessible() {
+
+      Optional<Field> fieldOptional = FieldUtil.getField(PersonTo.class, "notAccessibleSetter");
+      Optional<Method> optional = FieldUtil.findSetMethod(fieldOptional.get());
+
+      assertFalse(optional.isPresent());
+    }
+
+    public static class FindGetMethod {
+
+      @Test
+      public void shouldReturnNotEmpty_whenMethodIsAccessible() {
+
+        Optional<Field> fieldOptional = FieldUtil.getField(PersonTo.class, "id");
+        Optional<Method> optional = FieldUtil.findGetMethod(fieldOptional.get());
+
+        assertTrue(optional.isPresent());
+      }
+
+      @Test
+      public void shouldReturnEmpty_whenMethodDoesntExist() {
+
+        Optional<Field> fieldOptional = FieldUtil.getField(PersonTo.class, "noGetter");
+        Optional<Method> optional = FieldUtil.findGetMethod(fieldOptional.get());
+
+        assertFalse(optional.isPresent());
+      }
+
+      @Test
+      public void shouldReturnEmpty_whenMethodIsNotAccessible() {
+
+        Optional<Field> fieldOptional = FieldUtil.getField(PersonTo.class, "noAccessibleGetter");
+        Optional<Method> optional = FieldUtil.findGetMethod(fieldOptional.get());
+
+        assertFalse(optional.isPresent());
+      }
     }
   }
 }

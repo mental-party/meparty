@@ -10,12 +10,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MeMapperConfigurationBuilder<S, T> implements ConfigurationBetween<S>,
+public class MapConfigurationBuilder<S, T>
+    implements ConfigurationBetween<S>,
     ConfigurationAnd<T>,
     ConfigurationMapField,
     ConfigurationMapWith {
 
-  private MeMapperConfigurationBuilder(boolean oneWayMapping) {
+  private MapConfigurationBuilder(boolean oneWayMapping) {
+
     fieldMap = new HashMap<>();
     this.oneWayMapping = oneWayMapping;
   }
@@ -29,26 +31,32 @@ public class MeMapperConfigurationBuilder<S, T> implements ConfigurationBetween<
   private List<Field> targetFields;
 
   public boolean isOneWayMapping() {
+
     return oneWayMapping;
   }
 
   public static ConfigurationBetween onaWayMapping() {
-    return new MeMapperConfigurationBuilder(true);
+
+    return new MapConfigurationBuilder(true);
   }
 
   public static ConfigurationBetween twoWayMapping() {
-    return new MeMapperConfigurationBuilder(false);
+
+    return new MapConfigurationBuilder(false);
   }
 
   @Override
   public ConfigurationAnd between(Class<S> sourceType) {
+
     this.sourceType = sourceType;
     sourceFields = CommonMapUtil.getAllFields(sourceType, true);
+
     return this;
   }
 
   @Override
   public ConfigurationMapField and(Class<T> targetType) {
+
     this.targetType = targetType;
     targetFields = CommonMapUtil.getAllFields(targetType, true);
     return this;
@@ -56,6 +64,7 @@ public class MeMapperConfigurationBuilder<S, T> implements ConfigurationBetween<
 
   @Override
   public ConfigurationMapWith mapField(String sourceFieldName) {
+
     if (!sourceFields.stream().anyMatch(field -> field.getName().equals(sourceFieldName))) {
       throw new NoSuchFieldException(sourceFieldName, sourceType);
     }
@@ -64,12 +73,14 @@ public class MeMapperConfigurationBuilder<S, T> implements ConfigurationBetween<
   }
 
   @Override
-  public MeMapperConfiguration build() {
-    return new MeMapperConfiguration(fieldMap, sourceType, targetType, oneWayMapping);
+  public MapConfiguration build() {
+
+    return new MapConfiguration(fieldMap, sourceType, targetType, oneWayMapping);
   }
 
   @Override
   public ConfigurationMapField with(String targetFieldName) {
+
     if (!targetFields.stream().anyMatch(field -> field.getName().equals(targetFieldName))) {
       throw new NoSuchFieldException(targetFieldName, targetType);
     }
@@ -87,9 +98,12 @@ public class MeMapperConfigurationBuilder<S, T> implements ConfigurationBetween<
       throw new FieldTypesNotConvertableException(sourceField, targetField);
     }
 
+
     fieldMap.put(sourceField, targetField);
+
     this.tempSourceFieldName = null;
     return this;
   }
+
 
 }

@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MeMapperConfiguration {
+public class MapConfiguration {
   private Map<Field, Field> fieldMap;
   private Class<?> sourceType;
   private Class<?> targetType;
@@ -14,16 +14,17 @@ public class MeMapperConfiguration {
     return oneWayMapping;
   }
 
-  MeMapperConfiguration(Map<Field, Field> fieldMap,
-                        Class<?> sourceType,
-                        Class<?> targetType,
-                        boolean oneWayMapping) {
+  MapConfiguration(Map<Field, Field> fieldMap,
+                   Class<?> sourceType,
+                   Class<?> targetType,
+                   boolean oneWayMapping) {
 
     this.fieldMap = fieldMap;
     this.sourceType = sourceType;
     this.targetType = targetType;
     this.oneWayMapping = oneWayMapping;
   }
+
 
   public Map<Field, Field> getFieldMap() {
     return fieldMap;
@@ -51,7 +52,7 @@ public class MeMapperConfiguration {
   @Override
   public boolean equals(Object obj) {
 
-    MeMapperConfiguration other = (MeMapperConfiguration) obj;
+    MapConfiguration other = (MapConfiguration) obj;
 
     return this.targetType != null && this.sourceType != null
         && other.targetType != null && other.sourceType != null
@@ -59,7 +60,7 @@ public class MeMapperConfiguration {
         && this.sourceType.equals(other.sourceType);
   }
 
-  MeMapperConfiguration reverse() {
+  MapConfiguration reverse() {
 
     Map<Field, Field> reverseMap = new HashMap<>();
 
@@ -71,8 +72,8 @@ public class MeMapperConfiguration {
     Class<?> reverseSourceType = this.targetType;
     Class<?> reverseTargetType = this.sourceType;
 
-    MeMapperConfiguration configuration =
-        new MeMapperConfiguration(reverseMap,
+    MapConfiguration configuration =
+        new MapConfiguration(reverseMap,
             reverseSourceType, reverseTargetType, this.isOneWayMapping());
 
     return configuration;

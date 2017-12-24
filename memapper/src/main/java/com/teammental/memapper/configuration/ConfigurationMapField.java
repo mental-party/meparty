@@ -4,5 +4,5 @@ public interface ConfigurationMapField {
 
   ConfigurationMapWith mapField(String sourceFieldName);
 
-  MeMapperConfiguration build();
+  MapConfiguration build();
 }

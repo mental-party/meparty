@@ -8,6 +8,11 @@ public class PersonTo {
   private NameTo name;
   private EnumGender gender;
   private String title;
+  private String title2;
+  private String noSetter;
+  private String notAccessibleSetter;
+  private String noGetter;
+  private String noAccessibleGetter;
 
   public Integer getId() {
     return id;
@@ -39,5 +44,35 @@ public class PersonTo {
 
   public void setTitle(String title) {
     this.title = title;
+  }
+
+  public String getTitle2() {
+
+    return title2;
+  }
+
+  public void setTitle2(String title2) {
+
+    this.title2 = title2;
+  }
+
+  public String getNoSetter() {
+
+    return noSetter;
+  }
+
+  private void setNotAccessibleSetter(String notAccessibleSetter) {
+
+    this.notAccessibleSetter = notAccessibleSetter;
+  }
+
+  public void setNoGetter(String noGetter) {
+
+    this.noGetter = noGetter;
+  }
+
+  private String getNoAccessibleGetter() {
+
+    return noAccessibleGetter;
   }
 }
