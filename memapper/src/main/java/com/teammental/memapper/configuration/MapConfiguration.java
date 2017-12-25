@@ -30,10 +30,6 @@ public class MapConfiguration {
     return fieldMap;
   }
 
-  public Field getFieldMap(Field key) {
-    return fieldMap.get(key);
-  }
-
   public Class<?> getSourceType() {
     return sourceType;
   }

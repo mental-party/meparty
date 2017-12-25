@@ -1,6 +1,8 @@
 package com.teammental.memapper.configuration;
 
-import com.teammental.memapper.exception.FieldTypesNotConvertableException;
+import com.teammental.mehelper.AssertHelper;
+import com.teammental.memapper.exception.FieldIsNotAccessible;
+import com.teammental.memapper.exception.FieldTypesAreNotAssignableException;
 import com.teammental.memapper.exception.NoSuchFieldException;
 import com.teammental.memapper.util.FieldUtil;
 import com.teammental.memapper.util.mapping.CommonMapUtil;
@@ -35,7 +37,7 @@ public class MapConfigurationBuilder<S, T>
     return oneWayMapping;
   }
 
-  public static ConfigurationBetween onaWayMapping() {
+  public static ConfigurationBetween oneWayMapping() {
 
     return new MapConfigurationBuilder(true);
   }
@@ -48,6 +50,8 @@ public class MapConfigurationBuilder<S, T>
   @Override
   public ConfigurationAnd between(Class<S> sourceType) {
 
+    AssertHelper.NotNull(sourceType);
+
     this.sourceType = sourceType;
     sourceFields = CommonMapUtil.getAllFields(sourceType, true);
 
@@ -57,6 +61,8 @@ public class MapConfigurationBuilder<S, T>
   @Override
   public ConfigurationMapField and(Class<T> targetType) {
 
+    AssertHelper.NotNull(targetType);
+
     this.targetType = targetType;
     targetFields = CommonMapUtil.getAllFields(targetType, true);
     return this;
@@ -65,6 +71,8 @@ public class MapConfigurationBuilder<S, T>
   @Override
   public ConfigurationMapWith mapField(String sourceFieldName) {
 
+    AssertHelper.NotNull(sourceFieldName);
+
     if (!sourceFields.stream().anyMatch(field -> field.getName().equals(sourceFieldName))) {
       throw new NoSuchFieldException(sourceFieldName, sourceType);
     }
@@ -72,14 +80,11 @@ public class MapConfigurationBuilder<S, T>
     return this;
   }
 
-  @Override
-  public MapConfiguration build() {
-
-    return new MapConfiguration(fieldMap, sourceType, targetType, oneWayMapping);
-  }
 
   @Override
   public ConfigurationMapField with(String targetFieldName) {
+
+    AssertHelper.NotNull(targetFieldName);
 
     if (!targetFields.stream().anyMatch(field -> field.getName().equals(targetFieldName))) {
       throw new NoSuchFieldException(targetFieldName, targetType);
@@ -89,13 +94,21 @@ public class MapConfigurationBuilder<S, T>
         .filter(field -> field.getName().equals(tempSourceFieldName))
         .findFirst().get();
 
+    if (!FieldUtil.hasPublicGetMethod(sourceField)) {
+      throw new FieldIsNotAccessible(sourceField, false);
+    }
+
     Field targetField = targetFields.stream()
         .filter(field -> field.getName().equals(targetFieldName))
         .findFirst().get();
 
+    if (!FieldUtil.hasPublicSetMethod(targetField)) {
+      throw new FieldIsNotAccessible(targetField, true);
+    }
+
 
     if (!FieldUtil.isConvertable(sourceField, targetField)) {
-      throw new FieldTypesNotConvertableException(sourceField, targetField);
+      throw new FieldTypesAreNotAssignableException(sourceField, targetField);
     }
 
 
@@ -103,6 +116,17 @@ public class MapConfigurationBuilder<S, T>
 
     this.tempSourceFieldName = null;
     return this;
+  }
+
+
+  @Override
+  public MapConfiguration build() {
+
+    if (fieldMap.isEmpty()) {
+      throw new IllegalArgumentException("You should add at least one field mapping");
+    }
+
+    return new MapConfiguration(fieldMap, sourceType, targetType, oneWayMapping);
   }
 
 

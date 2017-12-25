@@ -44,7 +44,7 @@ public class FieldUtil {
         || secondField.getType().isAssignableFrom(firstField.getType());
   }
 
-  public static Optional<Field> getField(Class<?> clazz, String name) {
+  public static Optional<Field> getField(final Class<?> clazz,final String name) {
 
     AssertHelper.NotNull(clazz, name);
 
@@ -61,7 +61,7 @@ public class FieldUtil {
    * @param field field
    * @return set method.
    */
-  public static Optional<Method> findSetMethod(Field field) {
+  public static Optional<Method> findSetMethod(final Field field) {
 
     AssertHelper.NotNull(field);
 
@@ -86,7 +86,7 @@ public class FieldUtil {
    * @param field field
    * @return get method.
    */
-  public static Optional<Method> findGetMethod(Field field) {
+  public static Optional<Method> findGetMethod(final Field field) {
 
     AssertHelper.NotNull(field);
 
@@ -103,5 +103,25 @@ public class FieldUtil {
     }
 
     return Optional.ofNullable(method);
+  }
+
+  /**
+   * Examines if the declaring class of the field has
+   * a public setter method for the field.
+   * @param field The field to be looked.
+   * @return true if a public setter method found
+   */
+  public static boolean hasPublicSetMethod(Field field) {
+    return findGetMethod(field).isPresent();
+  }
+
+  /**
+   * Examines if the declaring class of the field has
+   * a public getter method for the field.
+   * @param field The field to be looked.
+   * @return true if a public setter method found
+   */
+  public static boolean hasPublicGetMethod(Field field) {
+    return findGetMethod(field).isPresent();
   }
 }
