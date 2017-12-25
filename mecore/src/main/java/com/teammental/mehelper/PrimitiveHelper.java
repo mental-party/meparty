@@ -34,13 +34,12 @@ public class PrimitiveHelper {
 
   /**
    * Gets the Wrapper class of the given primitive type.
+   *
    * @param primitiveClass the primitive type argument.
    * @return Wrapper class type.
    */
   public static Class<?> getWrapperClass(Class<?> primitiveClass) {
-    if (primitiveClass == null) {
-      throw new IllegalArgumentException();
-    }
+    AssertHelper.notNull(primitiveClass);
 
     if (primitiveClass.isPrimitive()) {
       Class<?> wrapper = primitiveMap.get(primitiveClass);
@@ -51,13 +50,12 @@ public class PrimitiveHelper {
 
   /**
    * Gets the primitive class of the given Wrapper class, if there is.
+   *
    * @param wrapperClass the wrapper type argument.
    * @return primitive class type.
    */
   public static Class<?> getPrimitiveClass(Class<?> wrapperClass) {
-    if (wrapperClass == null) {
-      throw new IllegalArgumentException();
-    }
+    AssertHelper.notNull(wrapperClass);
 
     if (wrapperClass.isPrimitive()) {
       return wrapperClass;
@@ -69,5 +67,29 @@ public class PrimitiveHelper {
     }
 
     return primitive;
+  }
+
+  /**
+   * Gets the primitive or wrapper class type of the given type.
+   * If none found, returns clazz itself.
+   *
+   * @param clazz class type.
+   * @return primitive or wrapper class of the given type.
+   */
+  public static Class<?> getOppositeClass(Class<?> clazz) {
+
+    AssertHelper.notNull(clazz);
+
+    Class<?> oppositeClass;
+
+    if (clazz.isPrimitive()) {
+      oppositeClass = primitiveMap.get(clazz);
+    } else {
+      oppositeClass = wrapperMap.get(clazz);
+      if (oppositeClass == null) {
+        oppositeClass = clazz;
+      }
+    }
+    return oppositeClass;
   }
 }

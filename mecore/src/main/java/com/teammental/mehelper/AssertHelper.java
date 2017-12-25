@@ -5,7 +5,13 @@ package com.teammental.mehelper;
  */
 public class AssertHelper {
 
-  public static void NotNull(Object... objects) {
+  /**
+   * Asserts the given objects by checking if any of them is null.
+   * Throws an IllegalArgumentException if any of the given objects is null.
+   *
+   * @param objects objects to be asserted
+   */
+  public static void notNull(Object... objects) {
 
     for (Object object :
         objects) {

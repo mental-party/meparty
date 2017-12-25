@@ -1,5 +1,6 @@
 package com.teammental.memapper;
 
+import com.teammental.memapper.core.MapWorker;
 import com.teammental.memapper.exception.TargetTypeInstantiationException;
 import com.teammental.memapper.util.mapping.MapByFieldNameUtil;
 
@@ -32,8 +33,12 @@ class MeMapperTo<SourceT, TargetT> implements To<TargetT> {
   public TargetT to(Class<TargetT> targetType) {
 
     try {
-      return MapByFieldNameUtil.map(source, targetType);
-    } catch (TargetTypeInstantiationException exception) {
+      TargetT target = targetType.newInstance();
+      return to(target);
+
+    } catch (Exception ex) {
+      TargetTypeInstantiationException exception =
+          new TargetTypeInstantiationException(targetType, ex);
       logger.debug(exception.getLocalizedMessage());
       return null;
     }
@@ -49,7 +54,11 @@ class MeMapperTo<SourceT, TargetT> implements To<TargetT> {
   @Override
   public TargetT to(TargetT target) {
 
-    return MapByFieldNameUtil.map(source, target);
+    if (target == null) {
+      return null;
+    }
+    MapWorker<SourceT, TargetT> mapWorker = new MapWorker<>(source, target);
+    return mapWorker.map();
   }
 
   /**
@@ -63,13 +72,7 @@ class MeMapperTo<SourceT, TargetT> implements To<TargetT> {
    */
   @Override
   public Optional<TargetT> toOptional(Class<TargetT> targetType) {
-
-    try {
-      return Optional.ofNullable(MapByFieldNameUtil.map(source, targetType));
-    } catch (Exception exception) {
-      logger.debug(exception.getLocalizedMessage());
-      return Optional.empty();
-    }
+    return Optional.ofNullable(to(targetType));
   }
 
   /**
@@ -82,6 +85,6 @@ class MeMapperTo<SourceT, TargetT> implements To<TargetT> {
   @Override
   public Optional<TargetT> toOptional(TargetT target) {
 
-    return Optional.ofNullable(MapByFieldNameUtil.map(source, target));
+    return Optional.ofNullable(to(target));
   }
 }

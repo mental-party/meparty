@@ -82,6 +82,11 @@ public class CommonMapUtilTest {
       expectedFields.put("title", String.class);
       expectedFields.put("name", NameTo.class);
       expectedFields.put("gender", EnumGender.class);
+      expectedFields.put("title2", String.class);
+      expectedFields.put("noSetter", String.class);
+      expectedFields.put("notAccessibleSetter", String.class);
+      expectedFields.put("noGetter", String.class);
+      expectedFields.put("noAccessibleGetter", String.class);
     }
     expectedFields.put("lessons", List.class);
     expectedFields.put("salary", Double.class);

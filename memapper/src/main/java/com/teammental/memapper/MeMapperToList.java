@@ -1,7 +1,9 @@
 package com.teammental.memapper;
 
-import com.teammental.memapper.util.mapping.MapByFieldNameUtil;
+import com.teammental.memapper.core.MapWorker;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -30,7 +32,16 @@ class MeMapperToList<SourceT, TargetT> implements ToList<TargetT> {
   @Override
   public Iterable<TargetT> to(Class<TargetT> targetType) {
     try {
-      return MapByFieldNameUtil.map(sources, targetType);
+      List<TargetT> targets = new ArrayList<>();
+      for (SourceT source :
+          sources) {
+        TargetT target = newInstance(targetType);
+        MapWorker<SourceT, TargetT> worker = new MapWorker<>(source, target);
+        target = worker.map();
+        targets.add(target);
+      }
+      return targets;
+
     } catch (Exception exception) {
       logger.debug(exception.getLocalizedMessage());
       return null;
@@ -50,10 +61,15 @@ class MeMapperToList<SourceT, TargetT> implements ToList<TargetT> {
   @Override
   public Optional<Iterable<TargetT>> toOptional(Class<TargetT> targetType) {
     try {
-      return Optional.ofNullable(MapByFieldNameUtil.map(sources, targetType));
+      return Optional.ofNullable(to(targetType));
     } catch (Exception exception) {
       logger.debug(exception.getLocalizedMessage());
       return Optional.empty();
     }
+  }
+
+  private TargetT newInstance(Class<TargetT> targetType) throws Exception {
+    TargetT target = targetType.newInstance();
+    return target;
   }
 }

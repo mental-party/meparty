@@ -19,9 +19,14 @@ public class MapWorker<S, T> {
   S source;
   T target;
 
+  /**
+   * Constructs a MapWorker instance.
+   * @param source mapping source object.
+   * @param target mapping target object.
+   */
   public MapWorker(S source, T target) {
 
-    AssertHelper.NotNull(source, target);
+    AssertHelper.notNull(source, target);
 
     MapConfigurationRegistry registry = MapConfigurationRegistrySingleton.getSingleton();
     this.configuration = registry

@@ -62,6 +62,8 @@ public class MeMapperToListTest {
         List<TargetPersonTo> targetPersonTos = optional.get();
 
         assertEquals(size, targetPersonTos.size());
+
+        assertEquals(trainerPersonTos.get(0).getId(), targetPersonTos.get(0).getId());
       }
     }
 

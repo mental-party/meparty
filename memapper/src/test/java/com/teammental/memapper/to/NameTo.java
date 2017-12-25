@@ -6,9 +6,10 @@ package com.teammental.memapper.to;
 public class NameTo {
   /**
    * Creates new instance of NameTo.
-   * @param firstName firstname
+   *
+   * @param firstName  firstname
    * @param middleName middlename
-   * @param lastName lastname
+   * @param lastName   lastname
    */
   public NameTo(String firstName, String middleName, String lastName) {
     this.firstName = firstName;
@@ -48,4 +49,5 @@ public class NameTo {
   public void setLastName(String lastName) {
     this.lastName = lastName;
   }
+
 }

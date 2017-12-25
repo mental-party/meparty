@@ -24,4 +24,9 @@ public class TrainerPersonTo extends PersonTo {
   public void setSalary(Double salary) {
     this.salary = salary;
   }
+
+  @Override
+  public String toString() {
+    return super.toString();
+  }
 }

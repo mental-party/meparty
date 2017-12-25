@@ -50,7 +50,7 @@ public class MapConfigurationBuilder<S, T>
   @Override
   public ConfigurationAnd between(Class<S> sourceType) {
 
-    AssertHelper.NotNull(sourceType);
+    AssertHelper.notNull(sourceType);
 
     this.sourceType = sourceType;
     sourceFields = CommonMapUtil.getAllFields(sourceType, true);
@@ -61,7 +61,7 @@ public class MapConfigurationBuilder<S, T>
   @Override
   public ConfigurationMapField and(Class<T> targetType) {
 
-    AssertHelper.NotNull(targetType);
+    AssertHelper.notNull(targetType);
 
     this.targetType = targetType;
     targetFields = CommonMapUtil.getAllFields(targetType, true);
@@ -71,7 +71,7 @@ public class MapConfigurationBuilder<S, T>
   @Override
   public ConfigurationMapWith mapField(String sourceFieldName) {
 
-    AssertHelper.NotNull(sourceFieldName);
+    AssertHelper.notNull(sourceFieldName);
 
     if (!sourceFields.stream().anyMatch(field -> field.getName().equals(sourceFieldName))) {
       throw new NoSuchFieldException(sourceFieldName, sourceType);
@@ -84,7 +84,7 @@ public class MapConfigurationBuilder<S, T>
   @Override
   public ConfigurationMapField with(String targetFieldName) {
 
-    AssertHelper.NotNull(targetFieldName);
+    AssertHelper.notNull(targetFieldName);
 
     if (!targetFields.stream().anyMatch(field -> field.getName().equals(targetFieldName))) {
       throw new NoSuchFieldException(targetFieldName, targetType);

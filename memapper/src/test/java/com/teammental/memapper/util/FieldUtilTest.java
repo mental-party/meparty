@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import com.teammental.memapper.to.BooleanTypesTo;
 import com.teammental.memapper.to.PersonTo;
 import com.teammental.memapper.to.PrimitiveTypeTo;
 import com.teammental.memapper.to.WrapperTypeTo;
@@ -54,6 +55,27 @@ public class FieldUtilTest {
 
       assertTrue(isBoolean);
     }
+
+    @Test
+    public void shouldFindGetMethod_whenGetterMethodBeginsWithIs () {
+      Optional<Field> field = FieldUtil.getField(BooleanTypesTo.class,
+          "nameBeginsWithIsAndWrapper");
+
+      boolean fieldHasPublicGetterMethod = FieldUtil.hasPublicGetMethod(field.get());
+
+      assertTrue(fieldHasPublicGetterMethod);
+    }
+
+    @Test
+    public void shouldFindGetMethod_whenGetterMethodBeginsWithGet () {
+      Optional<Field> field = FieldUtil.getField(BooleanTypesTo.class,
+          "nameBeginsWithGetAndPrimitive");
+
+      boolean fieldHasPublicGetterMethod = FieldUtil.hasPublicGetMethod(field.get());
+
+      assertTrue(fieldHasPublicGetterMethod);
+    }
+
   }
 
   public static class WhenFieldTypeIsNotBoolean {

@@ -27,7 +27,7 @@ public class MapConfigurationRegistry {
    */
   public void register(MapConfiguration configuration) {
 
-    AssertHelper.NotNull(configuration);
+    AssertHelper.notNull(configuration);
 
     registry.add(configuration);
     if (!configuration.isOneWayMapping()) {
@@ -36,10 +36,18 @@ public class MapConfigurationRegistry {
     }
   }
 
+  /**
+   * Gets mapping configuration between two types.
+   * If no custom configuration found, creates a default
+   * configuration set by name-to-name
+   * @param sourceType source type of mapping configuration.
+   * @param targetType target type of mapping configuration.
+   * @return a MapConfiguration item.
+   */
   public MapConfiguration getConfiguration(Class<?> sourceType,
                                            Class<?> targetType) {
 
-    AssertHelper.NotNull(sourceType, targetType);
+    AssertHelper.notNull(sourceType, targetType);
 
     MapConfiguration configuration = registry.stream()
         .filter(mapConfiguration ->
