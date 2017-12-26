@@ -5,7 +5,7 @@ jar {
 dependencies {
     compile project(':merepository')
     compile project(':medto')
-    compile project(':memapper')
+    compile project(':memapper-spring')
 
     testCompile ("org.springframework.boot:spring-boot-starter-test:${springBootStarterTestVersion}")
 }

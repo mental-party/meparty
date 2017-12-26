@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.teammental.memapper.spring.StartupMapConfigurationRegistryBeanLoader,\
+  com.teammental.memapper.spring.StartupMapConfigurationRegistry
