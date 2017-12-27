@@ -6,8 +6,8 @@ import com.teammental.memapper.configuration.MapConfigurationRegistry;
 import com.teammental.memapper.to.TargetPersonTo;
 import com.teammental.memapper.to.TeacherPersonTo;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -24,8 +24,8 @@ public class MapWorkerTest {
 
   public static class TwoWayMapping {
 
-    @BeforeClass
-    public static void setUp() {
+    @Before
+    public void setUp() {
 
       MapConfiguration configuration = MapConfigurationBuilder
           .twoWayMapping()
@@ -39,10 +39,8 @@ public class MapWorkerTest {
           .with("title")
           .build();
 
-      MapConfigurationRegistry registry = new MapConfigurationRegistry();
+      MapConfigurationRegistry registry = MapConfigurationRegistrySingleton.getSingleton();
       registry.register(configuration);
-
-      MapConfigurationRegistrySingleton.setRegistry(registry);
     }
 
     @Test
@@ -71,16 +69,16 @@ public class MapWorkerTest {
       assertEquals(targetPersonTo.getTitle2(), teacherPersonTo.getTitle());
     }
 
-    @AfterClass
-    public static void cleanUp() {
+    @After
+    public void cleanUp() {
       MapConfigurationRegistrySingleton.clean();
     }
   }
 
   public static class OneWayMapping {
 
-    @BeforeClass
-    public static void setUp() {
+    @Before
+    public void setUp() {
 
       MapConfiguration configuration = MapConfigurationBuilder
           .oneWayMapping()
@@ -94,10 +92,8 @@ public class MapWorkerTest {
           .with("title")
           .build();
 
-      MapConfigurationRegistry registry = new MapConfigurationRegistry();
+      MapConfigurationRegistry registry = MapConfigurationRegistrySingleton.getSingleton();
       registry.register(configuration);
-
-      MapConfigurationRegistrySingleton.setRegistry(registry);
     }
 
     @Test
@@ -128,8 +124,8 @@ public class MapWorkerTest {
       assertNotEquals(targetPersonTo.getTitle2(), teacherPersonTo.getTitle());
     }
 
-    @AfterClass
-    public static void cleanUp() {
+    @After
+    public void cleanUp() {
       MapConfigurationRegistrySingleton.clean();
     }
   }
