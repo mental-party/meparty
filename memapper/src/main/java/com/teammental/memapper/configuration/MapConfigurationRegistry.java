@@ -21,6 +21,20 @@ public class MapConfigurationRegistry {
   }
 
   /**
+   * Merges this with another MapConfigurationRegistry object.
+   * @param mapConfigurationRegistry other MapConfigurationRegistry
+   */
+  public void merge(MapConfigurationRegistry mapConfigurationRegistry) {
+
+    AssertHelper.notNull(mapConfigurationRegistry);
+
+    for (MapConfiguration configuration:
+        mapConfigurationRegistry.registry) {
+      this.registry.add(configuration);
+    }
+  }
+
+  /**
    * Registers new configuration.
    *
    * @param configuration configuration item.

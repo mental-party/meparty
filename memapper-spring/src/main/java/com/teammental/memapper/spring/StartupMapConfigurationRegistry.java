@@ -14,10 +14,15 @@ public class StartupMapConfigurationRegistry {
   @Autowired
   MapConfigurationRegistry mapConfigurationRegistry;
 
+  /**
+   * On context refreshed event, merges singleton instance
+   * of the registry with custom bean instance of the registry.
+   */
   @EventListener(ContextRefreshedEvent.class)
   public void contextRefreshEvent() {
 
-    MapConfigurationRegistrySingleton.setRegistry(mapConfigurationRegistry);
+    MapConfigurationRegistrySingleton.getSingleton()
+        .merge(mapConfigurationRegistry);
   }
 
 }

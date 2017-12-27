@@ -21,17 +21,6 @@ public class MapConfigurationRegistrySingleton {
     return registry;
   }
 
-  /**
-   * Sets singleton instance of registry.
-   * @param configurationRegistry registry object
-   */
-  public static void setRegistry(MapConfigurationRegistry configurationRegistry) {
-
-    if (registry == null) {
-      registry = configurationRegistry;
-    }
-  }
-
   static void clean() {
     registry = null;
   }
