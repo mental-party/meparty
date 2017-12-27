@@ -5,9 +5,9 @@ import com.teammental.memapper.configuration.MapConfigurationBuilder;
 import com.teammental.memapper.configuration.MapConfigurationRegistry;
 import com.teammental.memapper.to.TargetPersonTo;
 import com.teammental.memapper.to.TeacherPersonTo;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -24,8 +24,8 @@ public class MapWorkerTest {
 
   public static class TwoWayMapping {
 
-    @Before
-    public void setUp() {
+    @BeforeClass
+    public static void setUp() {
 
       MapConfiguration configuration = MapConfigurationBuilder
           .twoWayMapping()
@@ -71,16 +71,16 @@ public class MapWorkerTest {
       assertEquals(targetPersonTo.getTitle2(), teacherPersonTo.getTitle());
     }
 
-    @After
-    public void cleanUp() {
+    @AfterClass
+    public static void cleanUp() {
       MapConfigurationRegistrySingleton.clean();
     }
   }
 
   public static class OneWayMapping {
 
-    @Before
-    public void setUp() {
+    @BeforeClass
+    public static void setUp() {
 
       MapConfiguration configuration = MapConfigurationBuilder
           .oneWayMapping()
@@ -128,8 +128,8 @@ public class MapWorkerTest {
       assertNotEquals(targetPersonTo.getTitle2(), teacherPersonTo.getTitle());
     }
 
-    @After
-    public void cleanUp() {
+    @AfterClass
+    public static void cleanUp() {
       MapConfigurationRegistrySingleton.clean();
     }
   }
