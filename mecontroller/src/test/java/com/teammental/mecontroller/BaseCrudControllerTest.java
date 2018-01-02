@@ -23,6 +23,7 @@ import java.util.List;
 
 import com.teammental.mecontroller.config.TestControllerConfig;
 import com.teammental.mecontroller.config.TestUtil;
+import com.teammental.mecontroller.testapp.TestCrudRestApi;
 import com.teammental.mecontroller.testapp.TestCrudController;
 import com.teammental.mecontroller.testapp.TestCrudService;
 import com.teammental.mecontroller.testapp.TestDto;
@@ -31,7 +32,6 @@ import com.teammental.meexception.dto.DtoCreateException;
 import com.teammental.meexception.dto.DtoCrudException;
 import com.teammental.meexception.dto.DtoNotFoundException;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -51,15 +51,16 @@ public class BaseCrudControllerTest {
   private TestCrudService testCrudService;
 
   @InjectMocks
-  private TestCrudController testCrudController;
+  private TestCrudRestApi testCrudRestApi = new TestCrudController();
 
   private MockMvc mockMvc;
 
   @Before
   public void setUp() {
+
     MockitoAnnotations.initMocks(this);
 
-    this.mockMvc = MockMvcBuilders.standaloneSetup(testCrudController)
+    this.mockMvc = MockMvcBuilders.standaloneSetup(testCrudRestApi)
         .setControllerAdvice(new TestHandler())
         .build();
 

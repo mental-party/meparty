@@ -1,0 +1,9 @@
+jar {
+    baseName = 'merest'
+}
+
+dependencies {
+    compile project(':meexception')
+
+    compile("org.springframework:spring-web:${springVersion}")
+}
