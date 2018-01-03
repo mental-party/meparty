@@ -27,7 +27,7 @@ public abstract class BaseCrudController<ServiceT extends BaseCrudService,
    * {@inheritDoc}
    */
   @Override
-  public final ResponseEntity getAll() throws DtoCrudException {
+  public final ResponseEntity<List<DtoT>> getAll() throws DtoCrudException {
     final List<DtoT> dtos = doGetAll();
     return ResponseEntity.ok(dtos);
   }
@@ -36,7 +36,7 @@ public abstract class BaseCrudController<ServiceT extends BaseCrudService,
    * {@inheritDoc}
    */
   @Override
-  public final ResponseEntity getById(@PathVariable(value = "id") final IdT id)
+  public final ResponseEntity<DtoT> getById(@PathVariable(value = "id") final IdT id)
       throws DtoCrudException {
     DtoT dto = doGetById(id);
     return ResponseEntity.ok(dto);
@@ -61,9 +61,9 @@ public abstract class BaseCrudController<ServiceT extends BaseCrudService,
    * {@inheritDoc}
    */
   @Override
-  public final ResponseEntity update(@Validated @RequestBody final DtoT dto)
+  public final ResponseEntity<IdT> update(@Validated @RequestBody final DtoT dto)
       throws DtoCrudException {
-    Serializable id = doUpdate(dto);
+    IdT id = (IdT) doUpdate(dto);
     return ResponseEntity.ok(id);
   }
 

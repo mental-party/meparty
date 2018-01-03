@@ -1,6 +1,7 @@
 package com.teammental.mecontroller.rest;
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.teammental.medto.IdDto;
 import com.teammental.meexception.dto.DtoCrudException;
@@ -24,10 +25,10 @@ public interface BaseCrudRestApi<ServiceT extends BaseCrudService,
    * @throws DtoCrudException if fails
    */
   @GetMapping("")
-  ResponseEntity getAll() throws DtoCrudException;
+  ResponseEntity<List<DtoT>> getAll() throws DtoCrudException;
 
   @GetMapping("/{id}")
-  ResponseEntity getById(@PathVariable(value = "id") final IdT id)
+  ResponseEntity<DtoT> getById(@PathVariable(value = "id") final IdT id)
       throws DtoCrudException;
 
   /**
@@ -49,7 +50,7 @@ public interface BaseCrudRestApi<ServiceT extends BaseCrudService,
    * @throws DtoCrudException if fails
    */
   @PutMapping()
-  ResponseEntity update(@Validated @RequestBody final DtoT dto)
+  ResponseEntity<IdT> update(@Validated @RequestBody final DtoT dto)
       throws DtoCrudException;
 
   /**

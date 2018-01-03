@@ -6,4 +6,5 @@ dependencies {
     compile project(':meexception')
 
     compile("org.springframework:spring-web:${springVersion}")
+    compile("org.springframework.boot:spring-boot-autoconfigure:${springBootAutoConfigurationVersion}")
 }
