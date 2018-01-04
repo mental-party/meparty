@@ -1,6 +1,5 @@
 package com.teammental.merest.testapp;
 
-import com.teammental.mecore.stereotype.controller.Controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,7 +9,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-public interface TestRestApi_Annotations extends Controller {
+public interface ChildRestApi_Annotations extends SuperRestApi_Annotations {
 
   @RequestMapping(value = "/", method = RequestMethod.POST)
   ResponseEntity requestMapping_post();
@@ -18,7 +17,7 @@ public interface TestRestApi_Annotations extends Controller {
   @RequestMapping
   ResponseEntity requestMapping_noRequestMethodIsSet();
 
-  @GetMapping
+  @GetMapping("/get")
   ResponseEntity getMapping();
 
   @PostMapping
@@ -32,6 +31,9 @@ public interface TestRestApi_Annotations extends Controller {
 
   @PatchMapping
   ResponseEntity patchMapping();
+
+  @RequestMapping(Config.TESTMETHOD_URL)
+  ResponseEntity testMethod();
 
   ResponseEntity noRequestMappingAnnotation();
 

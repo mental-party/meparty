@@ -25,11 +25,10 @@ public interface BaseCrudRestApi<ServiceT extends BaseCrudService,
    * @throws DtoCrudException if fails
    */
   @GetMapping("")
-  ResponseEntity<List<DtoT>> getAll() throws DtoCrudException;
+  ResponseEntity<List<DtoT>> getAll();
 
   @GetMapping("/{id}")
-  ResponseEntity<DtoT> getById(@PathVariable(value = "id") final IdT id)
-      throws DtoCrudException;
+  ResponseEntity<DtoT> getById(@PathVariable(value = "id") final IdT id);
 
   /**
    * Insert a new DtoT item.
@@ -39,8 +38,7 @@ public interface BaseCrudRestApi<ServiceT extends BaseCrudService,
    * @throws DtoCrudException if fails
    */
   @PostMapping()
-  ResponseEntity create(@Validated @RequestBody final DtoT dto)
-      throws DtoCrudException;
+  ResponseEntity create(@Validated @RequestBody final DtoT dto);
 
   /**
    * Update a DtoT item.
@@ -50,8 +48,7 @@ public interface BaseCrudRestApi<ServiceT extends BaseCrudService,
    * @throws DtoCrudException if fails
    */
   @PutMapping()
-  ResponseEntity<IdT> update(@Validated @RequestBody final DtoT dto)
-      throws DtoCrudException;
+  ResponseEntity<IdT> update(@Validated @RequestBody final DtoT dto);
 
   /**
    * Delete a DtoT item.
@@ -61,6 +58,5 @@ public interface BaseCrudRestApi<ServiceT extends BaseCrudService,
    * @throws DtoCrudException if fails
    */
   @DeleteMapping("/{id}")
-  ResponseEntity delete(@PathVariable(value = "id") final IdT id)
-      throws DtoCrudException;
+  ResponseEntity delete(@PathVariable(value = "id") final IdT id);
 }

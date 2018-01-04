@@ -15,11 +15,12 @@ public class RestApiProxyFactory {
 
   /**
    * Returns Rest API implementation.
+   *
    * @param restApiClass type of Rest API
-   * @param <T> Rest Api type
+   * @param <T>          Rest Api type
    * @return Rest API instance
    */
-  public <T extends Controller> T createProxy(Class<T> restApiClass) {
+  public static <T extends Controller> T createProxy(Class<T> restApiClass) {
     AssertHelper.notNull(restApiClass);
 
     if (!restApiClass.isAnnotationPresent(RestApi.class)) {

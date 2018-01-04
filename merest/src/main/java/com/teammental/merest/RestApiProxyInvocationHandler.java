@@ -2,6 +2,8 @@ package com.teammental.merest;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,8 +12,10 @@ import java.util.Map;
 import com.teammental.mecore.stereotype.controller.RestApi;
 import com.teammental.mecore.stereotype.dto.Dto;
 import com.teammental.merest.exception.NoRequestMappingFoundException;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -41,31 +45,87 @@ class RestApiProxyInvocationHandler implements InvocationHandler {
 
         if (arg instanceof Dto) {
           httpEntity = new HttpEntity(arg);
+        } else {
+          urlVariables.add(arg);
         }
       }
     }
 
-//   ResponseEntity responseEntity = restTemplate.exchange(url, httpMethod)
+    Class<?> returnType = extractReturnType(method.getGenericReturnType());
 
 
-    return null;
+    return restTemplate.exchange(url, httpMethod, httpEntity, returnType, urlVariables.toArray());
   }
 
-  String getApplicationUrl(String applicationName) {
-    return applicationName;
+  Class<?> extractReturnType(Type genericReturnType) {
+    Class<?> returnType;
+    if (genericReturnType instanceof ParameterizedType) {
+      ParameterizedType parameterizedType = (ParameterizedType) genericReturnType;
+      Type[] types = parameterizedType.getActualTypeArguments();
+      if (types.length == 1) {
+        Type type = types[0];
+        returnType = extractReturnType(type);
+      } else {
+        returnType = Object.class;
+      }
+    } else {
+      returnType = (Class<?>) genericReturnType;
+    }
+
+    return returnType;
   }
 
   String extractApiUrl(Object proxy, Method method) {
-    RestApi restApiAnnotation = proxy.getClass().getAnnotation(RestApi.class);
+    RestApi restApiAnnotation = AnnotationUtils.findAnnotation(proxy.getClass(), RestApi.class);
     String applicationName = restApiAnnotation.value();
 
     String applicationRootUrl = getApplicationUrl(applicationName);
 
     String url = applicationRootUrl;
 
-    return url;
+    String classLevelUrl = extractClassLevelMappingUrl(method.getDeclaringClass());
+
+    String methodLevelUrl = extractMethodLevelMappingUrl(method);
+
+    return url + classLevelUrl + methodLevelUrl;
   }
 
+
+  String getApplicationUrl(String applicationName) {
+    return ApplicationExplorer.getApplicationUrl(applicationName);
+  }
+
+  String extractMethodLevelMappingUrl(Method method) {
+
+    RequestMapping requestMapping = AnnotationUtils.findAnnotation(method, RequestMapping.class);
+
+    if (requestMapping == null || requestMapping.path().length == 0) {
+      return "";
+    } else {
+      return requestMapping.value()[0];
+    }
+  }
+
+  String extractClassLevelMappingUrl(Class<?> clazz) {
+    RequestMapping requestMapping = AnnotationUtils.findAnnotation(clazz, RequestMapping.class);
+
+    if (requestMapping == null || requestMapping.path().length == 0) {
+      return "";
+    } else {
+      return requestMapping.value()[0];
+    }
+  }
+
+  /**
+   * Searches {@link org.springframework.web.bind.annotation.RequestMapping RequestMapping}
+   * annotation on the given method argument and extracts
+   * If RequestMapping annotation is not found, NoRequestMappingFoundException is thrown.
+   * {@link org.springframework.http.HttpMethod HttpMethod} type equivalent to
+   * {@link org.springframework.web.bind.annotation.RequestMethod RequestMethod} type
+   *
+   * @param method Method to be examined.
+   * @return {@link org.springframework.http.HttpMethod HttpMethod} type. Default is HttpMethod.Get
+   */
   HttpMethod extractHttpMethod(Method method) {
     RequestMapping requestMappingAnnotation = method.getAnnotation(RequestMapping.class);
     RequestMethod requestMethod;
@@ -95,5 +155,4 @@ class RestApiProxyInvocationHandler implements InvocationHandler {
     }
     return httpMethod;
   }
-
 }

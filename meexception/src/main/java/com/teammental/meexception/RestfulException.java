@@ -3,7 +3,7 @@ package com.teammental.meexception;
 import com.teammental.mecore.stereotype.dto.Dto;
 import com.teammental.mecore.stereotype.exception.Exception;
 
-public class RestfulException extends java.lang.Exception implements Exception {
+public class RestfulException extends RuntimeException implements Exception {
 
   private int statusCode;
 
