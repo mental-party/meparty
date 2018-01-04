@@ -8,9 +8,9 @@ import com.teammental.mecore.stereotype.controller.RestApi;
 import com.teammental.mehelper.AssertHelper;
 import com.teammental.mehelper.StringHelper;
 import com.teammental.merest.exception.RestApiAnnotationIsMissingException;
-import com.teammental.merest.exception.RestApiApplicationNameCannotBeNullOrEmpty;
+import com.teammental.merest.exception.ApplicationNameCannotBeNullOrEmptyException;
 
-public class RestApiFactory {
+public class RestApiProxyFactory {
 
 
   /**
@@ -19,7 +19,7 @@ public class RestApiFactory {
    * @param <T> Rest Api type
    * @return Rest API instance
    */
-  public <T extends Controller> T getRestApi(Class<T> restApiClass) {
+  public <T extends Controller> T createProxy(Class<T> restApiClass) {
     AssertHelper.notNull(restApiClass);
 
     if (!restApiClass.isAnnotationPresent(RestApi.class)) {
@@ -30,10 +30,10 @@ public class RestApiFactory {
     String applicationName = restApiAnnotation.value();
 
     if (StringHelper.isNullOrEmpty(applicationName)) {
-      throw new RestApiApplicationNameCannotBeNullOrEmpty(restApiClass);
+      throw new ApplicationNameCannotBeNullOrEmptyException(restApiClass);
     }
 
-    InvocationHandler handler = new RestApiInvocationHandler();
+    InvocationHandler handler = new RestApiProxyInvocationHandler();
 
     T restApi = (T) Proxy.newProxyInstance(restApiClass.getClassLoader(),
         new Class[]{restApiClass},
