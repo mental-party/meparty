@@ -43,4 +43,14 @@ public class RestApiProxyFactoryTest {
 
     assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
   }
+
+  @Test
+  public void getById_returnsDto_andStatusOk() {
+    Integer expectedId = 1;
+    String expectedName = "name";
+    ResponseEntity<TestDto> responseEntity = testRestApi.getById(1);
+    assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    assertEquals(expectedId, responseEntity.getBody().getId());
+    assertEquals(expectedName, responseEntity.getBody().getName());
+  }
 }

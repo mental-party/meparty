@@ -2,8 +2,10 @@ package com.teammental.memapper;
 
 import com.teammental.memapper.core.MapWorker;
 import com.teammental.memapper.exception.TargetTypeInstantiationException;
+import com.teammental.memapper.util.mapping.CommonMapUtil;
 import com.teammental.memapper.util.mapping.MapByFieldNameUtil;
 
+import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -59,6 +61,22 @@ class MeMapperTo<SourceT, TargetT> implements To<TargetT> {
     }
     MapWorker<SourceT, TargetT> mapWorker = new MapWorker<>(source, target);
     return mapWorker.map();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Map<String, Object> toMap() {
+    return toMap(true);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Map<String, Object> toMap(boolean includeSuperFields) {
+    return CommonMapUtil.getFieldsMap(source, includeSuperFields);
   }
 
   /**

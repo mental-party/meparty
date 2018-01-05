@@ -56,7 +56,8 @@ public class CommonMapUtil {
 
   /**
    * Returns all fields and their types in a map.
-   * @param type the type whose fields will be mapped.
+   *
+   * @param type               the type whose fields will be mapped.
    * @param includeSuperFields if true the fields of super classes will be included.
    * @return map of fields and their types.
    */
@@ -79,10 +80,8 @@ public class CommonMapUtil {
    * @param source The object which's fields are wanted to be extracted.
    * @param <T>    Generic type of source object.
    * @return a Map object which contains extracted fields names and values from the given object
-   * @throws IllegalAccessException throws this when can't get one of the field's value of source.
    */
-  public static <T> Map<String, Object> getFieldsMap(final T source)
-      throws IllegalAccessException {
+  public static <T> Map<String, Object> getFieldsMap(final T source) {
     return getFieldsMap(source, true);
   }
 
@@ -94,19 +93,23 @@ public class CommonMapUtil {
    *                           if true, fields of superclass will be included.
    * @param <T>                Generic type of source object.
    * @return a Map object which contains extracted fields names and values from the given object
-   * @throws IllegalAccessException throws this when can't get one of the field's value of source.
    */
-  public static <T> Map<String, Object> getFieldsMap(final T source, boolean includeSuperFields)
-      throws IllegalAccessException {
+  public static <T> Map<String, Object> getFieldsMap(final T source, boolean includeSuperFields) {
     final Map<String, Object> map = new HashMap<>();
     final List<Field> fields = getAllFields(source.getClass(), includeSuperFields);
     for (final Field field : fields) {
       final boolean isFieldAccessible = field.isAccessible();
       field.setAccessible(true);
-      map.put(field.getName(), field.get(source));
+      try {
+        map.put(field.getName(), field.get(source));
+      } catch (IllegalAccessException e) {
+        e.printStackTrace();
+        continue;
+      }
       field.setAccessible(isFieldAccessible);
     }
     return map;
   }
+
 
 }

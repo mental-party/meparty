@@ -2,16 +2,15 @@ package com.teammental.merest;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.teammental.mecore.stereotype.controller.RestApi;
-import com.teammental.mecore.stereotype.dto.Dto;
 import com.teammental.merest.exception.NoRequestMappingFoundException;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -19,10 +18,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 class RestApiProxyInvocationHandler implements InvocationHandler {
@@ -36,26 +38,48 @@ class RestApiProxyInvocationHandler implements InvocationHandler {
 
     HttpMethod httpMethod = extractHttpMethod(method);
 
-    HttpEntity httpEntity = HttpEntity.EMPTY;
-    List<Object> urlVariables = new ArrayList<>();
+//    Map<String, Object> pathVariables = new HashMap<>();
+    Map<String, Object> urlVariables = new HashMap<>();
+    Object requestBody = null;
+    Parameter[] parameters = method.getParameters();
+    for (int i = 0; i < parameters.length; i++) {
+      Parameter parameter = parameters[i];
+      Object value = args[i];
 
-    if (args != null && args.length > 0) {
-      for (int i = 0; i < args.length; i++) {
-        Object arg = args[i];
-
-        if (arg instanceof Dto) {
-          httpEntity = new HttpEntity(arg);
-        } else {
-          urlVariables.add(arg);
-        }
+      if (parameter.isAnnotationPresent(PathVariable.class)) {
+        PathVariable pathVariable = parameter.getAnnotation(PathVariable.class);
+        String name = pathVariable.value();
+        urlVariables.put(name, value);
+      } else if (parameter.isAnnotationPresent(RequestParam.class)) {
+        RequestParam requestParam = parameter.getAnnotation(RequestParam.class);
+        String name = requestParam.value();
+        urlVariables.put(name, value);
+      } else if (parameter.isAnnotationPresent(RequestBody.class)) {
+        requestBody = value;
       }
     }
 
-    Class<?> returnType = extractReturnType(method.getGenericReturnType());
 
+//    Class<?> returnType = extractReturnType(method.getGenericReturnType());
 
-    return restTemplate.exchange(url, httpMethod, httpEntity, returnType, urlVariables.toArray());
+//    if (!pathVariables.isEmpty()) {
+//      for (String key :
+//          pathVariables.keySet()) {
+//        Object val = pathVariables.get(key);
+//        url = url.replace("{" + key + "}", val.toString());
+//      }
+//    }
+
+    HttpEntity httpEntity = requestBody == null ? null : new HttpEntity(requestBody);
+    ResponseEntity responseEntity = restTemplate.exchange(url, httpMethod, httpEntity,
+        new ParameterizedTypeReference<Object>() {
+        }, urlVariables);
+
+//    Class<?> returnType = extractReturnType(method.getGenericReturnType());
+
+    return responseEntity;
   }
+
 
   Class<?> extractReturnType(Type genericReturnType) {
     Class<?> returnType;

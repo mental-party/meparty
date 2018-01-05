@@ -1,5 +1,6 @@
 package com.teammental.memapper;
 
+import java.util.Map;
 import java.util.Optional;
 
 public interface To<TargetT> {
@@ -23,6 +24,21 @@ public interface To<TargetT> {
    * @return Optional of TargetT.
    */
   TargetT to(TargetT target);
+
+  /**
+   * Converts source object to a HashMap of
+   * Name-Value pairs of fields.
+   * Includes super fields too.
+   * @return HashMap
+   */
+  Map<String, Object> toMap();
+
+  /**
+   * Converts source object to a HashMap of
+   * Name-Value pairs of fields.
+   * @return HashMap
+   */
+  Map<String, Object> toMap(boolean includeSuperFields);
 
   /**
    * Maps the given source SourceT object

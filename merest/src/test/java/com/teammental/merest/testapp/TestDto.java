@@ -10,7 +10,7 @@ public class TestDto implements Dto {
     this.name = name;
   }
 
-  public TestDto(){
+  public TestDto() {
   }
 
   private String name;
@@ -29,5 +29,12 @@ public class TestDto implements Dto {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder stringBuilder = new StringBuilder();
+    stringBuilder.append("{id:" + id + ", name:" + name + "}");
+    return stringBuilder.toString();
   }
 }
