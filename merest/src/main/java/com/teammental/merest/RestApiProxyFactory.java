@@ -20,6 +20,7 @@ public class RestApiProxyFactory {
    * @param <T>          Rest Api type
    * @return Rest API instance
    */
+  @SuppressWarnings("unchecked")
   public static <T extends Controller> T createProxy(Class<T> restApiClass) {
     AssertHelper.notNull(restApiClass);
 
