@@ -13,6 +13,7 @@ import com.teammental.merest.testapp.TestApplication;
 import com.teammental.merest.testapp.TestDto;
 import com.teammental.merest.testapp.TestRestApi;
 import com.teammental.merest.testapp.TestRestApiController;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -73,5 +74,11 @@ public class RestApiProxyFactoryTest {
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     assertEquals(expectedId, responseEntity.getBody().getId());
     assertEquals(expectedName, responseEntity.getBody().getName());
+  }
+
+  @After
+  public void cleanUp() {
+
+    ApplicationExplorer.clean();
   }
 }

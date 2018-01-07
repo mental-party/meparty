@@ -13,4 +13,8 @@ public class ApplicationExplorer {
   static void addApplicationUrl(String applicationName, String url) {
     applicationUrlMap.put(applicationName, url);
   }
+
+  static void clean() {
+    applicationUrlMap = new HashMap<>();
+  }
 }
