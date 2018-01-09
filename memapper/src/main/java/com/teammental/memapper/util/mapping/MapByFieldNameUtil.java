@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 /**
  * author @er-han on 3/30/2017.
  */
+@SuppressWarnings("PMD")
 public class MapByFieldNameUtil {
 
   private static final Logger logger = LoggerFactory.getLogger(MapByFieldNameUtil.class);

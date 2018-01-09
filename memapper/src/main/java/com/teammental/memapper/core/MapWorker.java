@@ -10,10 +10,15 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Created by sa on 12/23/2017.
  */
 public class MapWorker<S, T> {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(MapWorker.class);
 
   MapConfiguration configuration;
   S source;
@@ -68,14 +73,16 @@ public class MapWorker<S, T> {
             if (setMethodOptional.isPresent()) {
               setMethodOptional.get().invoke(target, val);
             }
-          } catch (InvocationTargetException e) {
-            e.printStackTrace();
+          } catch (InvocationTargetException ex) {
+
+            LOGGER.error(ex.getLocalizedMessage());
+
             continue;
           }
         }
 
-      } catch (IllegalAccessException e) {
-        e.printStackTrace();
+      } catch (IllegalAccessException ex) {
+        LOGGER.error(ex.getLocalizedMessage());
       }
     }
   }

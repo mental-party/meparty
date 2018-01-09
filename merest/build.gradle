@@ -4,11 +4,12 @@ jar {
 
 dependencies {
     compile project(':meexception')
+    compile project(':mevalidation')
 
     compile("org.springframework:spring-web:${springVersion}")
     compile("org.springframework.boot:spring-boot-autoconfigure:${springBootAutoConfigurationVersion}")
+    compile ("com.fasterxml.jackson.core:jackson-databind:${jacksonDatabindVersion}")
 
-    testCompile ("com.fasterxml.jackson.core:jackson-databind:${jacksonDatabindVersion}")
     testCompile ("org.springframework.boot:spring-boot-starter-web:${springBootStarterTestVersion}")
     testCompile ("org.springframework.boot:spring-boot-starter-test:${springBootStarterTestVersion}")
 }

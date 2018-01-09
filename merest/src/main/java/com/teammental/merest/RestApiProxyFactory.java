@@ -1,14 +1,14 @@
 package com.teammental.merest;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
-
 import com.teammental.mecore.stereotype.controller.Controller;
 import com.teammental.mecore.stereotype.controller.RestApi;
 import com.teammental.mehelper.AssertHelper;
 import com.teammental.mehelper.StringHelper;
-import com.teammental.merest.exception.RestApiAnnotationIsMissingException;
 import com.teammental.merest.exception.ApplicationNameCannotBeNullOrEmptyException;
+import com.teammental.merest.exception.RestApiAnnotationIsMissingException;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
 
 public class RestApiProxyFactory {
 

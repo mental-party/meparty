@@ -1,9 +1,6 @@
 jar {
     baseName = 'memapper'
 }
-pmd {
-    ignoreFailures = true
-}
 
 dependencies {
     compile project(':meexception')

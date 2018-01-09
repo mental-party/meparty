@@ -3,7 +3,6 @@ package com.teammental.memapper;
 import com.teammental.memapper.core.MapWorker;
 import com.teammental.memapper.exception.TargetTypeInstantiationException;
 import com.teammental.memapper.util.mapping.CommonMapUtil;
-import com.teammental.memapper.util.mapping.MapByFieldNameUtil;
 
 import java.util.Map;
 import java.util.Optional;

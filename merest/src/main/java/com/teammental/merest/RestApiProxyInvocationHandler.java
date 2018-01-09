@@ -1,19 +1,29 @@
 package com.teammental.merest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.teammental.mecore.stereotype.controller.RestApi;
+import com.teammental.mehelper.StringHelper;
+import com.teammental.merest.exception.NoRequestMappingFoundException;
+import com.teammental.mevalidation.dto.ValidationResultDto;
+
+import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import com.teammental.mecore.stereotype.controller.RestApi;
-import com.teammental.merest.exception.NoRequestMappingFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,9 +35,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 class RestApiProxyInvocationHandler implements InvocationHandler {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(RestApiProxyInvocationHandler.class);
 
   RestTemplate restTemplate = new RestTemplate();
 
@@ -38,7 +51,6 @@ class RestApiProxyInvocationHandler implements InvocationHandler {
 
     HttpMethod httpMethod = extractHttpMethod(method);
 
-//    Map<String, Object> pathVariables = new HashMap<>();
     Map<String, Object> urlVariables = new HashMap<>();
     Object requestBody = null;
     Parameter[] parameters = method.getParameters();
@@ -59,25 +71,84 @@ class RestApiProxyInvocationHandler implements InvocationHandler {
       }
     }
 
+    HttpEntity httpEntity = requestBody == null ? null : new HttpEntity<>(requestBody);
 
-//    Class<?> returnType = extractReturnType(method.getGenericReturnType());
+    RestResponse<Object> restResponse;
+    Class<?> returnType = extractReturnType(method.getGenericReturnType());
 
-//    if (!pathVariables.isEmpty()) {
-//      for (String key :
-//          pathVariables.keySet()) {
-//        Object val = pathVariables.get(key);
-//        url = url.replace("{" + key + "}", val.toString());
-//      }
-//    }
+    try {
 
-    HttpEntity httpEntity = requestBody == null ? null : new HttpEntity(requestBody);
-    ResponseEntity responseEntity = restTemplate.exchange(url, httpMethod, httpEntity,
-        new ParameterizedTypeReference<Object>() {
+      restResponse = doRestExchange(url, httpMethod, httpEntity, urlVariables, returnType);
+
+    } catch (HttpStatusCodeException exception) {
+
+      restResponse = handleHttpStatusCodeException(exception);
+    }
+
+    return restResponse;
+
+  }
+
+  RestResponse<Object> handleHttpStatusCodeException(HttpStatusCodeException exception) {
+    HttpStatus status = exception.getStatusCode();
+
+    RestResponse<Object> restResponse = new RestResponse<>(status);
+
+    if (status == HttpStatus.BAD_REQUEST) {
+      ObjectMapper objectMapper = new ObjectMapper();
+
+      ValidationResultDto validationResultDto;
+
+      try {
+
+        validationResultDto = objectMapper
+            .readValue(exception.getResponseBodyAsString(), ValidationResultDto.class);
+
+      } catch (Exception ex) {
+        LOGGER.error(ex.getLocalizedMessage());
+
+        validationResultDto = null;
+      }
+
+
+      if (validationResultDto == null) {
+        restResponse.setResponseMessage(exception.getResponseBodyAsString());
+      } else {
+        restResponse.setValidationResult(validationResultDto);
+      }
+    }
+
+    return restResponse;
+  }
+
+  RestResponse<Object> doRestExchange(String url,
+                                              HttpMethod httpMethod,
+                                              HttpEntity httpEntity,
+                                              Map<String, Object> urlVariables,
+                                              Class<?> returnType)
+      throws IOException, HttpStatusCodeException {
+
+    ResponseEntity<String> responseEntity = restTemplate.exchange(url, httpMethod, httpEntity,
+        new ParameterizedTypeReference<String>() {
         }, urlVariables);
 
-//    Class<?> returnType = extractReturnType(method.getGenericReturnType());
 
-    return responseEntity;
+    ObjectMapper objectMapper = new ObjectMapper();
+
+    Object returnBody = null;
+    if (!StringHelper.isNullOrEmpty(responseEntity.getBody())) {
+      if (responseEntity.getBody().startsWith("[")) {
+        returnBody = objectMapper.readValue(responseEntity.getBody(),
+            objectMapper.getTypeFactory().constructCollectionType(List.class, returnType));
+      } else {
+        returnBody = objectMapper.readValue(responseEntity.getBody(), returnType);
+      }
+    }
+    RestResponse<Object> restResponse = new RestResponse<>(returnBody,
+        responseEntity.getHeaders(),
+        responseEntity.getStatusCode());
+
+    return restResponse;
   }
 
 

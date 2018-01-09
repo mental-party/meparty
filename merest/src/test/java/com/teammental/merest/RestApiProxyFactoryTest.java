@@ -6,6 +6,7 @@ import com.teammental.merest.exception.ApplicationNameCannotBeNullOrEmptyExcepti
 import com.teammental.merest.exception.RestApiAnnotationIsMissingException;
 import com.teammental.merest.testapp.NoRestApiAnnotation;
 import com.teammental.merest.testapp.RestApiWithNoApplicationName;
+
 import java.util.List;
 
 import com.teammental.merest.testapp.Config;
@@ -58,11 +59,23 @@ public class RestApiProxyFactoryTest {
   }
 
   @Test
-  public void getAll_shouldReturn2Item_andStatusOk() {
+  public void getAll_shouldReturnStatusOk() {
 
-    ResponseEntity<List<TestDto>> responseEntity = testRestApi.getAll();
+    RestResponse<List<TestDto>> responseEntity = (RestResponse<List<TestDto>>) testRestApi.getAll();
 
     assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+  }
+
+  @Test
+  public void getAll_shouldReturnAsList() {
+
+    RestResponse<List<TestDto>> responseEntity = (RestResponse<List<TestDto>>) testRestApi.getAll();
+
+    List<TestDto> list = responseEntity.getBody();
+
+    assertEquals(2, list.size());
+    assertEquals((Integer) 1, list.get(0).getId());
+    assertEquals("1", list.get(0).getName());
   }
 
   @Test
@@ -70,10 +83,18 @@ public class RestApiProxyFactoryTest {
 
     Integer expectedId = 1;
     String expectedName = "name";
-    ResponseEntity<TestDto> responseEntity = testRestApi.getById(1);
+    RestResponse<TestDto> responseEntity = (RestResponse<TestDto>) testRestApi.getById(1);
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     assertEquals(expectedId, responseEntity.getBody().getId());
     assertEquals(expectedName, responseEntity.getBody().getName());
+  }
+
+  @Test
+  public void getById_shouldReturn404_whenNotFound() {
+
+    RestResponse<TestDto> responseEntity = (RestResponse<TestDto>) testRestApi.getById(5);
+
+    assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
   }
 
   @After

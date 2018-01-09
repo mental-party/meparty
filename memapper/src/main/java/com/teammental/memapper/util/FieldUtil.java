@@ -86,8 +86,8 @@ public class FieldUtil {
         .filter(m ->
             m.getName().equals("set" + capitalizedFieldName)
                 && m.getParameterCount() == 1
-                && (Arrays.stream(m.getParameterTypes()).anyMatch(p -> p.equals(field.getType())
-                || PrimitiveHelper.getOppositeClass(p).equals(field.getType()))))
+                && Arrays.stream(m.getParameterTypes()).anyMatch(p -> p.equals(field.getType())
+                || PrimitiveHelper.getOppositeClass(p).equals(field.getType())))
         .findFirst();
 
     return optionalMethod;
@@ -114,7 +114,7 @@ public class FieldUtil {
             (m.getReturnType().equals(field.getType())
                 || PrimitiveHelper.getOppositeClass(m.getReturnType()).equals(field.getType()))
                 && (m.getName().equals("get" + capitalizedFieldName)
-                || (isFieldBoolean && m.getName().equals("is" + capitalizedFieldName))))
+                || isFieldBoolean && m.getName().equals("is" + capitalizedFieldName)))
         .findFirst();
 
 
