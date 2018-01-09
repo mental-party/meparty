@@ -129,4 +129,46 @@ public class StringHelperTest {
       assertEquals(expectedResult, actualResult);
     }
   }
+
+  public static class FirstOrEmpty {
+
+    @Test
+    public void shouldReturnFirstElement_whenFirstHasValue() {
+
+      String[] strings = {"first", "second"};
+
+      String value = StringHelper.getFirstOrEmpty(strings);
+
+      assertEquals("first", value);
+    }
+
+    @Test
+    public void shouldReturnEmpty_whenArrayIsNull() {
+
+      String value = StringHelper.getFirstOrEmpty(null);
+
+      assertEquals("", value);
+    }
+
+
+    @Test
+    public void shouldReturnEmpty_whenArrayLengthIsZero() {
+      String[] strings = {};
+
+      String value = StringHelper.getFirstOrEmpty(strings);
+
+      assertEquals("", value);
+    }
+
+    @Test
+    public void shouldReturnEmpty_whenFirstElementIsNull() {
+      String[] strings = {null, "second"};
+
+      String value = StringHelper.getFirstOrEmpty(strings);
+
+      assertEquals("", value);
+    }
+
+
+  }
 }

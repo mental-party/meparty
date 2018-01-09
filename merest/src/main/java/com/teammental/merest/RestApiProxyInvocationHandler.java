@@ -8,6 +8,8 @@ import com.teammental.merest.exception.NoRequestMappingFoundException;
 import com.teammental.mevalidation.dto.ValidationResultDto;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -47,9 +49,36 @@ class RestApiProxyInvocationHandler implements InvocationHandler {
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
-    String url = extractApiUrl(proxy, method);
+    RestExchangeProperties properties = prepareRestExchangeProperties(proxy, method, args);
 
-    HttpMethod httpMethod = extractHttpMethod(method);
+    RestResponse<Object> restResponse;
+    try {
+
+      restResponse = doRestExchange(properties);
+
+    } catch (HttpStatusCodeException exception) {
+
+      restResponse = handleHttpStatusCodeException(exception);
+    }
+
+    return restResponse;
+  }
+
+  RestExchangeProperties prepareRestExchangeProperties(Object proxy, Method method, Object[] args) {
+    RestApi restApiAnnotation = AnnotationUtils.findAnnotation(proxy.getClass(), RestApi.class);
+    String applicationName = restApiAnnotation.value();
+
+    String url = ApplicationExplorer.getApplicationUrl(applicationName);
+
+    Mapping classLevelMapping = extractMapping(method.getDeclaringClass());
+    String classLevelUrl = classLevelMapping.getUrl();
+
+    Mapping methodLevelMapping = extractMapping(method);
+    String methodLevelUrl = methodLevelMapping.getUrl();
+
+    url = url + classLevelUrl + methodLevelUrl;
+
+    HttpMethod httpMethod = methodLevelMapping.getHttpMethod();
 
     Map<String, Object> urlVariables = new HashMap<>();
     Object requestBody = null;
@@ -73,20 +102,12 @@ class RestApiProxyInvocationHandler implements InvocationHandler {
 
     HttpEntity httpEntity = requestBody == null ? null : new HttpEntity<>(requestBody);
 
-    RestResponse<Object> restResponse;
     Class<?> returnType = extractReturnType(method.getGenericReturnType());
 
-    try {
+    RestExchangeProperties properties = new RestExchangeProperties(url,
+        httpMethod, httpEntity, urlVariables, returnType);
 
-      restResponse = doRestExchange(url, httpMethod, httpEntity, urlVariables, returnType);
-
-    } catch (HttpStatusCodeException exception) {
-
-      restResponse = handleHttpStatusCodeException(exception);
-    }
-
-    return restResponse;
-
+    return properties;
   }
 
   RestResponse<Object> handleHttpStatusCodeException(HttpStatusCodeException exception) {
@@ -94,43 +115,38 @@ class RestApiProxyInvocationHandler implements InvocationHandler {
 
     RestResponse<Object> restResponse = new RestResponse<>(status);
 
-    if (status == HttpStatus.BAD_REQUEST) {
-      ObjectMapper objectMapper = new ObjectMapper();
+    ObjectMapper objectMapper = new ObjectMapper();
 
-      ValidationResultDto validationResultDto;
+    ValidationResultDto validationResultDto;
 
-      try {
+    try {
 
-        validationResultDto = objectMapper
-            .readValue(exception.getResponseBodyAsString(), ValidationResultDto.class);
+      validationResultDto = objectMapper
+          .readValue(exception.getResponseBodyAsString(), ValidationResultDto.class);
 
-      } catch (Exception ex) {
-        LOGGER.error(ex.getLocalizedMessage());
+    } catch (Exception ex) {
+      LOGGER.error(ex.getLocalizedMessage());
 
-        validationResultDto = null;
-      }
+      validationResultDto = null;
+    }
 
 
-      if (validationResultDto == null) {
-        restResponse.setResponseMessage(exception.getResponseBodyAsString());
-      } else {
-        restResponse.setValidationResult(validationResultDto);
-      }
+    if (validationResultDto == null) {
+      restResponse.setResponseMessage(exception.getResponseBodyAsString());
+    } else {
+      restResponse.setValidationResult(validationResultDto);
     }
 
     return restResponse;
   }
 
-  RestResponse<Object> doRestExchange(String url,
-                                              HttpMethod httpMethod,
-                                              HttpEntity httpEntity,
-                                              Map<String, Object> urlVariables,
-                                              Class<?> returnType)
+  RestResponse<Object> doRestExchange(RestExchangeProperties properties)
       throws IOException, HttpStatusCodeException {
 
-    ResponseEntity<String> responseEntity = restTemplate.exchange(url, httpMethod, httpEntity,
+    ResponseEntity<String> responseEntity = restTemplate.exchange(properties.getUrl(),
+        properties.getHttpMethod(), properties.getHttpEntity(),
         new ParameterizedTypeReference<String>() {
-        }, urlVariables);
+        }, properties.getUrlVariables());
 
 
     ObjectMapper objectMapper = new ObjectMapper();
@@ -139,9 +155,10 @@ class RestApiProxyInvocationHandler implements InvocationHandler {
     if (!StringHelper.isNullOrEmpty(responseEntity.getBody())) {
       if (responseEntity.getBody().startsWith("[")) {
         returnBody = objectMapper.readValue(responseEntity.getBody(),
-            objectMapper.getTypeFactory().constructCollectionType(List.class, returnType));
+            objectMapper.getTypeFactory().constructCollectionType(List.class,
+                properties.getReturnType()));
       } else {
-        returnBody = objectMapper.readValue(responseEntity.getBody(), returnType);
+        returnBody = objectMapper.readValue(responseEntity.getBody(), properties.getReturnType());
       }
     }
     RestResponse<Object> restResponse = new RestResponse<>(returnBody,
@@ -150,7 +167,6 @@ class RestApiProxyInvocationHandler implements InvocationHandler {
 
     return restResponse;
   }
-
 
   Class<?> extractReturnType(Type genericReturnType) {
     Class<?> returnType;
@@ -170,47 +186,6 @@ class RestApiProxyInvocationHandler implements InvocationHandler {
     return returnType;
   }
 
-  String extractApiUrl(Object proxy, Method method) {
-    RestApi restApiAnnotation = AnnotationUtils.findAnnotation(proxy.getClass(), RestApi.class);
-    String applicationName = restApiAnnotation.value();
-
-    String applicationRootUrl = getApplicationUrl(applicationName);
-
-    String url = applicationRootUrl;
-
-    String classLevelUrl = extractClassLevelMappingUrl(method.getDeclaringClass());
-
-    String methodLevelUrl = extractMethodLevelMappingUrl(method);
-
-    return url + classLevelUrl + methodLevelUrl;
-  }
-
-
-  String getApplicationUrl(String applicationName) {
-    return ApplicationExplorer.getApplicationUrl(applicationName);
-  }
-
-  String extractMethodLevelMappingUrl(Method method) {
-
-    RequestMapping requestMapping = AnnotationUtils.findAnnotation(method, RequestMapping.class);
-
-    if (requestMapping == null || requestMapping.path().length == 0) {
-      return "";
-    } else {
-      return requestMapping.value()[0];
-    }
-  }
-
-  String extractClassLevelMappingUrl(Class<?> clazz) {
-    RequestMapping requestMapping = AnnotationUtils.findAnnotation(clazz, RequestMapping.class);
-
-    if (requestMapping == null || requestMapping.path().length == 0) {
-      return "";
-    } else {
-      return requestMapping.value()[0];
-    }
-  }
-
   /**
    * Searches {@link org.springframework.web.bind.annotation.RequestMapping RequestMapping}
    * annotation on the given method argument and extracts
@@ -218,36 +193,150 @@ class RestApiProxyInvocationHandler implements InvocationHandler {
    * {@link org.springframework.http.HttpMethod HttpMethod} type equivalent to
    * {@link org.springframework.web.bind.annotation.RequestMethod RequestMethod} type
    *
-   * @param method Method to be examined.
-   * @return {@link org.springframework.http.HttpMethod HttpMethod} type. Default is HttpMethod.Get
+   * @param element AnnotatedElement object to be examined.
+   * @return Mapping object
    */
-  HttpMethod extractHttpMethod(Method method) {
-    RequestMapping requestMappingAnnotation = method.getAnnotation(RequestMapping.class);
+  Mapping extractMapping(AnnotatedElement element) {
+    Annotation annotation = findMappingAnnotation(element);
+    String[] urls;
     RequestMethod requestMethod;
 
-    if (requestMappingAnnotation == null) {
-      if (method.isAnnotationPresent(GetMapping.class)) {
-        requestMethod = RequestMethod.GET;
-      } else if (method.isAnnotationPresent(PostMapping.class)) {
-        requestMethod = RequestMethod.POST;
-      } else if (method.isAnnotationPresent(PutMapping.class)) {
-        requestMethod = RequestMethod.PUT;
-      } else if (method.isAnnotationPresent(DeleteMapping.class)) {
-        requestMethod = RequestMethod.DELETE;
-      } else if (method.isAnnotationPresent(PatchMapping.class)) {
-        requestMethod = RequestMethod.PATCH;
-      } else {
-        throw new NoRequestMappingFoundException(method);
-      }
+    if (annotation instanceof RequestMapping) {
+      RequestMapping requestMapping = (RequestMapping) annotation;
+      requestMethod = requestMapping.method().length == 0
+          ? RequestMethod.GET : requestMapping.method()[0];
+      urls = requestMapping.value();
+
+    } else if (annotation instanceof GetMapping) {
+
+      requestMethod = RequestMethod.GET;
+      urls = ((GetMapping) annotation).value();
+
+    } else if (annotation instanceof PostMapping) {
+
+      requestMethod = RequestMethod.POST;
+      urls = ((PostMapping) annotation).value();
+
+    } else if (annotation instanceof PutMapping) {
+
+      requestMethod = RequestMethod.PUT;
+      urls = ((PutMapping) annotation).value();
+
+    } else if (annotation instanceof DeleteMapping) {
+
+      requestMethod = RequestMethod.DELETE;
+      urls = ((DeleteMapping) annotation).value();
+
+    } else if (annotation instanceof PatchMapping) {
+
+      requestMethod = RequestMethod.PATCH;
+      urls = ((PatchMapping) annotation).value();
+
     } else {
-      RequestMethod[] methods = requestMappingAnnotation.method();
-      requestMethod = methods.length == 0 ? RequestMethod.GET : methods[0];
+      throw new NoRequestMappingFoundException(element);
     }
 
     HttpMethod httpMethod = HttpMethod.resolve(requestMethod.name());
-    if (httpMethod == null) {
-      httpMethod = HttpMethod.GET;
+    String url = StringHelper.getFirstOrEmpty(urls);
+
+    return new Mapping(httpMethod, url);
+
+  }
+
+  Annotation findMappingAnnotation(AnnotatedElement element) {
+    Annotation mappingAnnotation = element.getAnnotation(RequestMapping.class);
+
+    if (mappingAnnotation == null) {
+      mappingAnnotation = element.getAnnotation(GetMapping.class);
+
+      if (mappingAnnotation == null) {
+        mappingAnnotation = element.getAnnotation(PostMapping.class);
+
+        if (mappingAnnotation == null) {
+          mappingAnnotation = element.getAnnotation(PutMapping.class);
+
+          if (mappingAnnotation == null) {
+            mappingAnnotation = element.getAnnotation(DeleteMapping.class);
+
+            if (mappingAnnotation == null) {
+              mappingAnnotation = element.getAnnotation(PatchMapping.class);
+            }
+          }
+        }
+      }
     }
-    return httpMethod;
+
+    if (mappingAnnotation == null) {
+      if (element instanceof Method) {
+        Method method = (Method) element;
+        mappingAnnotation = AnnotationUtils.findAnnotation(method, RequestMapping.class);
+      } else {
+        Class<?> clazz = (Class<?>) element;
+        mappingAnnotation = AnnotationUtils.findAnnotation(clazz, RequestMapping.class);
+      }
+    }
+
+    return mappingAnnotation;
+  }
+
+  class RestExchangeProperties {
+    private String url;
+    private HttpMethod httpMethod;
+    private HttpEntity httpEntity;
+    private Map<String, Object> urlVariables;
+    private Class<?> returnType;
+
+    public RestExchangeProperties(String url,
+                                  HttpMethod httpMethod,
+                                  HttpEntity httpEntity,
+                                  Map<String, Object> urlVariables,
+                                  Class<?> returnType) {
+      this.url = url;
+      this.httpMethod = httpMethod;
+      this.httpEntity = httpEntity;
+      this.urlVariables = urlVariables;
+      this.returnType = returnType;
+    }
+
+    public String getUrl() {
+      return url;
+    }
+
+    public HttpMethod getHttpMethod() {
+      return httpMethod;
+    }
+
+
+    public HttpEntity getHttpEntity() {
+      return httpEntity;
+    }
+
+    public Map<String, Object> getUrlVariables() {
+      return urlVariables;
+    }
+
+
+    public Class<?> getReturnType() {
+      return returnType;
+    }
+
+  }
+
+  class Mapping {
+    private HttpMethod httpMethod;
+    private String url;
+
+    public Mapping(HttpMethod httpMethod, String url) {
+      this.httpMethod = httpMethod;
+      this.url = url;
+    }
+
+    public HttpMethod getHttpMethod() {
+      return httpMethod;
+    }
+
+    public String getUrl() {
+      return url;
+    }
   }
 }

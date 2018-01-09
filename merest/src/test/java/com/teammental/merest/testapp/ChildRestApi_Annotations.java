@@ -26,7 +26,7 @@ public interface ChildRestApi_Annotations extends SuperRestApi_Annotations {
   @PutMapping
   ResponseEntity putMapping();
 
-  @DeleteMapping
+  @DeleteMapping("/{id}")
   ResponseEntity deleteMapping();
 
   @PatchMapping

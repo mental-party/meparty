@@ -1,6 +1,7 @@
 package com.teammental.merest;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import com.teammental.merest.exception.ApplicationNameCannotBeNullOrEmptyException;
 import com.teammental.merest.exception.RestApiAnnotationIsMissingException;
@@ -95,6 +96,23 @@ public class RestApiProxyFactoryTest {
     RestResponse<TestDto> responseEntity = (RestResponse<TestDto>) testRestApi.getById(5);
 
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+  }
+
+  @Test
+  public void delete_shouldReturn204_whenSuccess() {
+    RestResponse restResponse = (RestResponse) testRestApi.delete(1);
+
+    assertEquals(HttpStatus.NO_CONTENT, restResponse.getStatusCode());
+  }
+
+  @Test
+  public void post_shouldReturnValidationDto_whenValidationFails() {
+    fail();
+  }
+
+  @Test
+  public void post_shouldReturn201_whenSuccess() {
+    fail();
   }
 
   @After

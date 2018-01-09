@@ -13,7 +13,7 @@ public @interface RestApi {
    * Application name.
    * Must be same with the Spring application name.
    *
-   * @return
+   * @return string
    */
   String value() default "";
 

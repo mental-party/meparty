@@ -104,4 +104,19 @@ public class StringHelper {
 
     return split;
   }
+
+  /**
+   * Returns first element in an array unless it has a value;
+   * otherwise returns an empty String.
+   * @param strings String array
+   * @return first or an empty String
+   */
+  public static String getFirstOrEmpty(String[] strings) {
+
+    if (strings == null || strings.length == 0 || strings[0] == null) {
+      return "";
+    }
+
+    return strings[0];
+  }
 }
