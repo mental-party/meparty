@@ -2,7 +2,11 @@ package com.teammental.merest.testapp;
 
 import com.teammental.mecore.stereotype.dto.Dto;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 public class TestDto implements Dto {
+
   private Integer id;
 
   public TestDto(Integer id, String name) {
@@ -13,6 +17,8 @@ public class TestDto implements Dto {
   public TestDto() {
   }
 
+  @Size(min = 3)
+  @NotNull
   private String name;
 
   public Integer getId() {

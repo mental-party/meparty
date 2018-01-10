@@ -108,13 +108,26 @@ public class StringHelper {
   /**
    * Returns first element in an array unless it has a value;
    * otherwise returns an empty String.
+   *
    * @param strings String array
    * @return first or an empty String
    */
   public static String getFirstOrEmpty(String[] strings) {
 
+    return getFirstOrDefault(strings, "");
+  }
+
+  /**
+   * Returns first element in an array unless it has a value;
+   * otherwise returns defaultVal.
+   *
+   * @param strings String array
+   * @return first or defaultVal String
+   */
+  public static String getFirstOrDefault(String[] strings, String defaultVal) {
+
     if (strings == null || strings.length == 0 || strings[0] == null) {
-      return "";
+      return defaultVal;
     }
 
     return strings[0];

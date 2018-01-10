@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -22,12 +24,12 @@ public class TestRestApiController implements TestRestApi {
   }
 
   @Override
-  public ResponseEntity create(TestDto dto) {
+  public ResponseEntity create(@Validated @RequestBody TestDto dto) {
 
     dto.setId(3);
 
     return ResponseEntity.status(HttpStatus.CREATED)
-        .header("Location", Config.TESTRESTAPI_ROOTURL + "/id")
+        .header("Location", Config.TESTRESTAPI_ROOTURL + "/3")
         .build();
   }
 

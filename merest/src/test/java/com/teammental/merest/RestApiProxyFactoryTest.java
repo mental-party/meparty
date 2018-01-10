@@ -1,6 +1,8 @@
 package com.teammental.merest;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import com.teammental.merest.exception.ApplicationNameCannotBeNullOrEmptyException;
@@ -106,13 +108,23 @@ public class RestApiProxyFactoryTest {
   }
 
   @Test
-  public void post_shouldReturnValidationDto_whenValidationFails() {
-    fail();
+  public void post_shouldExtractValidationDto_whenApiResponseWithValidationDto() {
+    TestDto testDto = new TestDto();
+
+    RestResponse restResponse = (RestResponse) testRestApi.create(testDto);
+
+    assertEquals(HttpStatus.BAD_REQUEST, restResponse.getStatusCode());
+    assertNotNull(restResponse.getValidationResult());
   }
 
   @Test
   public void post_shouldReturn201_whenSuccess() {
-    fail();
+    TestDto testDto = new TestDto(null, "name");
+
+    RestResponse restResponse = (RestResponse) testRestApi.create(testDto);
+
+    assertEquals(HttpStatus.CREATED, restResponse.getStatusCode());
+    assertTrue(restResponse.getHeaders().containsKey("Location"));
   }
 
   @After

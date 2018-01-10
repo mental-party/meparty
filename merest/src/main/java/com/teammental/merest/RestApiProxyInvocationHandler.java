@@ -24,8 +24,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.InvalidMediaTypeException;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -100,7 +103,11 @@ class RestApiProxyInvocationHandler implements InvocationHandler {
       }
     }
 
-    HttpEntity httpEntity = requestBody == null ? null : new HttpEntity<>(requestBody);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(methodLevelMapping.getMediaType());
+
+    HttpEntity httpEntity = requestBody == null ? null : new HttpEntity<>(requestBody, headers);
 
     Class<?> returnType = extractReturnType(method.getGenericReturnType());
 
@@ -200,37 +207,44 @@ class RestApiProxyInvocationHandler implements InvocationHandler {
     Annotation annotation = findMappingAnnotation(element);
     String[] urls;
     RequestMethod requestMethod;
+    String consumes;
 
     if (annotation instanceof RequestMapping) {
       RequestMapping requestMapping = (RequestMapping) annotation;
       requestMethod = requestMapping.method().length == 0
           ? RequestMethod.GET : requestMapping.method()[0];
       urls = requestMapping.value();
+      consumes = StringHelper.getFirstOrEmpty(requestMapping.consumes());
 
     } else if (annotation instanceof GetMapping) {
 
       requestMethod = RequestMethod.GET;
       urls = ((GetMapping) annotation).value();
+      consumes = StringHelper.getFirstOrEmpty(((GetMapping) annotation).consumes());
 
     } else if (annotation instanceof PostMapping) {
 
       requestMethod = RequestMethod.POST;
       urls = ((PostMapping) annotation).value();
+      consumes = StringHelper.getFirstOrEmpty(((PostMapping) annotation).consumes());
 
     } else if (annotation instanceof PutMapping) {
 
       requestMethod = RequestMethod.PUT;
       urls = ((PutMapping) annotation).value();
+      consumes = StringHelper.getFirstOrEmpty(((PutMapping) annotation).consumes());
 
     } else if (annotation instanceof DeleteMapping) {
 
       requestMethod = RequestMethod.DELETE;
       urls = ((DeleteMapping) annotation).value();
+      consumes = StringHelper.getFirstOrEmpty(((DeleteMapping) annotation).consumes());
 
     } else if (annotation instanceof PatchMapping) {
 
       requestMethod = RequestMethod.PATCH;
       urls = ((PatchMapping) annotation).value();
+      consumes = StringHelper.getFirstOrEmpty(((PatchMapping) annotation).consumes());
 
     } else {
       throw new NoRequestMappingFoundException(element);
@@ -239,7 +253,14 @@ class RestApiProxyInvocationHandler implements InvocationHandler {
     HttpMethod httpMethod = HttpMethod.resolve(requestMethod.name());
     String url = StringHelper.getFirstOrEmpty(urls);
 
-    return new Mapping(httpMethod, url);
+    MediaType mediaType;
+    try {
+      mediaType =  MediaType.valueOf(consumes);
+    } catch (InvalidMediaTypeException exception) {
+      mediaType = MediaType.APPLICATION_JSON_UTF8;
+    }
+
+    return new Mapping(httpMethod, url, mediaType);
 
   }
 
@@ -325,10 +346,12 @@ class RestApiProxyInvocationHandler implements InvocationHandler {
   class Mapping {
     private HttpMethod httpMethod;
     private String url;
+    private MediaType mediaType;
 
-    public Mapping(HttpMethod httpMethod, String url) {
+    public Mapping(HttpMethod httpMethod, String url, MediaType mediaType) {
       this.httpMethod = httpMethod;
       this.url = url;
+      this.mediaType = mediaType;
     }
 
     public HttpMethod getHttpMethod() {
@@ -337,6 +360,10 @@ class RestApiProxyInvocationHandler implements InvocationHandler {
 
     public String getUrl() {
       return url;
+    }
+
+    public MediaType getMediaType() {
+      return mediaType;
     }
   }
 }

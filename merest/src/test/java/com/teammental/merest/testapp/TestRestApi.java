@@ -5,11 +5,13 @@ import java.util.List;
 import com.teammental.mecore.stereotype.controller.Controller;
 import com.teammental.mecore.stereotype.controller.RestApi;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestApi(Config.TESTAPPLICATIONNAME)
@@ -20,7 +22,7 @@ public interface TestRestApi extends Controller {
   ResponseEntity<List<TestDto>> getAll();
 
   @PostMapping
-  ResponseEntity create(TestDto dto);
+  ResponseEntity create(@RequestBody TestDto dto);
 
   @PutMapping
   ResponseEntity<Integer> update(TestDto dto);
