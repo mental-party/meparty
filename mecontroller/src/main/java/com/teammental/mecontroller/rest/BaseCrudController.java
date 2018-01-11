@@ -3,6 +3,7 @@ package com.teammental.mecontroller.rest;
 import com.teammental.mecontroller.BaseController;
 import com.teammental.medto.IdDto;
 import com.teammental.meexception.dto.DtoCrudException;
+import com.teammental.merest.RestResponse;
 import com.teammental.meservice.BaseCrudService;
 
 import java.io.Serializable;
@@ -27,58 +28,58 @@ public abstract class BaseCrudController<ServiceT extends BaseCrudService,
    * {@inheritDoc}
    */
   @Override
-  public final ResponseEntity<List<DtoT>> getAll() throws DtoCrudException {
+  public final RestResponse<List<DtoT>> getAll() throws DtoCrudException {
     final List<DtoT> dtos = doGetAll();
-    return ResponseEntity.ok(dtos);
+    return RestResponse.of(ResponseEntity.ok(dtos));
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public final ResponseEntity<DtoT> getById(@PathVariable(value = "id") final IdT id)
+  public final RestResponse<DtoT> getById(@PathVariable(value = "id") final IdT id)
       throws DtoCrudException {
     DtoT dto = doGetById(id);
-    return ResponseEntity.ok(dto);
+    return RestResponse.of(ResponseEntity.ok(dto));
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public final ResponseEntity create(@Validated @RequestBody final DtoT dto)
+  public final RestResponse create(@Validated @RequestBody final DtoT dto)
       throws DtoCrudException {
     Serializable id = doInsert(dto);
     String location = getMappingUrlOfController() + "/" + id.toString();
 
-    return ResponseEntity
+    return RestResponse.of(ResponseEntity
         .status(HttpStatus.CREATED)
         .header("Location", location)
-        .build();
+        .build());
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public final ResponseEntity<IdT> update(@Validated @RequestBody final DtoT dto)
+  public final RestResponse<IdT> update(@Validated @RequestBody final DtoT dto)
       throws DtoCrudException {
     IdT id = (IdT) doUpdate(dto);
-    return ResponseEntity.ok(id);
+    return RestResponse.of(ResponseEntity.ok(id));
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public final ResponseEntity delete(@PathVariable(value = "id") final IdT id)
+  public final RestResponse delete(@PathVariable(value = "id") final IdT id)
       throws DtoCrudException {
     boolean result = doDelete(id);
     if (result) {
-      return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+      return RestResponse.of(ResponseEntity.status(HttpStatus.NO_CONTENT).build());
     }
 
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    return RestResponse.of(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
   }
 
   // endregion

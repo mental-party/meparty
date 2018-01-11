@@ -1,5 +1,7 @@
 package com.teammental.merest.testapp;
 
+import com.teammental.merest.RestResponse;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,42 +15,43 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TestRestApiController implements TestRestApi {
   @Override
-  public ResponseEntity<List<TestDto>> getAll() {
+  public RestResponse<List<TestDto>> getAll() {
 
     TestDto testDto1 = new TestDto(1, "1");
     TestDto testDto2 = new TestDto(2, "2");
 
     List<TestDto> list = Arrays.asList(testDto1, testDto2);
 
-    return ResponseEntity.ok(list);
+    return RestResponse.of(ResponseEntity.ok(list));
   }
 
   @Override
-  public ResponseEntity create(@Validated @RequestBody TestDto dto) {
+  public RestResponse create(@Validated @RequestBody TestDto dto) {
 
     dto.setId(3);
 
-    return ResponseEntity.status(HttpStatus.CREATED)
+    return RestResponse.of(ResponseEntity.status(HttpStatus.CREATED)
         .header("Location", Config.TESTRESTAPI_ROOTURL + "/3")
-        .build();
+        .build());
   }
 
   @Override
-  public ResponseEntity<Integer> update(TestDto dto) {
-    return ResponseEntity.badRequest().build();
+  public RestResponse<Integer> update(TestDto dto) {
+    return RestResponse.of(ResponseEntity.badRequest().build());
   }
 
   @Override
-  public ResponseEntity<TestDto> getById(@PathVariable Integer id) {
+  public RestResponse<TestDto> getById(@PathVariable Integer id) {
     if (id == 1) {
       TestDto testDto = new TestDto(1, "name");
-      return ResponseEntity.ok(testDto);
+      ResponseEntity responseEntity = ResponseEntity.ok(testDto);
+      return new RestResponse<TestDto>(responseEntity);
     }
-    return ResponseEntity.notFound().build();
+    return new RestResponse<TestDto>(ResponseEntity.notFound().build());
   }
 
   @Override
-  public ResponseEntity delete(Integer id) {
-    return ResponseEntity.noContent().build();
+  public RestResponse delete(Integer id) {
+    return RestResponse.of(ResponseEntity.noContent().build());
   }
 }

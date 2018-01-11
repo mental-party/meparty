@@ -2,12 +2,12 @@ package com.teammental.mecontroller.rest;
 
 import com.teammental.medto.IdDto;
 import com.teammental.meexception.dto.DtoCrudException;
+import com.teammental.merest.RestResponse;
 import com.teammental.meservice.BaseCrudService;
 
 import java.io.Serializable;
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,10 +26,10 @@ public interface BaseCrudRestApi<ServiceT extends BaseCrudService,
    * @throws DtoCrudException if fails
    */
   @GetMapping("")
-  ResponseEntity<List<DtoT>> getAll();
+  RestResponse<List<DtoT>> getAll();
 
   @GetMapping("/{id}")
-  ResponseEntity<DtoT> getById(@PathVariable(value = "id") final IdT id);
+  RestResponse<DtoT> getById(@PathVariable(value = "id") final IdT id);
 
   /**
    * Insert a new DtoT item.
@@ -39,7 +39,7 @@ public interface BaseCrudRestApi<ServiceT extends BaseCrudService,
    * @throws DtoCrudException if fails
    */
   @PostMapping()
-  ResponseEntity create(@Validated @RequestBody final DtoT dto);
+  RestResponse create(@Validated @RequestBody final DtoT dto);
 
   /**
    * Update a DtoT item.
@@ -49,7 +49,7 @@ public interface BaseCrudRestApi<ServiceT extends BaseCrudService,
    * @throws DtoCrudException if fails
    */
   @PutMapping()
-  ResponseEntity<IdT> update(@Validated @RequestBody final DtoT dto);
+  RestResponse<IdT> update(@Validated @RequestBody final DtoT dto);
 
   /**
    * Delete a DtoT item.
@@ -59,5 +59,5 @@ public interface BaseCrudRestApi<ServiceT extends BaseCrudService,
    * @throws DtoCrudException if fails
    */
   @DeleteMapping("/{id}")
-  ResponseEntity delete(@PathVariable(value = "id") final IdT id);
+  RestResponse delete(@PathVariable(value = "id") final IdT id);
 }

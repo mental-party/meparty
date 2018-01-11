@@ -17,6 +17,8 @@ import com.teammental.merest.testapp.TestApplication;
 import com.teammental.merest.testapp.TestDto;
 import com.teammental.merest.testapp.TestRestApi;
 import com.teammental.merest.testapp.TestRestApiController;
+import com.teammental.mevalidation.dto.ValidationResultDto;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -86,7 +88,7 @@ public class RestApiProxyFactoryTest {
 
     Integer expectedId = 1;
     String expectedName = "name";
-    RestResponse<TestDto> responseEntity = (RestResponse<TestDto>) testRestApi.getById(1);
+    ResponseEntity<TestDto> responseEntity =  testRestApi.getById(1);
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     assertEquals(expectedId, responseEntity.getBody().getId());
     assertEquals(expectedName, responseEntity.getBody().getName());
