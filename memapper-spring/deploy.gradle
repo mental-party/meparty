@@ -1,0 +1,13 @@
+ext {
+    packageDescription = 'Mental Party MeMapper Spring Integration Library'
+    packageName = 'com.teammental.memapper.spring'
+    packageTitle = 'Mental MeMapper Spring'
+    repoUrl = 'https://github.com/mental-party/meparty/tree/master/memapper-spring'
+    repoVcsUrl = 'https://github.com/mental-party/meparty.git'
+    packageLabels = ['spring', 'spring-web', 'spring-webmvc', 'java', 'rest']
+    packageGroupId = 'com.teammental'
+    packageArtifactId = 'memapper-spring'
+}
+
+
+apply from: "${rootDir}/deploy.subprojects.gradle"
