@@ -1,0 +1,13 @@
+ext {
+    packageDescription = 'Mental Party Rest Client Library'
+    packageName = 'com.teammental.merest'
+    packageTitle = 'Mental Rest'
+    repoUrl = 'https://github.com/mental-party/meparty/tree/master/merest'
+    repoVcsUrl = 'https://github.com/mental-party/meparty.git'
+    packageLabels = ['spring', 'spring-web', 'spring-webmvc', 'java', 'rest']
+    packageGroupId = 'com.teammental'
+    packageArtifactId = 'merest'
+}
+
+
+apply from: "${rootDir}/deploy.subprojects.gradle"
