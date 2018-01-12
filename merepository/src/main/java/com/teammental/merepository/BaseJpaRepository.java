@@ -1,5 +1,6 @@
 package com.teammental.merepository;
 
+import com.teammental.mecore.stereotype.repository.Repository;
 import com.teammental.meentity.BaseEntity;
 
 import java.io.Serializable;
@@ -9,5 +10,5 @@ import org.springframework.data.repository.NoRepositoryBean;
 
 @NoRepositoryBean
 public interface BaseJpaRepository<EntityT extends BaseEntity, IdT extends Serializable>
-    extends JpaRepository<EntityT, IdT> {
+    extends JpaRepository<EntityT, IdT>, Repository {
 }
