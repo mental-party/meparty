@@ -5,6 +5,9 @@ jar {
 dependencies {
     compile project(':mecore')
     compile("org.springframework:spring-context:${springVersion}")
+
+    // https://mvnrepository.com/artifact/javax.validation/validation-api
+    compile group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
 }
 
 apply from: 'deploy.gradle'

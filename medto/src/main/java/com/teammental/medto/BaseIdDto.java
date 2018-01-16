@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public abstract class BaseIdDto<IdT extends Serializable> implements IdDto<IdT> {
 
-  protected IdT id;
+  private IdT id;
 
   @Override
   public IdT getId() {
