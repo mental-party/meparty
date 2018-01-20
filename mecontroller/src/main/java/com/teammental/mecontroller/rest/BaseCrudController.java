@@ -19,7 +19,7 @@ public abstract class BaseCrudController<ServiceT extends BaseCrudService,
     DtoT extends IdDto,
     IdT extends Serializable>
     extends BaseController
-    implements BaseCrudRestApi<ServiceT, DtoT, IdT> {
+    implements BaseCrudRestApi<DtoT, IdT> {
 
 
   // region request methods

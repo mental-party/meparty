@@ -3,7 +3,6 @@ package com.teammental.mecontroller.rest;
 import com.teammental.medto.IdDto;
 import com.teammental.meexception.dto.DtoCrudException;
 import com.teammental.merest.RestResponse;
-import com.teammental.meservice.BaseCrudService;
 
 import java.io.Serializable;
 import java.util.List;
@@ -16,7 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-public interface BaseCrudRestApi<ServiceT extends BaseCrudService,
+public interface BaseCrudRestApi<
     DtoT extends IdDto,
     IdT extends Serializable> {
   /**
