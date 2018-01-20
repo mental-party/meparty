@@ -115,6 +115,7 @@ public abstract class BaseCrudController<ServiceT extends BaseCrudService,
 
   protected abstract ServiceT getCrudService();
 
+  // todo: mapping url could be extracted via reflection. see: merest
   protected abstract String getMappingUrlOfController();
 
   // endregion abstract methods
