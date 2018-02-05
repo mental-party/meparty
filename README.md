@@ -1,6 +1,8 @@
 # Mental Party
 ##### A collection of libraries to extend Spring Framework in specific points
 
+#### Wiki: [https://github.com/mental-party/meparty/wiki](https://github.com/mental-party/meparty/wiki)
+
 Bintray: [https://bintray.com/mental-soft/meparty/](https://bintray.com/mental-soft/meparty/)
 
 Structure: 
