@@ -5,9 +5,19 @@ jar {
 dependencies {
     compile project(':mecore')
     compile("org.springframework:spring-context:${springVersion}")
+    compile("org.springframework:spring-web:${springVersion}")
 
     // https://mvnrepository.com/artifact/javax.validation/validation-api
     compile group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
+
+    // formerly apache sanselan
+    compile group: 'org.apache.sanselan', name: 'sanselan', version: '0.97-incubator'
+
+
+    testCompile group: 'org.hibernate', name: 'hibernate-validator', version: '6.0.7.Final'
+    testCompile group: 'org.glassfish.web', name: 'javax.el', version: '2.2.6'
+    testCompile group: 'javax.el', name: 'javax.el-api', version: '3.0.0'
+    testCompile("org.springframework:spring-test:${springVersion}")
 }
 
 apply from: 'deploy.gradle'
