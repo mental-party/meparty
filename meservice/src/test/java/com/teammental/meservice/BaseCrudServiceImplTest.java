@@ -1,6 +1,8 @@
 package com.teammental.meservice;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.times;
@@ -8,18 +10,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import com.teammental.meexception.dto.DtoCrudException;
-import com.teammental.memapper.MeMapper;
-import com.teammental.meservice.testapp.TestCrudService;
-import com.teammental.meservice.testapp.TestCrudServiceImpl;
-import com.teammental.meservice.testapp.TestDto;
-import com.teammental.meservice.testapp.TestEntity;
-import com.teammental.meservice.testapp.TestRepository;
-
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +21,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import com.teammental.meexception.dto.DtoCrudException;
+import com.teammental.memapper.MeMapper;
+import com.teammental.meservice.testapp.TestCrudService;
+import com.teammental.meservice.testapp.TestCrudServiceImpl;
+import com.teammental.meservice.testapp.TestDto;
+import com.teammental.meservice.testapp.TestEntity;
+import com.teammental.meservice.testapp.TestRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class BaseCrudServiceImplTest {
@@ -62,7 +64,7 @@ public class BaseCrudServiceImplTest {
     when(testRepository.findAll())
         .thenReturn(testEntities);
 
-    final List<TestDto> actualTestDtos = testCrudService.findAll();
+    final Page<TestDto> actualTestDtos = testCrudService.findAll();
     final String actualDtoString = actualTestDtos.stream()
         .map(testDto -> testDto.toString())
         .reduce("", String::concat);
@@ -79,7 +81,7 @@ public class BaseCrudServiceImplTest {
   public void findAll_shouldThrowNotFoundException_whenNotFound() {
 
     when(testRepository.findAll())
-        .thenReturn(null);
+        .thenReturn(new ArrayList<>());
 
     try {
       testCrudService.findAll();
@@ -140,12 +142,13 @@ public class BaseCrudServiceImplTest {
   public void create_shouldThrowcreateException_whenFails() {
 
     final TestDto testDto = TestDto.buildRandom();
+    testDto.setId(null);
 
     when(testRepository.save(anyObject()))
         .thenThrow(new RuntimeException());
 
     try {
-      testCrudService.create(testDto);
+      testCrudService.save(testDto);
       fail();
     } catch (DtoCrudException ex) {
       verify(testRepository, times(1))
@@ -159,13 +162,14 @@ public class BaseCrudServiceImplTest {
 
     final TestEntity expectedEntity = TestEntity.buildRandom();
     final Integer expectedId = expectedEntity.getId();
-    final TestDto expectedDto = (TestDto) MeMapper.getMapperFrom(expectedEntity)
-        .mapTo(TestDto.class).get();
+    final TestDto expectedDto = (TestDto) MeMapper.from(expectedEntity)
+        .to(TestDto.class);
+    expectedDto.setId(null);
 
     when(testRepository.save(anyObject()))
         .thenReturn(expectedEntity);
 
-    final Integer actualId = testCrudService.create(expectedDto);
+    final Integer actualId = testCrudService.save(expectedDto);
 
     assertEquals(expectedId, actualId);
 
@@ -195,7 +199,7 @@ public class BaseCrudServiceImplTest {
     when(testRepository.save(anyObject()))
         .thenReturn(updatedEntity);
 
-    final Integer actualId = testCrudService.update(updatedDto);
+    final Integer actualId = testCrudService.save(updatedDto);
 
     assertEquals(originalEntity.getId(), actualId);
 
@@ -223,7 +227,7 @@ public class BaseCrudServiceImplTest {
         .thenThrow(new RuntimeException());
 
     try {
-      testCrudService.update(updatedDto);
+      testCrudService.save(updatedDto);
       fail();
     } catch (DtoCrudException ex) {
       verify(testRepository, times(1))
@@ -247,7 +251,7 @@ public class BaseCrudServiceImplTest {
         .thenReturn(originalEntity);
 
     try {
-      testCrudService.update(updatedDto);
+      testCrudService.save(updatedDto);
       fail();
     } catch (DtoCrudException e) {
       verify(testRepository, times(1))

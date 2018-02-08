@@ -1,6 +1,7 @@
 package com.teammental.meservice;
 
 import com.teammental.mecore.stereotype.entity.Entity;
+import com.teammental.medto.FilterDto;
 import com.teammental.medto.IdDto;
 import com.teammental.meexception.dto.DtoCreateException;
 import com.teammental.meexception.dto.DtoCrudException;
@@ -10,14 +11,15 @@ import com.teammental.meexception.dto.DtoUpdateException;
 import com.teammental.memapper.MeMapper;
 import com.teammental.memapper.util.mapping.MapByFieldNameUtil;
 import com.teammental.merepository.BaseJpaRepository;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.transaction.annotation.Transactional;
+
 
 @Transactional
 public abstract class BaseCrudServiceImpl<DtoT extends IdDto<IdT>, IdT extends Serializable>
@@ -28,10 +30,15 @@ public abstract class BaseCrudServiceImpl<DtoT extends IdDto<IdT>, IdT extends S
   // region override methods
 
   @Override
-  public final List<DtoT> findAll() throws DtoCrudException {
+  public final Page<DtoT> findAll() throws DtoCrudException {
+    return findAll(null);
+  }
+
+  @Override
+  public final Page<DtoT> findAll(FilterDto filterDto) throws DtoCrudException {
     LOGGER.debug("findAll of " + getDtoClass().getSimpleName() + " started");
     try {
-      List<DtoT> dtos = doFindAll();
+      Page<DtoT> dtos = doFindAll(filterDto);
       LOGGER.debug("findAll of " + getDtoClass().getSimpleName() + " ended");
       return dtos;
     } catch (DtoCrudException ex) {
@@ -58,34 +65,38 @@ public abstract class BaseCrudServiceImpl<DtoT extends IdDto<IdT>, IdT extends S
   }
 
   @Override
-  public final IdT create(final DtoT dto) throws DtoCrudException {
-    LOGGER.debug("create of " + getDtoClass().getSimpleName()
-        + " started, with parameter: dto=" + dto.toString());
-    try {
-      IdT id = doCreate(dto);
-      LOGGER.debug("create of " + getDtoClass().getSimpleName() + " ended");
-      return id;
-    } catch (DtoCrudException ex) {
-      LOGGER.error("insert of " + getDtoClass().getSimpleName()
-          + " throwed a DtoCrudException");
-      throw ex;
-    }
-  }
+  public final IdT save(final DtoT dto) throws DtoCrudException {
 
-  @Override
-  public final IdT update(final DtoT dto)
-      throws DtoCrudException {
-    LOGGER.debug("update of " + getDtoClass().getSimpleName()
-        + " started, with parameter: dto=" + dto.toString());
-    try {
-      IdT idResult = doUpdate(dto);
-      LOGGER.debug("update of " + getDtoClass().getSimpleName() + " ended");
-      return idResult;
-    } catch (DtoCrudException ex) {
-      LOGGER.error("update of " + getDtoClass().getSimpleName()
-          + " throwed an DtoCrudException");
-      throw ex;
+    if (dto == null) {
+      return null;
     }
+
+    if (dto.getId() == null) {
+      LOGGER.debug("create of " + getDtoClass().getSimpleName()
+          + " started, with parameter: dto=" + dto.toString());
+      try {
+        IdT id = doCreate(dto);
+        LOGGER.debug("create of " + getDtoClass().getSimpleName() + " ended");
+        return id;
+      } catch (DtoCrudException ex) {
+        LOGGER.error("insert of " + getDtoClass().getSimpleName()
+            + " throwed a DtoCrudException");
+        throw ex;
+      }
+    } else {
+      LOGGER.debug("update of " + getDtoClass().getSimpleName()
+          + " started, with parameter: dto=" + dto.toString());
+      try {
+        IdT idResult = doUpdate(dto);
+        LOGGER.debug("update of " + getDtoClass().getSimpleName() + " ended");
+        return idResult;
+      } catch (DtoCrudException ex) {
+        LOGGER.error("update of " + getDtoClass().getSimpleName()
+            + " throwed an DtoCrudException");
+        throw ex;
+      }
+    }
+
   }
 
   @Override
@@ -107,9 +118,14 @@ public abstract class BaseCrudServiceImpl<DtoT extends IdDto<IdT>, IdT extends S
 
   // region protected default methods
 
-  protected List<DtoT> doFindAll() throws DtoCrudException {
+  protected Page<DtoT> doFindAll(FilterDto filterDto) throws DtoCrudException {
 
-    List entities = getRepository().findAll();
+    Page entities;
+    if (filterDto == null) {
+      entities = new PageImpl<>(getRepository().findAll());
+    } else {
+      entities = getRepository().findAll(filterDto.getPage());
+    }
 
     Optional<List<DtoT>> optionalDtos = MeMapper.from(entities)
         .toOptional(getDtoClass());
@@ -118,7 +134,7 @@ public abstract class BaseCrudServiceImpl<DtoT extends IdDto<IdT>, IdT extends S
       throw new DtoNotFoundException();
     }
 
-    return optionalDtos.get();
+    return new PageImpl<>(optionalDtos.get());
   }
 
   protected DtoT doFindById(final IdT id) throws DtoCrudException {
