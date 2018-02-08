@@ -4,6 +4,9 @@ jar {
 
 dependencies {
     compile project(':mevalidation')
+
+    compile("org.springframework.data:spring-data-commons:${springDataJpaVersion}")
+
 }
 
 apply from: 'deploy.gradle'
