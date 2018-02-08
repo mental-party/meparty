@@ -19,9 +19,4 @@ public class TestCrudController
     return testCrudService;
   }
 
-  @Override
-  protected String getMappingUrlOfController() {
-
-    return TestControllerConfig.URL;
-  }
 }

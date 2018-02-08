@@ -1,14 +1,13 @@
 package com.teammental.mecontroller.rest;
 
 import com.teammental.mecontroller.BaseController;
+import com.teammental.medto.FilterDto;
 import com.teammental.medto.IdDto;
 import com.teammental.meexception.dto.DtoCrudException;
 import com.teammental.merest.RestResponse;
 import com.teammental.meservice.BaseCrudService;
-
 import java.io.Serializable;
-import java.util.List;
-
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -28,8 +27,12 @@ public abstract class BaseCrudController<ServiceT extends BaseCrudService,
    * {@inheritDoc}
    */
   @Override
-  public final RestResponse<List<DtoT>> getAll() throws DtoCrudException {
-    final List<DtoT> dtos = doGetAll();
+  public final RestResponse<Page<DtoT>> getAll(
+      @RequestBody(required = false) final FilterDto filterDto)
+      throws DtoCrudException {
+
+    Page<DtoT> dtos = doGetAll(filterDto);
+
     return RestResponse.of(ResponseEntity.ok(dtos));
   }
 
@@ -47,26 +50,15 @@ public abstract class BaseCrudController<ServiceT extends BaseCrudService,
    * {@inheritDoc}
    */
   @Override
-  public final RestResponse create(@Validated @RequestBody final DtoT dto)
+  public final RestResponse save(@Validated @RequestBody final DtoT dto)
       throws DtoCrudException {
-    Serializable id = doInsert(dto);
-    String location = getMappingUrlOfController() + "/" + id.toString();
+    Serializable id = doSave(dto);
 
     return RestResponse.of(ResponseEntity
-        .status(HttpStatus.CREATED)
-        .header("Location", location)
-        .build());
+        .status(HttpStatus.OK)
+        .body(id));
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public final RestResponse<IdT> update(@Validated @RequestBody final DtoT dto)
-      throws DtoCrudException {
-    IdT id = (IdT) doUpdate(dto);
-    return RestResponse.of(ResponseEntity.ok(id));
-  }
 
   /**
    * {@inheritDoc}
@@ -86,8 +78,13 @@ public abstract class BaseCrudController<ServiceT extends BaseCrudService,
 
   // region protected methods
 
-  protected List<DtoT> doGetAll() throws DtoCrudException {
-    List<DtoT> dtos = getCrudService().findAll();
+  protected Page<DtoT> doGetAll(final FilterDto filterDto) throws DtoCrudException {
+    Page<DtoT> dtos;
+    if (filterDto == null) {
+      dtos = getCrudService().findAll();
+    } else {
+      dtos = getCrudService().findAll(filterDto);
+    }
     return dtos;
   }
 
@@ -96,15 +93,11 @@ public abstract class BaseCrudController<ServiceT extends BaseCrudService,
     return dtoResult;
   }
 
-  protected Serializable doInsert(final DtoT dto) throws DtoCrudException {
-    Serializable id = getCrudService().create(dto);
+  protected Serializable doSave(final DtoT dto) throws DtoCrudException {
+    Serializable id = getCrudService().save(dto);
     return id;
   }
 
-  protected Serializable doUpdate(final DtoT dto) throws DtoCrudException {
-    Serializable id = getCrudService().update(dto);
-    return id;
-  }
 
   protected boolean doDelete(final IdT id) throws DtoCrudException {
     boolean result = getCrudService().delete(id);
@@ -114,9 +107,6 @@ public abstract class BaseCrudController<ServiceT extends BaseCrudService,
   // region abstract methods
 
   protected abstract ServiceT getCrudService();
-
-  // todo: mapping url could be extracted via reflection. see: merest
-  protected abstract String getMappingUrlOfController();
 
   // endregion abstract methods
 
