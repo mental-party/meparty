@@ -6,7 +6,6 @@ import com.teammental.mehelper.AssertHelper;
 import com.teammental.mehelper.StringHelper;
 import com.teammental.merest.exception.ApplicationNameCannotBeNullOrEmptyException;
 import com.teammental.merest.exception.RestApiAnnotationIsMissingException;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 

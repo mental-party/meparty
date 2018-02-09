@@ -1,0 +1,6 @@
+com:
+  teammental:
+    merest:
+      applications:
+        testapp2: http://testapp2.com
+        testapp3: http://testapp3.com

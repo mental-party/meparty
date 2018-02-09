@@ -1,12 +1,10 @@
 package com.teammental.merest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.teammental.mecore.stereotype.controller.RestApi;
 import com.teammental.mehelper.StringHelper;
 import com.teammental.merest.exception.NoRequestMappingFoundException;
 import com.teammental.mevalidation.dto.ValidationResultDto;
-
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -18,7 +16,6 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
@@ -43,9 +40,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
-class RestApiProxyInvocationHandler implements InvocationHandler {
+class RestApiProxyInvocationHandler
+    implements InvocationHandler {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RestApiProxyInvocationHandler.class);
+
+  private ApplicationExplorer applicationExplorer = ApplicationExplorer.getInstance();
 
   RestTemplate restTemplate = new RestTemplate();
 
@@ -71,7 +71,7 @@ class RestApiProxyInvocationHandler implements InvocationHandler {
     RestApi restApiAnnotation = AnnotationUtils.findAnnotation(proxy.getClass(), RestApi.class);
     String applicationName = restApiAnnotation.value();
 
-    String url = ApplicationExplorer.getApplicationUrl(applicationName);
+    String url = applicationExplorer.getApplication(applicationName);
 
     Mapping classLevelMapping = extractMapping(method.getDeclaringClass());
     String classLevelUrl = classLevelMapping.getUrl();
@@ -194,11 +194,11 @@ class RestApiProxyInvocationHandler implements InvocationHandler {
   }
 
   /**
-   * Searches {@link org.springframework.web.bind.annotation.RequestMapping RequestMapping}
+   * Searches {@link RequestMapping RequestMapping}
    * annotation on the given method argument and extracts
    * If RequestMapping annotation is not found, NoRequestMappingFoundException is thrown.
-   * {@link org.springframework.http.HttpMethod HttpMethod} type equivalent to
-   * {@link org.springframework.web.bind.annotation.RequestMethod RequestMethod} type
+   * {@link HttpMethod HttpMethod} type equivalent to
+   * {@link RequestMethod RequestMethod} type
    *
    * @param element AnnotatedElement object to be examined.
    * @return Mapping object

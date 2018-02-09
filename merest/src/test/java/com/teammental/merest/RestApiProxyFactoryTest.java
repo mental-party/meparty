@@ -3,7 +3,6 @@ package com.teammental.merest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import com.teammental.merest.exception.ApplicationNameCannotBeNullOrEmptyException;
 import com.teammental.merest.exception.RestApiAnnotationIsMissingException;
@@ -16,8 +15,6 @@ import com.teammental.merest.testapp.Config;
 import com.teammental.merest.testapp.TestApplication;
 import com.teammental.merest.testapp.TestDto;
 import com.teammental.merest.testapp.TestRestApi;
-import com.teammental.merest.testapp.TestRestApiController;
-import com.teammental.mevalidation.dto.ValidationResultDto;
 
 import org.junit.After;
 import org.junit.Before;
@@ -25,13 +22,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
@@ -43,10 +36,12 @@ public class RestApiProxyFactoryTest {
 
   private TestRestApi testRestApi = RestApiProxyFactory.createProxy(TestRestApi.class);
 
+  private ApplicationExplorer applicationExplorer = ApplicationExplorer.getInstance();
+
   @Before
   public void setUp() {
 
-    ApplicationExplorer.addApplicationUrl(Config.TESTAPPLICATIONNAME, "http://localhost:" + port);
+    applicationExplorer.addApplication(Config.TESTAPPLICATIONNAME, "http://localhost:" + port);
   }
 
   @Test(expected = RestApiAnnotationIsMissingException.class)
@@ -132,6 +127,6 @@ public class RestApiProxyFactoryTest {
   @After
   public void cleanUp() {
 
-    ApplicationExplorer.clean();
+    applicationExplorer.clean();
   }
 }

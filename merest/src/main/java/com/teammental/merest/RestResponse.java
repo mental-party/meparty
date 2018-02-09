@@ -2,7 +2,6 @@ package com.teammental.merest;
 
 import com.teammental.mecore.stereotype.dto.Dto;
 import com.teammental.mevalidation.dto.ValidationResultDto;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;

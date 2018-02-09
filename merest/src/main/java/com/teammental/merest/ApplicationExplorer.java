@@ -4,17 +4,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ApplicationExplorer {
-  private static Map<String, String> applicationUrlMap = new HashMap<>();
 
-  public static String getApplicationUrl(String applicationName) {
-    return applicationUrlMap.get(applicationName);
+  private Map<String, String> applications = new HashMap<>();
+
+  private static ApplicationExplorer INSTANCE = new ApplicationExplorer();
+
+  private ApplicationExplorer() {
   }
 
-  static void addApplicationUrl(String applicationName, String url) {
-    applicationUrlMap.put(applicationName, url);
+  public String getApplication(String applicationName) {
+    return applications.get(applicationName);
   }
 
-  static void clean() {
-    applicationUrlMap = new HashMap<>();
+  void addApplication(String applicationName, String url) {
+    applications.put(applicationName, url);
+  }
+
+  void clean() {
+    applications = new HashMap<>();
+  }
+
+  public static ApplicationExplorer getInstance() {
+    return INSTANCE;
   }
 }
