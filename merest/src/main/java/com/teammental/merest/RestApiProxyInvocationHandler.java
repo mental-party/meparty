@@ -1,7 +1,9 @@
 package com.teammental.merest;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teammental.mecore.stereotype.controller.RestApi;
+import com.teammental.medto.FilterDto;
 import com.teammental.mehelper.StringHelper;
 import com.teammental.merest.exception.NoRequestMappingFoundException;
 import com.teammental.mevalidation.dto.ValidationResultDto;
@@ -20,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -33,6 +36,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -68,6 +72,7 @@ class RestApiProxyInvocationHandler
   }
 
   RestExchangeProperties prepareRestExchangeProperties(Object proxy, Method method, Object[] args) {
+
     RestApi restApiAnnotation = AnnotationUtils.findAnnotation(proxy.getClass(), RestApi.class);
     String applicationName = restApiAnnotation.value();
 
@@ -99,7 +104,17 @@ class RestApiProxyInvocationHandler
         String name = requestParam.value();
         urlVariables.put(name, value);
       } else if (parameter.isAnnotationPresent(RequestBody.class)) {
-        requestBody = value;
+
+        if (parameter.getType().isAssignableFrom(FilterDto.class)
+            && value != null) {
+          FilterDtoWrapper filterDtoWrapper = new FilterDtoWrapper();
+          filterDtoWrapper.setFilterDto(value);
+          filterDtoWrapper.setFilterDtoType(value.getClass());
+          requestBody = filterDtoWrapper;
+        } else {
+
+          requestBody = value;
+        }
       }
     }
 
@@ -118,6 +133,7 @@ class RestApiProxyInvocationHandler
   }
 
   RestResponse<Object> handleHttpStatusCodeException(HttpStatusCodeException exception) {
+
     HttpStatus status = exception.getStatusCode();
 
     RestResponse<Object> restResponse = new RestResponse<>(status);
@@ -150,35 +166,52 @@ class RestApiProxyInvocationHandler
   RestResponse<Object> doRestExchange(RestExchangeProperties properties)
       throws IOException, HttpStatusCodeException {
 
+    RestResponse<Object> restResponse;
+
     ResponseEntity<String> responseEntity = restTemplate.exchange(properties.getUrl(),
         properties.getHttpMethod(), properties.getHttpEntity(),
         new ParameterizedTypeReference<String>() {
         }, properties.getUrlVariables());
 
+    Object returnBody = null;
+
 
     ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper = objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    objectMapper = objectMapper.disable(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES);
+    objectMapper = objectMapper.disable(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES);
+    objectMapper = objectMapper.disable(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE);
 
-    Object returnBody = null;
+    String body = responseEntity.getBody();
+    if (properties.getReturnType().equals(RestResponsePageImpl.class)) {
+      body = body.replace("\"pageable\":\"INSTANCE\",", "");
+    }
     if (!StringHelper.isNullOrEmpty(responseEntity.getBody())) {
       if (responseEntity.getBody().startsWith("[")) {
-        returnBody = objectMapper.readValue(responseEntity.getBody(),
+        returnBody = objectMapper.readValue(body,
             objectMapper.getTypeFactory().constructCollectionType(List.class,
                 properties.getReturnType()));
       } else {
-        returnBody = objectMapper.readValue(responseEntity.getBody(), properties.getReturnType());
+        returnBody = objectMapper.readValue(body, properties.getReturnType());
       }
     }
-    RestResponse<Object> restResponse = new RestResponse<>(returnBody,
+    restResponse = new RestResponse<>(returnBody,
         responseEntity.getHeaders(),
         responseEntity.getStatusCode());
+
 
     return restResponse;
   }
 
   Class<?> extractReturnType(Type genericReturnType) {
+
     Class<?> returnType;
+
     if (genericReturnType instanceof ParameterizedType) {
       ParameterizedType parameterizedType = (ParameterizedType) genericReturnType;
+      if (parameterizedType.getRawType().equals(Page.class)) {
+        return RestResponsePageImpl.class;
+      }
       Type[] types = parameterizedType.getActualTypeArguments();
       if (types.length == 1) {
         Type type = types[0];
@@ -204,6 +237,7 @@ class RestApiProxyInvocationHandler
    * @return Mapping object
    */
   Mapping extractMapping(AnnotatedElement element) {
+
     Annotation annotation = findMappingAnnotation(element);
     String[] urls;
     RequestMethod requestMethod;
@@ -255,7 +289,7 @@ class RestApiProxyInvocationHandler
 
     MediaType mediaType;
     try {
-      mediaType =  MediaType.valueOf(consumes);
+      mediaType = MediaType.valueOf(consumes);
     } catch (InvalidMediaTypeException exception) {
       mediaType = MediaType.APPLICATION_JSON_UTF8;
     }
@@ -265,6 +299,7 @@ class RestApiProxyInvocationHandler
   }
 
   Annotation findMappingAnnotation(AnnotatedElement element) {
+
     Annotation mappingAnnotation = element.getAnnotation(RequestMapping.class);
 
     if (mappingAnnotation == null) {
@@ -301,6 +336,7 @@ class RestApiProxyInvocationHandler
   }
 
   class RestExchangeProperties {
+
     private String url;
     private HttpMethod httpMethod;
     private HttpEntity httpEntity;
@@ -312,6 +348,7 @@ class RestApiProxyInvocationHandler
                                   HttpEntity httpEntity,
                                   Map<String, Object> urlVariables,
                                   Class<?> returnType) {
+
       this.url = url;
       this.httpMethod = httpMethod;
       this.httpEntity = httpEntity;
@@ -320,49 +357,59 @@ class RestApiProxyInvocationHandler
     }
 
     public String getUrl() {
+
       return url;
     }
 
     public HttpMethod getHttpMethod() {
+
       return httpMethod;
     }
 
 
     public HttpEntity getHttpEntity() {
+
       return httpEntity;
     }
 
     public Map<String, Object> getUrlVariables() {
+
       return urlVariables;
     }
 
 
     public Class<?> getReturnType() {
+
       return returnType;
     }
 
   }
 
   class Mapping {
+
     private HttpMethod httpMethod;
     private String url;
     private MediaType mediaType;
 
     public Mapping(HttpMethod httpMethod, String url, MediaType mediaType) {
+
       this.httpMethod = httpMethod;
       this.url = url;
       this.mediaType = mediaType;
     }
 
     public HttpMethod getHttpMethod() {
+
       return httpMethod;
     }
 
     public String getUrl() {
+
       return url;
     }
 
     public MediaType getMediaType() {
+
       return mediaType;
     }
   }

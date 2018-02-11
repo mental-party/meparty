@@ -7,7 +7,7 @@ allprojects {
 subprojects {
     ext {
         slf4jVersion = '1.7.25'
-        jacksonDatabindVersion = '2.9.3'
+        jacksonDatabindVersion = '2.9.4'
         junitVersion = '4.12'
         springVersion = '5.0.2.RELEASE'
         springDataJpaVersion = '2.0.2.RELEASE'

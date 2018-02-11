@@ -1,11 +1,13 @@
 package com.teammental.merest.testapp;
 
+import com.teammental.medto.FilterDto;
 import java.util.List;
 
 import com.teammental.mecore.stereotype.controller.Controller;
 import com.teammental.mecore.stereotype.controller.RestApi;
 import com.teammental.merest.RestResponse;
 
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,4 +34,8 @@ public interface TestRestApi extends Controller {
 
   @DeleteMapping("/{id}")
   RestResponse delete(@PathVariable("id") Integer id);
+
+  @PostMapping("/filter")
+  RestResponse<Page<TestDto>> filterAll(@RequestBody(required = false)
+                                            FilterDto filterDto);
 }

@@ -4,11 +4,15 @@ jar {
 
 dependencies {
     compile project(':meexception')
-    compile project(':mevalidation')
+    compile project(':medto')
 
     compile("org.springframework:spring-web:${springVersion}")
+    compile("org.springframework:spring-webmvc:${springVersion}")
     compile("org.springframework.boot:spring-boot-autoconfigure:${springBootAutoConfigurationVersion}")
     compile("com.fasterxml.jackson.core:jackson-databind:${jacksonDatabindVersion}")
+    // https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api
+    compileOnly  group: 'javax.servlet', name: 'javax.servlet-api', version: '3.0.1'
+
 
     testCompile("org.springframework.boot:spring-boot-starter-web:${springBootStarterTestVersion}")
     testCompile("org.springframework.boot:spring-boot-starter-test:${springBootStarterTestVersion}")

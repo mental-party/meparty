@@ -20,9 +20,11 @@ import com.teammental.mecontroller.testapp.TestCrudRestApi;
 import com.teammental.mecontroller.testapp.TestCrudService;
 import com.teammental.mecontroller.testapp.TestDto;
 import com.teammental.mecontroller.testapp.TestHandler;
+import com.teammental.medto.impl.FilterDtoImpl;
 import com.teammental.meexception.dto.DtoCreateException;
 import com.teammental.meexception.dto.DtoCrudException;
 import com.teammental.meexception.dto.DtoNotFoundException;
+import com.teammental.merest.autoconfiguration.FilterDtoHandlerInterceptor;
 import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,6 +60,7 @@ public class BaseCrudControllerTest {
 
     this.mockMvc = MockMvcBuilders.standaloneSetup(testCrudRestApi)
         .setControllerAdvice(new TestHandler())
+        .addInterceptors(new FilterDtoHandlerInterceptor())
         .build();
 
   }
@@ -66,6 +69,7 @@ public class BaseCrudControllerTest {
 
   @Test
   public void getAll_shouldReturn200AndDtos_whenFound() throws Exception {
+
     final TestDto testDto1 = TestDto.buildRandom();
     final TestDto testDto2 = TestDto.buildRandom();
     final Page<TestDto> expectedDtos = new PageImpl<>(Arrays.asList(testDto1, testDto2));
@@ -131,6 +135,7 @@ public class BaseCrudControllerTest {
 
   @Test
   public void create_shouldThrowException_whenValidationFails() throws Exception {
+
     final TestDto testDto = new TestDto();
     mockMvc.perform(post(TestControllerConfig.URL)
         .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -165,6 +170,7 @@ public class BaseCrudControllerTest {
 
   @Test
   public void update_shouldReturn200_whenSuccess() throws Exception {
+
     final TestDto testDto = TestDto.buildRandom();
 
     when(testCrudService.save(anyObject()))
@@ -184,6 +190,7 @@ public class BaseCrudControllerTest {
 
   @Test
   public void update_shouldThrowException_whenNotFound() throws Exception {
+
     final TestDto testDto = TestDto.buildRandom();
 
     when(testCrudService.save(anyObject()))
@@ -202,6 +209,7 @@ public class BaseCrudControllerTest {
 
   @Test
   public void update_shouldThrowException_whenValidationFails() throws Exception {
+
     final TestDto testDto = new TestDto();
 
     mockMvc.perform(post(TestControllerConfig.URL)
