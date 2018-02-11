@@ -23,6 +23,7 @@ public class MapWorker<S, T> {
   MapConfiguration configuration;
   S source;
   T target;
+  private int level;
 
   /**
    * Constructs a MapWorker instance.
@@ -30,7 +31,14 @@ public class MapWorker<S, T> {
    * @param target mapping target object.
    */
   public MapWorker(S source, T target) {
+    init(source, target, 1);
+  }
 
+  private MapWorker(S source, T target, int level) {
+    init(source, target, level);
+  }
+
+  private void init(S source, T target, int level) {
     AssertHelper.notNull(source, target);
 
     MapConfigurationRegistry registry = MapConfigurationRegistrySingleton.getSingleton();
@@ -38,6 +46,7 @@ public class MapWorker<S, T> {
         .getConfiguration(source.getClass(), target.getClass());
     this.source = source;
     this.target = target;
+    this.level = level;
   }
 
   /**
@@ -65,6 +74,8 @@ public class MapWorker<S, T> {
         if (getMethodOptional.isPresent()) {
           try {
             Object val = getMethodOptional.get().invoke(source);
+
+            // todo: depth level and recursive mapping
 
             Field targetField = fieldMap.get(sourceField);
 

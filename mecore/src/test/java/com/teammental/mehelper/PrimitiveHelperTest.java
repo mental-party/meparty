@@ -1,6 +1,8 @@
 package com.teammental.mehelper;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -344,5 +346,43 @@ public class PrimitiveHelperTest {
 
       assertEquals(void.class, primitiveVoidClass);
     }
+  }
+
+  public static class IsPrimitiveOrHasPrimitive {
+
+    @Test
+    public void shouldReturnTrue_whenGivenTypeIsPrimitive() {
+
+      assertTrue(PrimitiveHelper.isPrimitiveOrHasPrimitiveType(boolean.class));
+      assertTrue(PrimitiveHelper.isPrimitiveOrHasPrimitiveType(byte.class));
+      assertTrue(PrimitiveHelper.isPrimitiveOrHasPrimitiveType(short.class));
+      assertTrue(PrimitiveHelper.isPrimitiveOrHasPrimitiveType(char.class));
+      assertTrue(PrimitiveHelper.isPrimitiveOrHasPrimitiveType(int.class));
+      assertTrue(PrimitiveHelper.isPrimitiveOrHasPrimitiveType(long.class));
+      assertTrue(PrimitiveHelper.isPrimitiveOrHasPrimitiveType(float.class));
+      assertTrue(PrimitiveHelper.isPrimitiveOrHasPrimitiveType(double.class));
+      assertTrue(PrimitiveHelper.isPrimitiveOrHasPrimitiveType(void.class));
+    }
+
+    @Test
+    public void shouldReturnTrue_whenGivenTypeHasPrimitiveType() {
+
+      assertTrue(PrimitiveHelper.isPrimitiveOrHasPrimitiveType(Boolean.class));
+      assertTrue(PrimitiveHelper.isPrimitiveOrHasPrimitiveType(Byte.class));
+      assertTrue(PrimitiveHelper.isPrimitiveOrHasPrimitiveType(Short.class));
+      assertTrue(PrimitiveHelper.isPrimitiveOrHasPrimitiveType(Character.class));
+      assertTrue(PrimitiveHelper.isPrimitiveOrHasPrimitiveType(Integer.class));
+      assertTrue(PrimitiveHelper.isPrimitiveOrHasPrimitiveType(Long.class));
+      assertTrue(PrimitiveHelper.isPrimitiveOrHasPrimitiveType(Float.class));
+      assertTrue(PrimitiveHelper.isPrimitiveOrHasPrimitiveType(Double.class));
+      assertTrue(PrimitiveHelper.isPrimitiveOrHasPrimitiveType(Void.class));
+    }
+
+    @Test
+    public void shouldReturnFalse_whenGivenTypeIsNotPrimitiveOrHasPrimitiveType() {
+
+      assertFalse(PrimitiveHelper.isPrimitiveOrHasPrimitiveType(this.getClass()));
+    }
+
   }
 }

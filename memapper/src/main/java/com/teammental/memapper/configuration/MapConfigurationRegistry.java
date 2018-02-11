@@ -93,7 +93,7 @@ public class MapConfigurationRegistry {
     }
 
     MapConfiguration mapConfiguration =
-        new MapConfiguration(fieldMap, sourceType, targetType, false);
+        new MapConfiguration(fieldMap, sourceType, targetType, false, 1);
 
     registry.add(mapConfiguration);
 

@@ -92,4 +92,16 @@ public class PrimitiveHelper {
     }
     return oppositeClass;
   }
+
+  /**
+   * Checks if the given type is primitive or has primitive type.
+   * @param clazz type to be checked
+   * @return true if the given type is primitive or has primitive type.
+   */
+  public static boolean isPrimitiveOrHasPrimitiveType(Class<?> clazz) {
+    AssertHelper.notNull(clazz);
+
+    return clazz.isPrimitive()
+        || wrapperMap.get(clazz) != null;
+  }
 }

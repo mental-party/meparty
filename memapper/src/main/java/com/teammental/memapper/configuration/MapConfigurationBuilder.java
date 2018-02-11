@@ -16,7 +16,8 @@ public class MapConfigurationBuilder<S, T>
     implements ConfigurationBetween<S>,
     ConfigurationAnd<T>,
     ConfigurationMapField,
-    ConfigurationMapWith {
+    ConfigurationMapWith,
+    ConfigurationDepthLevel<S> {
 
   private MapConfigurationBuilder(boolean oneWayMapping) {
 
@@ -31,18 +32,19 @@ public class MapConfigurationBuilder<S, T>
   private String tempSourceFieldName;
   private List<Field> sourceFields;
   private List<Field> targetFields;
+  private int level;
 
   public boolean isOneWayMapping() {
 
     return oneWayMapping;
   }
 
-  public static ConfigurationBetween oneWayMapping() {
+  public static ConfigurationDepthLevel oneWayMapping() {
 
     return new MapConfigurationBuilder(true);
   }
 
-  public static ConfigurationBetween twoWayMapping() {
+  public static ConfigurationDepthLevel twoWayMapping() {
 
     return new MapConfigurationBuilder(false);
   }
@@ -126,8 +128,17 @@ public class MapConfigurationBuilder<S, T>
       throw new IllegalArgumentException("You should add at least one field mapping");
     }
 
-    return new MapConfiguration(fieldMap, sourceType, targetType, oneWayMapping);
+    return new MapConfiguration(fieldMap, sourceType, targetType, oneWayMapping, level);
   }
 
 
+  @Override
+  public ConfigurationBetween<S> depthLevel(int level) {
+
+    if (level < 1) {
+      level = 1;
+    }
+    this.level = level;
+    return this;
+  }
 }

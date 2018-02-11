@@ -111,4 +111,32 @@ public class MapConfigurationBuilderTest {
         .build();
   }
 
+  @Test()
+  public void shouldSetLevelTo1_whenGivenLevelIsZero() {
+    MapConfiguration configuration = MapConfigurationBuilder
+        .oneWayMapping()
+        .depthLevel(0)
+        .between(TeacherPersonTo.class)
+        .and(TargetPersonTo.class)
+        .mapField("id")
+        .with("id")
+        .build();
+
+    assertEquals(1, configuration.getDepthLevel());
+  }
+
+  @Test()
+  public void shouldSetLevelTo1_whenGivenLevelIsMinus() {
+    MapConfiguration configuration = MapConfigurationBuilder
+        .oneWayMapping()
+        .depthLevel(-1)
+        .between(TeacherPersonTo.class)
+        .and(TargetPersonTo.class)
+        .mapField("id")
+        .with("id")
+        .build();
+
+    assertEquals(1, configuration.getDepthLevel());
+  }
+
 }

@@ -9,6 +9,7 @@ public class MapConfiguration {
   private Class<?> sourceType;
   private Class<?> targetType;
   private boolean oneWayMapping;
+  private int depthLevel = 1;
 
   boolean isOneWayMapping() {
     return oneWayMapping;
@@ -17,12 +18,13 @@ public class MapConfiguration {
   MapConfiguration(Map<Field, Field> fieldMap,
                    Class<?> sourceType,
                    Class<?> targetType,
-                   boolean oneWayMapping) {
+                   boolean oneWayMapping, int depthLevel) {
 
     this.fieldMap = fieldMap;
     this.sourceType = sourceType;
     this.targetType = targetType;
     this.oneWayMapping = oneWayMapping;
+    this.depthLevel = depthLevel;
   }
 
 
@@ -37,6 +39,10 @@ public class MapConfiguration {
 
   public Class<?> getTargetType() {
     return targetType;
+  }
+
+  public int getDepthLevel() {
+    return depthLevel;
   }
 
 
@@ -70,7 +76,7 @@ public class MapConfiguration {
 
     MapConfiguration configuration =
         new MapConfiguration(reverseMap,
-            reverseSourceType, reverseTargetType, this.isOneWayMapping());
+            reverseSourceType, reverseTargetType, this.isOneWayMapping(), depthLevel);
 
     return configuration;
   }
