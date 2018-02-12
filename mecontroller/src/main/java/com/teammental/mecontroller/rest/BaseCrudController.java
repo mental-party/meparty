@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 
 public abstract class BaseCrudController<ServiceT extends BaseCrudService,
@@ -29,7 +28,7 @@ public abstract class BaseCrudController<ServiceT extends BaseCrudService,
    */
   @Override
   public final RestResponse<Page<DtoT>> getAll(
-      @RequestAttribute(required = false, name = "filterDto") final FilterDto filterDto)
+      @RequestBody(required = false) final FilterDto filterDto)
       throws DtoCrudException {
 
     Page<DtoT> dtos = doGetAll(filterDto);

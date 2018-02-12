@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 
 public interface BaseCrudRestApi<
@@ -25,7 +24,7 @@ public interface BaseCrudRestApi<
    * @throws DtoCrudException if fails
    */
   @PostMapping(value = "/filter")
-  RestResponse<Page<DtoT>> getAll(@RequestAttribute(required = false, name = "filterDto")
+  RestResponse<Page<DtoT>> getAll(@RequestBody(required = false)
                                   final FilterDto filterDto);
 
   @GetMapping("/{id}")
