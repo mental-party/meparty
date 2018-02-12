@@ -1,9 +1,9 @@
 package com.teammental.medto;
 
 import com.teammental.mecore.stereotype.dto.Dto;
-import org.springframework.data.domain.Pageable;
+import com.teammental.medto.page.PageRequestDto;
 
 public interface FilterDto extends Dto {
 
-  Pageable getPage();
+  PageRequestDto getPage();
 }

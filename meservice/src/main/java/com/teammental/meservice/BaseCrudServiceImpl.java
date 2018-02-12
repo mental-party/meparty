@@ -124,7 +124,7 @@ public abstract class BaseCrudServiceImpl<DtoT extends IdDto<IdT>, IdT extends S
     if (filterDto == null) {
       entities = new PageImpl<>(getRepository().findAll());
     } else {
-      entities = getRepository().findAll(filterDto.getPage());
+      entities = getRepository().findAll(filterDto.getPage().toPageRequest());
     }
 
     Optional<List<DtoT>> optionalDtos = MeMapper.from(entities)

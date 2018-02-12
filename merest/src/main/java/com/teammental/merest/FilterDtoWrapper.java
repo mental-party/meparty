@@ -1,8 +1,5 @@
 package com.teammental.merest;
 
-/**
- * Created by sa on 2/11/2018.
- */
 public class FilterDtoWrapper<T> {
 
   private T filterDto;

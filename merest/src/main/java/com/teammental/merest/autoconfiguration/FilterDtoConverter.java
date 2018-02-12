@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teammental.medto.FilterDto;
+import com.teammental.medto.impl.FilterDtoImpl;
 import com.teammental.merest.FilterDtoWrapper;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,7 +48,8 @@ public final class FilterDtoConverter extends AbstractHttpMessageConverter<Filte
     try {
       FilterDtoWrapper filterDtoWrapper =
           objectMapper.readValue(source, FilterDtoWrapper.class);
-      JavaType actualWrapperType = objectMapper.getTypeFactory().constructParametricType(FilterDtoWrapper.class,
+      JavaType actualWrapperType = objectMapper.getTypeFactory()
+          .constructParametricType(FilterDtoWrapper.class,
           filterDtoWrapper.getFilterDtoType());
 
       FilterDtoWrapper wrapper = objectMapper.readValue(source, actualWrapperType);
@@ -57,7 +59,7 @@ public final class FilterDtoConverter extends AbstractHttpMessageConverter<Filte
       return (FilterDto) type.cast(wrapper.getFilterDto());
     } catch (IOException ex) {
       LOGGER.error(ex.getLocalizedMessage());
-      return null;
+      return new FilterDtoImpl();
     }
 
   }

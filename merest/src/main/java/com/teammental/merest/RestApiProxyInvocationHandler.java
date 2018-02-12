@@ -1,6 +1,7 @@
 package com.teammental.merest;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teammental.mecore.stereotype.controller.RestApi;
 import com.teammental.medto.FilterDto;
@@ -36,7 +37,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -124,10 +124,11 @@ class RestApiProxyInvocationHandler
 
     HttpEntity httpEntity = requestBody == null ? null : new HttpEntity<>(requestBody, headers);
 
-    Class<?> returnType = extractReturnType(method.getGenericReturnType());
+    Class<?> parameterizedReturnType = extractReturnType(method.getGenericReturnType(), true);
+    Class<?> rowReturnType = extractReturnType(method.getGenericReturnType(), false);
 
     RestExchangeProperties properties = new RestExchangeProperties(url,
-        httpMethod, httpEntity, urlVariables, returnType);
+        httpMethod, httpEntity, urlVariables, parameterizedReturnType, rowReturnType);
 
     return properties;
   }
@@ -177,22 +178,36 @@ class RestApiProxyInvocationHandler
 
 
     ObjectMapper objectMapper = new ObjectMapper();
-    objectMapper = objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-    objectMapper = objectMapper.disable(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES);
-    objectMapper = objectMapper.disable(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES);
-    objectMapper = objectMapper.disable(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE);
 
     String body = responseEntity.getBody();
-    if (properties.getReturnType().equals(RestResponsePageImpl.class)) {
-      body = body.replace("\"pageable\":\"INSTANCE\",", "");
-    }
+
+
     if (!StringHelper.isNullOrEmpty(responseEntity.getBody())) {
       if (responseEntity.getBody().startsWith("[")) {
         returnBody = objectMapper.readValue(body,
             objectMapper.getTypeFactory().constructCollectionType(List.class,
-                properties.getReturnType()));
+                properties.getRowReturnType()));
       } else {
-        returnBody = objectMapper.readValue(body, properties.getReturnType());
+
+        boolean isPage = properties.getPageReturnType() != null
+            && properties.getPageReturnType().equals(RestResponsePageImpl.class);
+
+        if (isPage) {
+          body = body.replace("\"pageable\":\"INSTANCE\",", "");
+
+          JavaType actualType = objectMapper.getTypeFactory()
+              .constructParametricType(properties.getPageReturnType(),
+                  properties.getRowReturnType());
+
+          returnBody = objectMapper.disable(
+              DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES)
+              .readValue(body, actualType);
+        } else {
+
+          returnBody = objectMapper.disable(
+              DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES)
+              .readValue(body, properties.getRowReturnType());
+        }
       }
     }
     restResponse = new RestResponse<>(returnBody,
@@ -203,19 +218,19 @@ class RestApiProxyInvocationHandler
     return restResponse;
   }
 
-  Class<?> extractReturnType(Type genericReturnType) {
+  Class<?> extractReturnType(Type genericReturnType, boolean extractForPageType) {
 
     Class<?> returnType;
 
     if (genericReturnType instanceof ParameterizedType) {
       ParameterizedType parameterizedType = (ParameterizedType) genericReturnType;
-      if (parameterizedType.getRawType().equals(Page.class)) {
+      if (extractForPageType && parameterizedType.getRawType().equals(Page.class)) {
         return RestResponsePageImpl.class;
       }
       Type[] types = parameterizedType.getActualTypeArguments();
       if (types.length == 1) {
         Type type = types[0];
-        returnType = extractReturnType(type);
+        returnType = extractReturnType(type, extractForPageType);
       } else {
         returnType = Object.class;
       }
@@ -341,19 +356,22 @@ class RestApiProxyInvocationHandler
     private HttpMethod httpMethod;
     private HttpEntity httpEntity;
     private Map<String, Object> urlVariables;
-    private Class<?> returnType;
+    private Class<?> pageReturnType;
+    private Class<?> rowReturnType;
 
     public RestExchangeProperties(String url,
                                   HttpMethod httpMethod,
                                   HttpEntity httpEntity,
                                   Map<String, Object> urlVariables,
-                                  Class<?> returnType) {
+                                  Class<?> pageReturnType,
+                                  Class<?> rowReturnType) {
 
       this.url = url;
       this.httpMethod = httpMethod;
       this.httpEntity = httpEntity;
       this.urlVariables = urlVariables;
-      this.returnType = returnType;
+      this.pageReturnType = Page.class.isAssignableFrom(pageReturnType) ? pageReturnType : null;
+      this.rowReturnType = rowReturnType;
     }
 
     public String getUrl() {
@@ -378,11 +396,14 @@ class RestApiProxyInvocationHandler
     }
 
 
-    public Class<?> getReturnType() {
+    public Class<?> getPageReturnType() {
 
-      return returnType;
+      return pageReturnType;
     }
 
+    public Class<?> getRowReturnType() {
+      return rowReturnType;
+    }
   }
 
   class Mapping {

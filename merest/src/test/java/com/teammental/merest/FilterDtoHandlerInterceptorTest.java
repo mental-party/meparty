@@ -6,7 +6,6 @@ import com.teammental.merest.testapp.Config;
 import com.teammental.merest.testapp.TestApplication;
 import com.teammental.merest.testapp.TestDto;
 import com.teammental.merest.testapp.TestRestApi;
-import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,7 +13,6 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertEquals;

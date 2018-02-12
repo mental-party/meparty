@@ -20,11 +20,9 @@ import com.teammental.mecontroller.testapp.TestCrudRestApi;
 import com.teammental.mecontroller.testapp.TestCrudService;
 import com.teammental.mecontroller.testapp.TestDto;
 import com.teammental.mecontroller.testapp.TestHandler;
-import com.teammental.medto.impl.FilterDtoImpl;
 import com.teammental.meexception.dto.DtoCreateException;
 import com.teammental.meexception.dto.DtoCrudException;
 import com.teammental.meexception.dto.DtoNotFoundException;
-import com.teammental.merest.autoconfiguration.FilterDtoHandlerInterceptor;
 import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,7 +58,6 @@ public class BaseCrudControllerTest {
 
     this.mockMvc = MockMvcBuilders.standaloneSetup(testCrudRestApi)
         .setControllerAdvice(new TestHandler())
-        .addInterceptors(new FilterDtoHandlerInterceptor())
         .build();
 
   }
