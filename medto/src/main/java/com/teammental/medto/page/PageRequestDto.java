@@ -1,11 +1,12 @@
 package com.teammental.medto.page;
 
+import com.teammental.mecore.stereotype.dto.Dto;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
-public class PageRequestDto {
+public class PageRequestDto implements Dto {
 
   private int page;
   private int size;
