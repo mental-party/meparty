@@ -78,7 +78,7 @@ class RestApiProxyInvocationHandler
 
     String url = applicationExplorer.getApplication(applicationName);
 
-    Mapping classLevelMapping = extractMapping(method.getDeclaringClass());
+    Mapping classLevelMapping = extractMapping(proxy.getClass());
     String classLevelUrl = classLevelMapping.getUrl();
 
     Mapping methodLevelMapping = extractMapping(method);
