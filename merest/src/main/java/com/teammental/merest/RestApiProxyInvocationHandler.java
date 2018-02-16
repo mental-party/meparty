@@ -51,7 +51,7 @@ class RestApiProxyInvocationHandler
 
   private ApplicationExplorer applicationExplorer = ApplicationExplorer.getInstance();
 
-  RestTemplate restTemplate = new RestTemplate();
+  private RestTemplate restTemplate = new RestTemplate();
 
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -124,8 +124,10 @@ class RestApiProxyInvocationHandler
 
     HttpEntity httpEntity = requestBody == null ? null : new HttpEntity<>(requestBody, headers);
 
-    Class<?> parameterizedReturnType = extractReturnType(method.getGenericReturnType(), true);
-    Class<?> rowReturnType = extractReturnType(method.getGenericReturnType(), false);
+    Class<?> parameterizedReturnType = extractReturnType(method.getGenericReturnType(),
+        true, proxy.getClass());
+    Class<?> rowReturnType = extractReturnType(method.getGenericReturnType(),
+        false, proxy.getClass());
 
     RestExchangeProperties properties = new RestExchangeProperties(url,
         httpMethod, httpEntity, urlVariables, parameterizedReturnType, rowReturnType);
@@ -218,7 +220,9 @@ class RestApiProxyInvocationHandler
     return restResponse;
   }
 
-  Class<?> extractReturnType(Type genericReturnType, boolean extractForPageType) {
+  Class<?> extractReturnType(Type genericReturnType,
+                             boolean extractForPageType,
+                             Class<?> proxyClass) {
 
     Class<?> returnType;
 
@@ -230,12 +234,27 @@ class RestApiProxyInvocationHandler
       Type[] types = parameterizedType.getActualTypeArguments();
       if (types.length == 1) {
         Type type = types[0];
-        returnType = extractReturnType(type, extractForPageType);
+        returnType = extractReturnType(type, extractForPageType, proxyClass);
       } else {
         returnType = Object.class;
       }
     } else {
-      returnType = (Class<?>) genericReturnType;
+
+      try {
+        returnType = (Class<?>) genericReturnType;
+      } catch (ClassCastException ex) {
+        if (proxyClass != null) {
+          Type genericSuperType = proxyClass.getGenericSuperclass();
+          if (genericSuperType == null && proxyClass.getGenericInterfaces().length > 0) {
+            genericSuperType = proxyClass.getGenericInterfaces()[0];
+          }
+          returnType = (Class<?>)
+              ((ParameterizedType) genericSuperType)
+                  .getActualTypeArguments()[0];
+        } else {
+          throw new RuntimeException("Cannot extract return type of method");
+        }
+      }
     }
 
     return returnType;

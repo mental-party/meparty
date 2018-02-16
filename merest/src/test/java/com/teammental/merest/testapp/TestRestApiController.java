@@ -78,4 +78,11 @@ public class TestRestApiController implements TestRestApi {
 
     return RestResponse.of(ResponseEntity.ok(page));
   }
+
+  @Override
+  public RestResponse<TestDto> getOneGenericType(Integer id) {
+    TestDto testDto = new TestDto(1,"name");
+
+    return RestResponse.of(ResponseEntity.ok(testDto));
+  }
 }

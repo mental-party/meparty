@@ -2,12 +2,15 @@ package com.teammental.merest;
 
 import static org.junit.Assert.*;
 
+import com.teammental.merest.testapp.TestDto;
+import com.teammental.merest.testapp.TestRestApi;
 import java.lang.reflect.Method;
 
 import com.teammental.merest.exception.NoRequestMappingFoundException;
 import com.teammental.merest.testapp.Config;
 import com.teammental.merest.testapp.SuperRestApi_Annotations;
 import com.teammental.merest.testapp.ChildRestApi_Annotations;
+import java.lang.reflect.Type;
 import org.junit.Test;
 import org.springframework.http.HttpMethod;
 
@@ -137,5 +140,23 @@ public class RestApiProxyInvocationHandlerTest {
       assertEquals("/{id}", url);
     }
 
+  }
+
+  public static class ExtractReturnType {
+
+    @Test
+    public void shouldExtractActualType_whenMethodIsFromSuperAndReturnyTypeIsGeneric() throws NoSuchMethodException {
+
+      Method method = TestRestApi.class.getMethod("getOneGenericType", Integer.class);
+      RestApiProxyInvocationHandler handler = new RestApiProxyInvocationHandler();
+      Type genericReturnType = method.getGenericReturnType();
+
+      Class<?> extractedType = handler.extractReturnType(genericReturnType,
+          false, TestRestApi.class);
+
+      Class<?> expectedType = TestDto.class;
+
+      assertEquals(expectedType, extractedType);
+    }
   }
 }

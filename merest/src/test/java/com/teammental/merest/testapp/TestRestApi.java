@@ -6,5 +6,5 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestApi(Config.TESTAPPLICATIONNAME)
 @RequestMapping(Config.TESTRESTAPI_ROOTURL)
-public interface TestRestApi extends BaseTitleRestApi, Controller {
+public interface TestRestApi extends BaseTitleRestApi<TestDto>, Controller {
 }

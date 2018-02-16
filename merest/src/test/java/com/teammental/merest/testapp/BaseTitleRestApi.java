@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-public interface BaseTitleRestApi {
+public interface BaseTitleRestApi<T> {
 
   @GetMapping
   RestResponse<List<TestDto>> getAll();
@@ -32,4 +32,7 @@ public interface BaseTitleRestApi {
   @PostMapping("/filter")
   RestResponse<Page<TestDto>> filterAll(@RequestBody(required = false)
                                             FilterDto filterDto);
+
+  @RequestMapping("/getOne/{id}")
+  RestResponse<T> getOneGenericType(@PathVariable("id") Integer id);
 }
