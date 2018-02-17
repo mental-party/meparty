@@ -17,22 +17,27 @@ public class RestResponse<T> extends ResponseEntity<T> {
   // region constructors
 
   public RestResponse(HttpStatus status) {
+
     super(status);
   }
 
   public RestResponse(T body, HttpStatus status) {
+
     super(body, status);
   }
 
   public RestResponse(MultiValueMap<String, String> headers, HttpStatus status) {
+
     super(headers, status);
   }
 
   public RestResponse(T body, MultiValueMap<String, String> headers, HttpStatus status) {
+
     super(body, headers, status);
   }
 
   public RestResponse(ResponseEntity<T> responseEntity) {
+
     super(responseEntity.getBody(), responseEntity.getHeaders(), responseEntity.getStatusCode());
   }
 
@@ -41,58 +46,98 @@ public class RestResponse<T> extends ResponseEntity<T> {
   // region getters & setters
 
   public ValidationResultDto getValidationResult() {
+
     return validationResult;
   }
 
   void setValidationResult(ValidationResultDto validationResult) {
+
     this.validationResult = validationResult;
   }
 
   public boolean hasValidationResult() {
+
     return validationResult != null;
   }
 
   public String getResponseMessage() {
+
     return responseMessage;
   }
 
   public void setResponseMessage(String responseMessage) {
+
     this.responseMessage = responseMessage;
   }
 
   public Dto getResponseDto() {
+
     return responseDto;
   }
 
   void setResponseDto(Dto responseDto) {
+
     this.responseDto = responseDto;
   }
 
   // endregion getters & setters
 
+  public boolean isSuccess() {
+
+    switch (getStatusCode()) {
+      case OK:
+      case CREATED:
+      case NO_CONTENT:
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  /**
+   * See {@link #isSuccess()}
+   * @return
+   */
+  @Deprecated
   public boolean isStatusOk() {
+
     return getStatusCode().equals(HttpStatus.OK);
   }
 
+  /**
+   * See {@link #isSuccess()}
+   * @return
+   */
+  @Deprecated
   public boolean isStatusCreated() {
+
     return getStatusCode().equals(HttpStatus.CREATED);
   }
 
+  /**
+   * See {@link #isSuccess()}
+   * @return
+   */
+  @Deprecated
   public boolean isStatusNoContent() {
+
     return getStatusCode().equals(HttpStatus.NO_CONTENT);
   }
 
+
   public boolean isStatusNotFound() {
+
     return getStatusCode().equals(HttpStatus.NOT_FOUND);
   }
 
   public boolean isStatusBadRequest() {
+
     return getStatusCode().equals(HttpStatus.BAD_REQUEST);
   }
 
   public static <T> RestResponse<T> of(ResponseEntity<T> responseEntity) {
+
     return new RestResponse<>(responseEntity);
   }
-
 
 }
