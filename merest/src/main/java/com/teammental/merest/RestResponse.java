@@ -82,6 +82,10 @@ public class RestResponse<T> extends ResponseEntity<T> {
 
   // endregion getters & setters
 
+  /**
+   * Checks status code is 200, 201 or 204.
+   * @return rest operation result
+   */
   public boolean isSuccess() {
 
     switch (getStatusCode()) {
@@ -95,8 +99,7 @@ public class RestResponse<T> extends ResponseEntity<T> {
   }
 
   /**
-   * See {@link #isSuccess()}
-   * @return
+   * See {@link #isSuccess()}.
    */
   @Deprecated
   public boolean isStatusOk() {
@@ -105,8 +108,7 @@ public class RestResponse<T> extends ResponseEntity<T> {
   }
 
   /**
-   * See {@link #isSuccess()}
-   * @return
+   * See {@link #isSuccess()}.
    */
   @Deprecated
   public boolean isStatusCreated() {
@@ -115,8 +117,7 @@ public class RestResponse<T> extends ResponseEntity<T> {
   }
 
   /**
-   * See {@link #isSuccess()}
-   * @return
+   * See {@link #isSuccess()}.
    */
   @Deprecated
   public boolean isStatusNoContent() {
