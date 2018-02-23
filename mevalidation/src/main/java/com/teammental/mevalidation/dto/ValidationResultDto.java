@@ -81,4 +81,22 @@ public class ValidationResultDto implements Dto {
       globalErrors.add(globalErrorDto);
     }
   }
+
+  /**
+   * Checks if there are any field errors.
+   * @return true if any field error exists.
+   */
+  public boolean hasFieldError() {
+    return fieldErrors != null
+        && !fieldErrors.isEmpty();
+  }
+
+  /**
+   * Checks if there are any global errors.
+   * @return true if any global error exists.
+   */
+  public boolean hasGlobalError() {
+    return globalErrors != null
+        && !globalErrors.isEmpty();
+  }
 }
