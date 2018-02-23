@@ -1,6 +1,5 @@
 package com.teammental.merest;
 
-import com.teammental.mecore.stereotype.dto.Dto;
 import com.teammental.mevalidation.dto.ValidationResultDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +10,6 @@ public class RestResponse<T> extends ResponseEntity<T> {
   // region fields
   private String responseMessage;
   private ValidationResultDto validationResult;
-  private Dto responseDto;
   //endregion fields
 
   // region constructors
@@ -55,9 +53,15 @@ public class RestResponse<T> extends ResponseEntity<T> {
     this.validationResult = validationResult;
   }
 
+  /**
+   * Checks if there is any validation result.
+   * @return boolean
+   */
   public boolean hasValidationResult() {
 
-    return validationResult != null;
+    return validationResult != null
+        && (validationResult.hasFieldError()
+        || validationResult.hasGlobalError());
   }
 
   public String getResponseMessage() {
@@ -70,20 +74,11 @@ public class RestResponse<T> extends ResponseEntity<T> {
     this.responseMessage = responseMessage;
   }
 
-  public Dto getResponseDto() {
-
-    return responseDto;
-  }
-
-  void setResponseDto(Dto responseDto) {
-
-    this.responseDto = responseDto;
-  }
-
   // endregion getters & setters
 
   /**
-   * Checks status code is 200, 201 or 204.
+   * Checks status.
+   *
    * @return rest operation result
    */
   public boolean isSuccess() {
@@ -96,44 +91,6 @@ public class RestResponse<T> extends ResponseEntity<T> {
       default:
         return false;
     }
-  }
-
-  /**
-   * See {@link #isSuccess()}.
-   */
-  @Deprecated
-  public boolean isStatusOk() {
-
-    return getStatusCode().equals(HttpStatus.OK);
-  }
-
-  /**
-   * See {@link #isSuccess()}.
-   */
-  @Deprecated
-  public boolean isStatusCreated() {
-
-    return getStatusCode().equals(HttpStatus.CREATED);
-  }
-
-  /**
-   * See {@link #isSuccess()}.
-   */
-  @Deprecated
-  public boolean isStatusNoContent() {
-
-    return getStatusCode().equals(HttpStatus.NO_CONTENT);
-  }
-
-
-  public boolean isStatusNotFound() {
-
-    return getStatusCode().equals(HttpStatus.NOT_FOUND);
-  }
-
-  public boolean isStatusBadRequest() {
-
-    return getStatusCode().equals(HttpStatus.BAD_REQUEST);
   }
 
   public static <T> RestResponse<T> of(ResponseEntity<T> responseEntity) {
