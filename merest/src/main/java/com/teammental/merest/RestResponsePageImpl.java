@@ -25,7 +25,7 @@ public class RestResponsePageImpl<T> extends PageImpl<T> {
     super(new ArrayList<T>());
   }
 
-  public PageImpl<T> pageImpl() {
+  public PageImpl<T> toPageImpl() {
     return new PageImpl<T>(getContent(), new PageRequest(getNumber(),
         getSize(), getSort()), getTotalElements());
   }
