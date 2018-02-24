@@ -38,7 +38,7 @@ public interface BaseCrudRestApi<
    * @throws DtoCrudException if fails
    */
   @PostMapping()
-  RestResponse save(@Validated @RequestBody final DtoT dto);
+  RestResponse<IdT> save(@Validated @RequestBody final DtoT dto);
 
   /**
    * Delete a DtoT item.
