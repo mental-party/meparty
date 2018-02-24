@@ -50,9 +50,9 @@ public abstract class BaseCrudController<ServiceT extends BaseCrudService,
    * {@inheritDoc}
    */
   @Override
-  public final RestResponse save(@Validated @RequestBody final DtoT dto)
+  public final RestResponse<IdT> save(@Validated @RequestBody final DtoT dto)
       throws DtoCrudException {
-    Serializable id = doSave(dto);
+    IdT id = doSave(dto);
 
     return RestResponse.of(ResponseEntity
         .status(HttpStatus.OK)
@@ -93,8 +93,8 @@ public abstract class BaseCrudController<ServiceT extends BaseCrudService,
     return dtoResult;
   }
 
-  protected Serializable doSave(final DtoT dto) throws DtoCrudException {
-    Serializable id = getCrudService().save(dto);
+  protected IdT doSave(final DtoT dto) throws DtoCrudException {
+    IdT id = (IdT)getCrudService().save(dto);
     return id;
   }
 
