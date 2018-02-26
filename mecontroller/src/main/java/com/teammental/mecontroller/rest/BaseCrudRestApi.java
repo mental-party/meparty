@@ -1,5 +1,6 @@
 package com.teammental.mecontroller.rest;
 
+import com.teammental.mecore.stereotype.controller.Controller;
 import com.teammental.medto.FilterDto;
 import com.teammental.medto.IdDto;
 import com.teammental.meexception.dto.DtoCrudException;
@@ -15,17 +16,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 public interface BaseCrudRestApi<
     DtoT extends IdDto,
-    IdT extends Serializable> {
+    IdT extends Serializable>
+    extends Controller {
 
   /**
    * Get all DtoT items.
+   *
    * @param filterDto for filtering items
    * @return HttpStatus=200, List of DtoT objects
    * @throws DtoCrudException if fails
    */
   @PostMapping(value = "/filter")
-  RestResponse<Page<DtoT>> getAll(@RequestBody(required = false)
-                                  final FilterDto filterDto);
+  RestResponse<Page<DtoT>> getAll(@RequestBody(required = false) final FilterDto filterDto);
 
   @GetMapping("/{id}")
   RestResponse<DtoT> getById(@PathVariable(value = "id") final IdT id);
