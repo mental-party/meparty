@@ -1,6 +1,8 @@
 package com.teammental.mehelper;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -93,6 +95,7 @@ public class PrimitiveHelperTest {
 
       assertEquals(Void.class, wrapperVoidClass);
     }
+
   }
 
   public static class WhenWrapper {
@@ -178,6 +181,7 @@ public class PrimitiveHelperTest {
 
       assertEquals(void.class, primitiveVoidClass);
     }
+
   }
 
   public static class WhenNotKnown {
@@ -345,4 +349,24 @@ public class PrimitiveHelperTest {
       assertEquals(void.class, primitiveVoidClass);
     }
   }
+
+  public static class IsPrimitiveOrWrapper {
+
+    @Test
+    public void shouldReturnTrue_whenTypeIsWrapper() {
+      assertTrue(PrimitiveHelper.isWrapperOrPrimitive(Integer.class));
+    }
+
+    @Test
+    public void shouldReturnTrue_whenTypeIsPrimitive() {
+      assertTrue(PrimitiveHelper.isWrapperOrPrimitive(int.class));
+    }
+
+    @Test
+    public void shouldReturnFalse_whenTypeIsNotPrimitiveOrWrapper() {
+      assertFalse(PrimitiveHelper
+      .isWrapperOrPrimitive(PrimitiveHelperTest.class));
+    }
+  }
+
 }
