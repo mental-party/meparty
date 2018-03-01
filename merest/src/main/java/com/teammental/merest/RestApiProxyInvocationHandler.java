@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teammental.mecore.stereotype.controller.RestApi;
 import com.teammental.medto.FilterDto;
+import com.teammental.mehelper.PrimitiveHelper;
 import com.teammental.mehelper.StringHelper;
 import com.teammental.merest.exception.NoRequestMappingFoundException;
 import com.teammental.mevalidation.dto.ValidationResultDto;
@@ -206,9 +207,19 @@ class RestApiProxyInvocationHandler
               .readValue(body, actualType);
         } else {
 
-          returnBody = objectMapper.disable(
-              DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES)
-              .readValue(body, properties.getRowReturnType());
+
+          if (PrimitiveHelper
+              .isWrapperOrPrimitive(properties.getRowReturnType()))
+          {
+
+
+
+          } else {
+            returnBody = objectMapper.disable(
+                DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES)
+                .readValue(body, properties.getRowReturnType());
+          }
+
         }
       }
     }
