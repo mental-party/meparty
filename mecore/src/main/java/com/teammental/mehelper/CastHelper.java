@@ -10,19 +10,18 @@ public class CastHelper {
 
   /**
    * Casts from String to given type.
+   * Given type must be primitive or wrapper type.
    *
    * @param clazz type
    * @param value string value
    * @param <T>   casting type
    * @return casted value
    */
+  @SuppressWarnings({"unchecked", "PMD"})
   public static <T> T castFromString(String value, Class<T> clazz) {
 
-    if (clazz == null || value == null || value.isEmpty()) {
-      return null;
-    }
-
-    if (!PrimitiveHelper.isWrapperOrPrimitive(clazz)) {
+    if (clazz == null || value == null || value.isEmpty()
+        || !PrimitiveHelper.isWrapperOrPrimitive(clazz)) {
       return null;
     }
 
@@ -31,7 +30,7 @@ public class CastHelper {
     try {
       T val;
       if (wrapperClazz.equals(Boolean.class)) {
-        val = (T) Boolean.valueOf(value);
+        val = (T) castToBoolean(value);
       } else if (wrapperClazz.equals(Byte.class)) {
         val = (T) Byte.valueOf(value);
       } else if (wrapperClazz.equals(Short.class)) {
@@ -56,5 +55,14 @@ public class CastHelper {
       LOGGER.error(ex.getLocalizedMessage());
       return null;
     }
+  }
+
+  private static Boolean castToBoolean(String value) {
+
+    return value.equalsIgnoreCase("true")
+        ? (Boolean) true
+        : value.equalsIgnoreCase("false")
+        ? false
+        : null;
   }
 }
