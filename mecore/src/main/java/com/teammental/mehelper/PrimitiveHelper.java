@@ -95,8 +95,8 @@ public class PrimitiveHelper {
 
   /**
    * Checks if the given clazz is wrapper or primitive.
-   * @param clazz
-   * @return
+   * @param clazz type
+   * @return true if clazz is wrapper or primitive
    */
   public static boolean isWrapperOrPrimitive(Class<?> clazz) {
     return wrapperMap.containsKey(clazz)
