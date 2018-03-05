@@ -5,6 +5,13 @@ import java.util.Date;
 
 public class DateHelper {
 
+  /**
+   * Creates a new {@link Date} object.
+   * @param year year
+   * @param month month
+   * @param day day
+   * @return Date
+   */
   public static Date newDate(int year, int month, int day) {
 
     Calendar cal = Calendar.getInstance();
