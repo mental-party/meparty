@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teammental.mecore.stereotype.controller.RestApi;
 import com.teammental.medto.FilterDto;
+import com.teammental.mehelper.CastHelper;
 import com.teammental.mehelper.PrimitiveHelper;
 import com.teammental.mehelper.StringHelper;
 import com.teammental.merest.exception.NoRequestMappingFoundException;
@@ -119,7 +120,6 @@ class RestApiProxyInvocationHandler
       }
     }
 
-
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(methodLevelMapping.getMediaType());
 
@@ -157,7 +157,6 @@ class RestApiProxyInvocationHandler
       validationResultDto = null;
     }
 
-
     if (validationResultDto == null) {
       restResponse.setResponseMessage(exception.getResponseBodyAsString());
     } else {
@@ -179,11 +178,9 @@ class RestApiProxyInvocationHandler
 
     Object returnBody = null;
 
-
     ObjectMapper objectMapper = new ObjectMapper();
 
     String body = responseEntity.getBody();
-
 
     if (!StringHelper.isNullOrEmpty(responseEntity.getBody())) {
       if (responseEntity.getBody().startsWith("[")) {
@@ -207,12 +204,13 @@ class RestApiProxyInvocationHandler
               .readValue(body, actualType);
         } else {
 
-
           if (PrimitiveHelper
-              .isWrapperOrPrimitive(properties.getRowReturnType()))
-          {
+              .isWrapperOrPrimitive(properties.getRowReturnType())) {
 
-
+            // do not use object mapper
+            // if returned value is primitive or wrapper type
+            returnBody = CastHelper
+                .castFromString(body, properties.getRowReturnType());
 
           } else {
             returnBody = objectMapper.disable(
@@ -226,7 +224,6 @@ class RestApiProxyInvocationHandler
     restResponse = new RestResponse<>(returnBody,
         responseEntity.getHeaders(),
         responseEntity.getStatusCode());
-
 
     return restResponse;
   }
@@ -414,7 +411,6 @@ class RestApiProxyInvocationHandler
       return httpMethod;
     }
 
-
     public HttpEntity getHttpEntity() {
 
       return httpEntity;
@@ -425,13 +421,13 @@ class RestApiProxyInvocationHandler
       return urlVariables;
     }
 
-
     public Class<?> getPageReturnType() {
 
       return pageReturnType;
     }
 
     public Class<?> getRowReturnType() {
+
       return rowReturnType;
     }
   }
