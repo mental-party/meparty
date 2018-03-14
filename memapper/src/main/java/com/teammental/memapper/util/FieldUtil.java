@@ -129,7 +129,7 @@ public class FieldUtil {
    * @return true if a public setter method found
    */
   public static boolean hasPublicSetMethod(Field field) {
-    return findGetMethod(field).isPresent();
+    return findSetMethod(field).isPresent();
   }
 
   /**
