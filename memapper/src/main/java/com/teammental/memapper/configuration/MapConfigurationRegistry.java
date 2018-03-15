@@ -22,13 +22,14 @@ public class MapConfigurationRegistry {
 
   /**
    * Merges this with another MapConfigurationRegistry object.
+   *
    * @param mapConfigurationRegistry other MapConfigurationRegistry
    */
   public void merge(MapConfigurationRegistry mapConfigurationRegistry) {
 
     AssertHelper.notNull(mapConfigurationRegistry);
 
-    for (MapConfiguration configuration:
+    for (MapConfiguration configuration :
         mapConfigurationRegistry.registry) {
       this.registry.add(configuration);
     }
@@ -51,9 +52,25 @@ public class MapConfigurationRegistry {
   }
 
   /**
+   * Registers a list of configuration.
+   *
+   * @param configurations configuration list.
+   */
+  public void register(List<MapConfiguration> configurations) {
+
+    AssertHelper.notNull(configurations);
+
+    for (MapConfiguration configuration
+        : configurations) {
+      register(configuration);
+    }
+  }
+
+  /**
    * Gets mapping configuration between two types.
    * If no custom configuration found, creates a default
    * configuration set by name-to-name
+   *
    * @param sourceType source type of mapping configuration.
    * @param targetType target type of mapping configuration.
    * @return a MapConfiguration item.
