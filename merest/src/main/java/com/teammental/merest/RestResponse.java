@@ -55,6 +55,7 @@ public class RestResponse<T> extends ResponseEntity<T> {
 
   /**
    * Checks if there is any validation result.
+   *
    * @return boolean
    */
   public boolean hasValidationResult() {

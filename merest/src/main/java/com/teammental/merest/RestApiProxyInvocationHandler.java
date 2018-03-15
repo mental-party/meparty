@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.GenericTypeResolver;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.data.domain.Page;
@@ -48,6 +49,12 @@ import org.springframework.web.client.RestTemplate;
 
 class RestApiProxyInvocationHandler
     implements InvocationHandler {
+
+  private Class<?> restApiClass;
+
+  public RestApiProxyInvocationHandler(Class<?> restApiClass) {
+    this.restApiClass = restApiClass;
+  }
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RestApiProxyInvocationHandler.class);
 
@@ -126,9 +133,10 @@ class RestApiProxyInvocationHandler
     HttpEntity httpEntity = requestBody == null ? null : new HttpEntity<>(requestBody, headers);
 
     Class<?> parameterizedReturnType = extractReturnType(method.getGenericReturnType(),
-        true, proxy.getClass());
+        true, restApiClass);
     Class<?> rowReturnType = extractReturnType(method.getGenericReturnType(),
-        false, proxy.getClass());
+        false, restApiClass);
+
 
     RestExchangeProperties properties = new RestExchangeProperties(url,
         httpMethod, httpEntity, urlVariables, parameterizedReturnType, rowReturnType);
@@ -232,40 +240,25 @@ class RestApiProxyInvocationHandler
                              boolean extractForPageType,
                              Class<?> proxyClass) {
 
-    Class<?> returnType;
+    Type returnType = GenericTypeResolver
+        .resolveType(genericReturnType, proxyClass);
 
-    if (genericReturnType instanceof ParameterizedType) {
-      ParameterizedType parameterizedType = (ParameterizedType) genericReturnType;
+
+    if (returnType instanceof ParameterizedType) {
+
+      ParameterizedType parameterizedType = (ParameterizedType) returnType;
+
       if (extractForPageType && parameterizedType.getRawType().equals(Page.class)) {
         return RestResponsePageImpl.class;
       }
-      Type[] types = parameterizedType.getActualTypeArguments();
-      if (types.length == 1) {
-        Type type = types[0];
-        returnType = extractReturnType(type, extractForPageType, proxyClass);
-      } else {
-        returnType = Object.class;
-      }
-    } else {
 
-      try {
-        returnType = (Class<?>) genericReturnType;
-      } catch (ClassCastException ex) {
-        if (proxyClass != null) {
-          Type genericSuperType = proxyClass.getGenericSuperclass();
-          if (genericSuperType == null && proxyClass.getGenericInterfaces().length > 0) {
-            genericSuperType = proxyClass.getGenericInterfaces()[0];
-          }
-          returnType = (Class<?>)
-              ((ParameterizedType) genericSuperType)
-                  .getActualTypeArguments()[0];
-        } else {
-          throw new RuntimeException("Cannot extract return type of method");
-        }
-      }
+      Type actualType = parameterizedType.getActualTypeArguments()[0];
+      return extractReturnType(actualType, extractForPageType, proxyClass);
+
     }
 
-    return returnType;
+    return (Class<?>) returnType;
+
   }
 
   /**

@@ -34,7 +34,7 @@ public class RestApiProxyFactory {
       throw new ApplicationNameCannotBeNullOrEmptyException(restApiClass);
     }
 
-    InvocationHandler handler = new RestApiProxyInvocationHandler();
+    InvocationHandler handler = new RestApiProxyInvocationHandler(restApiClass);
 
     T restApi = (T) Proxy.newProxyInstance(restApiClass.getClassLoader(),
         new Class[]{restApiClass},

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-public interface BaseTitleRestApi<T> {
+public interface BaseTitleRestApi<T, S> {
 
   @GetMapping
   RestResponse<List<TestDto>> getAll();
@@ -21,7 +21,7 @@ public interface BaseTitleRestApi<T> {
   RestResponse create(@RequestBody TestDto dto);
 
   @PutMapping
-  RestResponse<Integer> update(TestDto dto);
+  RestResponse<S> update(TestDto dto);
 
   @RequestMapping("/{id}")
   RestResponse<TestDto> getById(@PathVariable("id") Integer id);
