@@ -44,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
@@ -75,6 +76,12 @@ class RestApiProxyInvocationHandler
     } catch (HttpStatusCodeException exception) {
 
       restResponse = handleHttpStatusCodeException(exception);
+    } catch (Exception exception) {
+
+      HttpStatusCodeException statusCodeException =
+          new HttpServerErrorException(HttpStatus.BAD_REQUEST, exception.getLocalizedMessage());
+
+      restResponse = handleHttpStatusCodeException(statusCodeException);
     }
 
     return restResponse;
