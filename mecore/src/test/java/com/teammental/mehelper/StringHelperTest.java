@@ -1,6 +1,7 @@
 package com.teammental.mehelper;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,7 +26,6 @@ public class StringHelperTest {
       assertEquals(expectedValue, capitalizedString);
     }
   }
-
 
   public static class GenerateRandomString {
 
@@ -170,5 +170,145 @@ public class StringHelperTest {
     }
 
 
+  }
+
+  public static class PadLeft {
+
+    @Test
+    public void shouldReturnNull_whenOriginalStringIsNull() {
+
+      final String originalString = null;
+
+      String newString = StringHelper.padLeft(originalString, 'a', 3);
+
+      assertNull(newString);
+    }
+
+    @Test
+    public void shouldReturnOriginalString_whenOriginalStringIsLongerThenDesiredLength() {
+
+      final int originalLength = 10;
+      final int desiredLength = 9;
+      final String originalString = StringHelper.generateRandomString(originalLength);
+
+      String newString = StringHelper.padLeft(originalString, 'a', desiredLength);
+
+      assertEquals(originalString, newString);
+    }
+
+    @Test
+    public void shouldReturnOriginalString_whenLengthOfOriginalStringEqualsToDesiredLength() {
+
+      final int originalLength = 10;
+      final int desiredLength = 10;
+      final String originalString = StringHelper.generateRandomString(originalLength);
+
+      String newString = StringHelper.padLeft(originalString, 'a', desiredLength);
+
+      assertEquals(originalString, newString);
+    }
+
+    @Test
+    public void shouldReturnOriginalString_whenDesiredLengthIsZero() {
+
+      final int desiredLength = 0;
+      final String originalString = "frgfr";
+
+      String newString = StringHelper.padLeft(originalString, 'a', desiredLength);
+
+      assertEquals(originalString, newString);
+    }
+
+    @Test
+    public void shouldReturnOriginalString_whenDesiredLengthIsLowerThanZero() {
+
+      final int desiredLength = -5;
+      final String originalString = "frgfr";
+
+      String newString = StringHelper.padLeft(originalString, 'a', desiredLength);
+
+      assertEquals(originalString, newString);
+    }
+
+    @Test
+    public void shouldReturnPaddedString() {
+
+      final String originalString = "test";
+      final String expectedString = "aaaaaatest";
+
+      String newString = StringHelper.padLeft(originalString, 'a', 10);
+
+      assertEquals(expectedString, newString);
+    }
+  }
+
+  public static class PadRight {
+
+    @Test
+    public void shouldReturnNull_whenOriginalStringIsNull() {
+
+      final String originalString = null;
+
+      String newString = StringHelper.padRight(originalString, 'a', 3);
+
+      assertNull(newString);
+    }
+
+    @Test
+    public void shouldReturnOriginalString_whenOriginalStringIsLongerThenDesiredLength() {
+
+      final int originalLength = 10;
+      final int desiredLength = 9;
+      final String originalString = StringHelper.generateRandomString(originalLength);
+
+      String newString = StringHelper.padRight(originalString, 'a', desiredLength);
+
+      assertEquals(originalString, newString);
+    }
+
+    @Test
+    public void shouldReturnOriginalString_whenLengthOfOriginalStringEqualsToDesiredLength() {
+
+      final int originalLength = 10;
+      final int desiredLength = 10;
+      final String originalString = StringHelper.generateRandomString(originalLength);
+
+      String newString = StringHelper.padRight(originalString, 'a', desiredLength);
+
+      assertEquals(originalString, newString);
+    }
+
+    @Test
+    public void shouldReturnOriginalString_whenDesiredLengthIsZero() {
+
+      final int desiredLength = 0;
+      final String originalString = "frgfr";
+
+      String newString = StringHelper.padRight(originalString, 'a', desiredLength);
+
+      assertEquals(originalString, newString);
+    }
+
+    @Test
+    public void shouldReturnOriginalString_whenDesiredLengthIsLowerThanZero() {
+
+      final int desiredLength = -5;
+      final String originalString = "frgfr";
+
+      String newString = StringHelper.padRight(originalString, 'a', desiredLength);
+
+      assertEquals(originalString, newString);
+    }
+
+    @Test
+    public void shouldReturnPaddedString() {
+
+      final String originalString = "test";
+      final String expectedString = "testaaaaaa";
+
+      String newString = StringHelper.padRight(originalString, 'a', 10);
+
+      assertEquals(expectedString, newString);
+    }
   }
 }

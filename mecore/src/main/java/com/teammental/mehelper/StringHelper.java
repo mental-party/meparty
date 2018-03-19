@@ -132,4 +132,63 @@ public class StringHelper {
 
     return strings[0];
   }
+
+  /**
+   * Left pad string with specified character to given length.
+   *
+   * @param originalString original string
+   * @param padCharachter  character to use with padding
+   * @param length         length of desired padded string
+   * @return padded string
+   */
+  public static String padLeft(final String originalString,
+                               final char padCharachter,
+                               final int length) {
+
+    if (originalString == null
+        || length <= 0
+        || originalString.length() >= length) {
+      return originalString;
+    }
+
+    StringBuilder stringBuilder = new StringBuilder();
+
+    while (stringBuilder.length() < length - originalString.length()) {
+      stringBuilder.append(padCharachter);
+    }
+
+    stringBuilder.append(originalString);
+
+    return stringBuilder.toString();
+
+  }
+
+  /**
+   * Right pad string with specified character to given length.
+   *
+   * @param originalString original string
+   * @param padCharachter  character to use with padding
+   * @param length         length of desired padded string
+   * @return padded string
+   */
+  public static String padRight(final String originalString,
+                                final char padCharachter,
+                                final int length) {
+
+    if (originalString == null
+        || length <= 0
+        || originalString.length() >= length) {
+
+      return originalString;
+    }
+
+    StringBuilder stringBuilder = new StringBuilder(originalString);
+
+    while (stringBuilder.length() < length) {
+      stringBuilder.append(padCharachter);
+    }
+
+    return stringBuilder.toString();
+
+  }
 }
