@@ -85,4 +85,13 @@ public class TestRestApiController implements TestRestApi {
 
     return RestResponse.of(ResponseEntity.ok(testDto));
   }
+
+
+  @Override
+  public RestResponse<UnknownPropertyTo> getUnknownPropertyTo() {
+
+    UnknownPropertyTo to = new UnknownPropertyTo();
+    to.setId(1);
+    return RestResponse.of(ResponseEntity.ok(to));
+  }
 }

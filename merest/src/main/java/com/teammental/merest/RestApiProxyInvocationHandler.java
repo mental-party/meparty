@@ -194,6 +194,19 @@ class RestApiProxyInvocationHandler
     Object returnBody = null;
 
     ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper = objectMapper.disable(
+        DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES)
+        .disable(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE)
+        .disable(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES)
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .disable(DeserializationFeature.FAIL_ON_MISSING_EXTERNAL_TYPE_ID_PROPERTY)
+        .disable(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES)
+        .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+        .disable(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES)
+        .disable(DeserializationFeature.FAIL_ON_NUMBERS_FOR_ENUMS)
+        .disable(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY)
+        .disable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS)
+        .disable(DeserializationFeature.FAIL_ON_UNRESOLVED_OBJECT_IDS);
 
     String body = responseEntity.getBody();
 
@@ -214,8 +227,7 @@ class RestApiProxyInvocationHandler
               .constructParametricType(properties.getPageReturnType(),
                   properties.getRowReturnType());
 
-          returnBody = objectMapper.disable(
-              DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES)
+          returnBody = objectMapper
               .readValue(body, actualType);
         } else {
 
@@ -228,8 +240,7 @@ class RestApiProxyInvocationHandler
                 .castFromString(body, properties.getRowReturnType());
 
           } else {
-            returnBody = objectMapper.disable(
-                DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES)
+            returnBody = objectMapper
                 .readValue(body, properties.getRowReturnType());
           }
 
