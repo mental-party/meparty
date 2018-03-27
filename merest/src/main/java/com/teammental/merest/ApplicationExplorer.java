@@ -7,6 +7,8 @@ public class ApplicationExplorer {
 
   private Map<String, String> applications = new HashMap<>();
 
+  private boolean useMockImpl;
+
   private static ApplicationExplorer INSTANCE = new ApplicationExplorer();
 
   private ApplicationExplorer() {
@@ -24,7 +26,19 @@ public class ApplicationExplorer {
     applications = new HashMap<>();
   }
 
+  void removeApplication(String applicationName) {
+    applications.remove(applicationName);
+  }
+
   public static ApplicationExplorer getInstance() {
     return INSTANCE;
+  }
+
+  void setUseMockImpl(boolean useMockImpl) {
+    this.useMockImpl = useMockImpl;
+  }
+
+  public boolean getUseMockImpl() {
+    return useMockImpl;
   }
 }

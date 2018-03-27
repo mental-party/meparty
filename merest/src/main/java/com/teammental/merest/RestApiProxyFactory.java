@@ -8,9 +8,13 @@ import com.teammental.merest.exception.ApplicationNameCannotBeNullOrEmptyExcepti
 import com.teammental.merest.exception.RestApiAnnotationIsMissingException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RestApiProxyFactory {
 
+  private static final String MOCK_IMPL_SUFFIX = "MockImpl";
+  private static final Logger LOGGER = LoggerFactory.getLogger(RestApiProxyFactory.class);
 
   /**
    * Returns Rest API implementation.
@@ -32,6 +36,19 @@ public class RestApiProxyFactory {
 
     if (StringHelper.isNullOrEmpty(applicationName)) {
       throw new ApplicationNameCannotBeNullOrEmptyException(restApiClass);
+    }
+
+    if (ApplicationExplorer.getInstance().getUseMockImpl()) {
+      Package pack = restApiClass.getPackage();
+      String implName = pack.getName() + "." + restApiClass.getSimpleName() + MOCK_IMPL_SUFFIX;
+
+      try {
+        Class<?> implClass = Class.forName(implName);
+        Object implInstance = implClass.newInstance();
+        return (T) implInstance;
+      } catch (Exception ex) {
+        LOGGER.debug(ex.getLocalizedMessage());
+      }
     }
 
     InvocationHandler handler = new RestApiProxyInvocationHandler(restApiClass);
