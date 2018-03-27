@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConfigurationProperties("portalbase.rest")
+@ConfigurationProperties("com.teammental.merest")
 public class ApplicationConfiguration {
 
   private Map<String, String> applications = new HashMap<>();

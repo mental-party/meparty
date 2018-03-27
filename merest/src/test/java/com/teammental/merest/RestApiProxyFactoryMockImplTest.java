@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    classes = {TestApplication.class}, properties = {"portalbase.rest.use-mock-impl=true"})
+    classes = {TestApplication.class}, properties = {"com.teammental.merest.use-mock-impl=true"})
 public class RestApiProxyFactoryMockImplTest {
 
   @LocalServerPort
