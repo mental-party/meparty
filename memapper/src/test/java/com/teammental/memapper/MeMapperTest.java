@@ -3,6 +3,7 @@ package com.teammental.memapper;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import com.teammental.memapper.to.BooleanTypesTo;
@@ -13,13 +14,10 @@ import com.teammental.memapper.to.TargetPersonNoEmptyConstructorTo;
 import com.teammental.memapper.to.TargetPersonTo;
 import com.teammental.memapper.to.TrainerPersonTo;
 import com.teammental.memapper.to.WrapperTypeTo;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -260,4 +258,19 @@ public class MeMapperTest {
     }
   }
 
+  public static class SettingIllegalArgumentToTargetField {
+
+    @Test
+    public void shouldIgnoreField_whenSorceFieldValueIsIllegalArgument() {
+
+      WrapperTypeTo source = new WrapperTypeTo();
+      source.setId(null);
+
+      PrimitiveTypeTo primitiveTypeTo = (PrimitiveTypeTo) MeMapper
+          .from(source)
+          .to(PrimitiveTypeTo.class);
+
+      assertNotNull(primitiveTypeTo);
+    }
+  }
 }

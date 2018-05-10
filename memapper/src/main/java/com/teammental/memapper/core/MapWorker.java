@@ -5,11 +5,9 @@ import com.teammental.memapper.configuration.MapConfiguration;
 import com.teammental.memapper.configuration.MapConfigurationRegistry;
 import com.teammental.memapper.util.FieldUtil;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +24,7 @@ public class MapWorker<S, T> {
 
   /**
    * Constructs a MapWorker instance.
+   *
    * @param source mapping source object.
    * @param target mapping target object.
    */
@@ -59,31 +58,27 @@ public class MapWorker<S, T> {
     Map<Field, Field> fieldMap = configuration.getFieldMap();
     for (Field sourceField :
         fieldMap.keySet()) {
-      try {
 
-        Optional<Method> getMethodOptional = FieldUtil.findGetMethod(sourceField);
-        if (getMethodOptional.isPresent()) {
-          try {
-            Object val = getMethodOptional.get().invoke(source);
+      Optional<Method> getMethodOptional = FieldUtil.findGetMethod(sourceField);
+      if (getMethodOptional.isPresent()) {
+        try {
+          Object val = getMethodOptional.get().invoke(source);
 
-            Field targetField = fieldMap.get(sourceField);
+          Field targetField = fieldMap.get(sourceField);
 
-            Optional<Method> setMethodOptional = FieldUtil.findSetMethod(targetField);
+          Optional<Method> setMethodOptional = FieldUtil.findSetMethod(targetField);
 
-            if (setMethodOptional.isPresent()) {
-              setMethodOptional.get().invoke(target, val);
-            }
-          } catch (InvocationTargetException ex) {
-
-            LOGGER.error(ex.getLocalizedMessage());
-
-            continue;
+          if (setMethodOptional.isPresent()) {
+            setMethodOptional.get().invoke(target, val);
           }
-        }
+        } catch (Exception ex) {
 
-      } catch (IllegalAccessException ex) {
-        LOGGER.error(ex.getLocalizedMessage());
+          LOGGER.error(ex.getLocalizedMessage());
+
+          continue;
+        }
       }
+
     }
   }
 }
