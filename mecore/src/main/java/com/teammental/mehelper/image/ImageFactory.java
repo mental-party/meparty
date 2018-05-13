@@ -25,6 +25,12 @@ public class ImageFactory {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ImageFactory.class);
 
+  /**
+   * Creates an empty image.
+   * @param properties Image properties.
+   * @return byte array of the created image.
+   * @throws IOException exception
+   */
   public static byte[] createEmptyImage(EmptyImageProperties properties)
       throws IOException {
 
