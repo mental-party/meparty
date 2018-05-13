@@ -107,7 +107,10 @@ public class ImageFactory {
       int lineWidth = fm.stringWidth(line);
       int lineX = (properties.getMaxWidth() - lineWidth) / 2;
 
-      int lineY = (fm.getAscent() / 2) * lineIndex + fm.getAscent() * lineIndex;
+      int topMargin = (properties.getMaxHeight()
+          - (fm.getAscent() * lines.size() + (fm.getAscent() / 2) * (lines.size() - 1))) / 2;
+
+      int lineY = topMargin + (fm.getAscent() / 2) * (lineIndex - 1) + fm.getAscent() * lineIndex;
       g2d.drawString(line, lineX, lineY);
 
       lineIndex++;
