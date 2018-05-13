@@ -87,7 +87,7 @@ public class TextToImageProperties {
     return text;
   }
 
-  public static Builder builder() {
+  public static Builder getbuilder() {
 
     return new DefaultBuilderImpl();
   }

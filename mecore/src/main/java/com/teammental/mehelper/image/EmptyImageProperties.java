@@ -51,7 +51,7 @@ public class EmptyImageProperties {
     return fileExtension;
   }
 
-  public static Builder builder() {
+  public static Builder getBuilder() {
 
     return new DefaultBuilderImpl();
   }

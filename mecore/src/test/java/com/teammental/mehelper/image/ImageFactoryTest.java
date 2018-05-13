@@ -32,8 +32,8 @@ public class ImageFactoryTest {
       FileExtension fileExtension = FileExtension.JPG;
 
       emptyImageProperties
-          = EmptyImageProperties.builder()
-          .imageSize(ImageResolution.builder()
+          = EmptyImageProperties.getBuilder()
+          .imageSize(ImageResolution.getBuilder()
               .dpi(dpi)
               .height(height)
               .width(width))

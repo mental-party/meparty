@@ -30,7 +30,7 @@ public class ImageResolution {
     return dpi;
   }
 
-  public static DpiBuilder builder() {
+  public static DpiBuilder getBuilder() {
 
     return new BuilderImpl();
   }
