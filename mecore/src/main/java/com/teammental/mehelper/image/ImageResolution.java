@@ -105,7 +105,7 @@ public class ImageResolution {
     @Override
     public HeightBuilder dpi(int dpi) {
 
-      if (dpi < 0) {
+      if (dpi < 1) {
         throw new IllegalArgumentException("dpi cannot be lower than 0");
       }
       this.dpi = dpi;

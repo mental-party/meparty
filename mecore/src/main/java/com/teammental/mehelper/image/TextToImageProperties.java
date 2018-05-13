@@ -96,7 +96,7 @@ public class TextToImageProperties {
     return text;
   }
 
-  public static Builder getbuilder() {
+  public static Builder getBuilder() {
 
     return new DefaultBuilderImpl();
   }

@@ -5,8 +5,6 @@ import com.teammental.mecore.enums.FontType;
 import java.awt.Color;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 public class TextToImagePropertiesTest {
 
   private Color backgroundColor = Color.WHITE;
@@ -26,7 +24,7 @@ public class TextToImagePropertiesTest {
     final Color colorNull = null;
 
     TextToImageProperties properties =
-        TextToImageProperties.getbuilder()
+        TextToImageProperties.getBuilder()
             .backgroundColor(colorNull)
             .fileExtension(fileExtension)
             .fontColor(fontColor)
@@ -48,7 +46,7 @@ public class TextToImagePropertiesTest {
     final Color colorNull = null;
 
     TextToImageProperties properties =
-        TextToImageProperties.getbuilder()
+        TextToImageProperties.getBuilder()
             .backgroundColor(backgroundColor)
             .fileExtension(fileExtension)
             .fontColor(colorNull)
@@ -70,7 +68,7 @@ public class TextToImagePropertiesTest {
     final FontType fontTypeNull = null;
 
     TextToImageProperties properties =
-        TextToImageProperties.getbuilder()
+        TextToImageProperties.getBuilder()
             .backgroundColor(backgroundColor)
             .fileExtension(fileExtension)
             .fontColor(fontColor)
@@ -92,7 +90,7 @@ public class TextToImagePropertiesTest {
     final int maxFontSizeZero = 0;
 
     TextToImageProperties properties =
-        TextToImageProperties.getbuilder()
+        TextToImageProperties.getBuilder()
             .backgroundColor(backgroundColor)
             .fileExtension(fileExtension)
             .fontColor(fontColor)
@@ -114,7 +112,7 @@ public class TextToImagePropertiesTest {
     final int minFontSizeZero = 0;
 
     TextToImageProperties properties =
-        TextToImageProperties.getbuilder()
+        TextToImageProperties.getBuilder()
             .backgroundColor(backgroundColor)
             .fileExtension(fileExtension)
             .fontColor(fontColor)
@@ -126,6 +124,162 @@ public class TextToImagePropertiesTest {
             .maxFontSize(maxFontSize)
             .minFontSize(minFontSizeZero)
             .text(text)
+            .build();
+
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void shouldThrowException_whenMinFontSizeIsHigherThanMaxFontSize() {
+
+    final int minFontSizeHigher = maxFontSize +1;
+
+    TextToImageProperties properties =
+        TextToImageProperties.getBuilder()
+            .backgroundColor(backgroundColor)
+            .fileExtension(fileExtension)
+            .fontColor(fontColor)
+            .fontType(fontType)
+            .imageSize(ImageResolution.getBuilder()
+                .dpi(dpi)
+                .heightPx(height)
+                .widthPx(width))
+            .maxFontSize(maxFontSize)
+            .minFontSize(minFontSizeHigher)
+            .text(text)
+            .build();
+
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void shouldThrowException_whenImageResolutionIsNull() {
+
+    final ImageResolution imageResolutionNull = null;
+
+    TextToImageProperties properties =
+        TextToImageProperties.getBuilder()
+            .backgroundColor(backgroundColor)
+            .fileExtension(fileExtension)
+            .fontColor(fontColor)
+            .fontType(fontType)
+            .imageSize(imageResolutionNull)
+            .maxFontSize(maxFontSize)
+            .minFontSize(minFontSize)
+            .text(text)
+            .build();
+
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void shouldThrowException_whenFileExtensionIsNull() {
+
+    final FileExtension fileExtensionNull = null;
+
+    TextToImageProperties properties =
+        TextToImageProperties.getBuilder()
+            .backgroundColor(backgroundColor)
+            .fileExtension(fileExtensionNull)
+            .fontColor(fontColor)
+            .fontType(fontType)
+            .imageSize(ImageResolution
+            .getBuilder()
+            .dpi(dpi)
+            .heightCm(height)
+            .widthCm(width))
+            .maxFontSize(maxFontSize)
+            .minFontSize(minFontSize)
+            .text(text)
+            .build();
+
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void shouldThrowException_whenFileExtensionIsNotImage() {
+
+    final FileExtension fileExtensionNotImage = FileExtension.DOC;
+
+    TextToImageProperties properties =
+        TextToImageProperties.getBuilder()
+            .backgroundColor(backgroundColor)
+            .fileExtension(fileExtensionNotImage)
+            .fontColor(fontColor)
+            .fontType(fontType)
+            .imageSize(ImageResolution
+                .getBuilder()
+                .dpi(dpi)
+                .heightCm(height)
+                .widthCm(width))
+            .maxFontSize(maxFontSize)
+            .minFontSize(minFontSize)
+            .text(text)
+            .build();
+
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void shouldThrowException_whenTextIsNull() {
+
+    final String textNull = null;
+
+    TextToImageProperties properties =
+        TextToImageProperties.getBuilder()
+            .backgroundColor(backgroundColor)
+            .fileExtension(fileExtension)
+            .fontColor(fontColor)
+            .fontType(fontType)
+            .imageSize(ImageResolution
+                .getBuilder()
+                .dpi(dpi)
+                .heightCm(height)
+                .widthCm(width))
+            .maxFontSize(maxFontSize)
+            .minFontSize(minFontSize)
+            .text(textNull)
+            .build();
+
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void shouldThrowException_whenTextIsEmpty() {
+
+    final String textEmpty = "";
+
+    TextToImageProperties properties =
+        TextToImageProperties.getBuilder()
+            .backgroundColor(backgroundColor)
+            .fileExtension(fileExtension)
+            .fontColor(fontColor)
+            .fontType(fontType)
+            .imageSize(ImageResolution
+                .getBuilder()
+                .dpi(dpi)
+                .heightCm(height)
+                .widthCm(width))
+            .maxFontSize(maxFontSize)
+            .minFontSize(minFontSize)
+            .text(textEmpty)
+            .build();
+
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void shouldThrowException_whenTextTrimIsEmpty() {
+
+    final String textEmpty = "    ";
+
+    TextToImageProperties properties =
+        TextToImageProperties.getBuilder()
+            .backgroundColor(backgroundColor)
+            .fileExtension(fileExtension)
+            .fontColor(fontColor)
+            .fontType(fontType)
+            .imageSize(ImageResolution
+                .getBuilder()
+                .dpi(dpi)
+                .heightCm(height)
+                .widthCm(width))
+            .maxFontSize(maxFontSize)
+            .minFontSize(minFontSize)
+            .text(textEmpty)
             .build();
 
   }
