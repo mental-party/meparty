@@ -37,16 +37,16 @@ public class ImageResolution {
 
   public interface HeightBuilder {
 
-    WidthBuilder height(int height);
+    WidthBuilder heightPx(int height);
 
-    WidthBuilder height(double cm);
+    WidthBuilder heightCm(double cm);
   }
 
   public interface WidthBuilder {
 
-    ImageResolution width(int width);
+    ImageResolution widthPx(int width);
 
-    ImageResolution width(double cm);
+    ImageResolution widthCm(double cm);
   }
 
   public interface DpiBuilder {
@@ -62,7 +62,7 @@ public class ImageResolution {
     private int dpi;
 
     @Override
-    public WidthBuilder height(int height) {
+    public WidthBuilder heightPx(int height) {
 
       if (height < 1) {
         throw new IllegalArgumentException("height cannot be lower than 0");
@@ -72,7 +72,7 @@ public class ImageResolution {
     }
 
     @Override
-    public WidthBuilder height(double cm) {
+    public WidthBuilder heightCm(double cm) {
 
       if (cm <= 0) {
         throw new IllegalArgumentException("cm cannot be lower than or equal to 0");
@@ -82,7 +82,7 @@ public class ImageResolution {
     }
 
     @Override
-    public ImageResolution width(int width) {
+    public ImageResolution widthPx(int width) {
 
       if (width < 1) {
         throw new IllegalArgumentException("width cannot be lower than 0");
@@ -92,7 +92,7 @@ public class ImageResolution {
     }
 
     @Override
-    public ImageResolution width(double cm) {
+    public ImageResolution widthCm(double cm) {
 
       if (cm <= 0) {
         throw new IllegalArgumentException("cm cannot be lower than or equal to 0");
