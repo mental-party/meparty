@@ -16,7 +16,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(Enclosed.class)
-public class ImageFactoryTest {
+public class ImageHelperTest {
 
   public static class CreateEmptyImageTest {
 
@@ -45,14 +45,14 @@ public class ImageFactoryTest {
     @Test
     public void shouldNotReturnNull() throws IOException {
 
-      byte[] image = ImageFactory.createEmptyImage(emptyImageProperties);
+      byte[] image = ImageHelper.createEmptyImage(emptyImageProperties);
       assertNotNull(image);
     }
 
     @Test
     public void shouldSetDpiAsGiven() throws IOException, ImageReadException {
 
-      byte[] image = ImageFactory.createEmptyImage(emptyImageProperties);
+      byte[] image = ImageHelper.createEmptyImage(emptyImageProperties);
 
       ImageInfo imageInfo = Sanselan.getImageInfo(image);
 
@@ -67,7 +67,7 @@ public class ImageFactoryTest {
     public void shouldSetColorFormatAsRgb_whenFileExtensionJpg()
         throws IOException, ImageReadException {
 
-      byte[] image = ImageFactory.createEmptyImage(emptyImageProperties);
+      byte[] image = ImageHelper.createEmptyImage(emptyImageProperties);
 
       ImageInfo imageInfo = Sanselan.getImageInfo(image);
 
@@ -80,7 +80,7 @@ public class ImageFactoryTest {
     public void shouldSetWidthAsGiven()
         throws IOException, ImageReadException {
 
-      byte[] image = ImageFactory.createEmptyImage(emptyImageProperties);
+      byte[] image = ImageHelper.createEmptyImage(emptyImageProperties);
 
       ImageInfo imageInfo = Sanselan.getImageInfo(image);
 
@@ -93,7 +93,7 @@ public class ImageFactoryTest {
     public void shouldSetHeightAsGiven()
         throws IOException, ImageReadException {
 
-      byte[] image = ImageFactory.createEmptyImage(emptyImageProperties);
+      byte[] image = ImageHelper.createEmptyImage(emptyImageProperties);
 
       ImageInfo imageInfo = Sanselan.getImageInfo(image);
 

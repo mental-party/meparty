@@ -1,6 +1,7 @@
 package com.teammental.mehelper.image;
 
 import com.teammental.mecore.enums.FileExtension;
+import com.teammental.mecore.enums.FileType;
 import com.teammental.mehelper.AssertHelper;
 import com.teammental.mehelper.ResolutionHelper;
 import com.teammental.mehelper.StringHelper;
@@ -10,6 +11,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
@@ -24,13 +26,14 @@ import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
+import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ImageFactory {
+public class ImageHelper {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(ImageFactory.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(ImageHelper.class);
 
   /**
    * Creates an empty image.
@@ -122,6 +125,40 @@ public class ImageFactory {
 
     return setDpi(formatType, bufferedImageType,
         properties.getDpi(), img);
+  }
+
+  /**
+   * Changes format of given image data.
+   * @param originalImage original image
+   * @param outputFileExtension wanted format
+   * @return formatted image data
+   * @throws IOException exception
+   */
+  public static byte[] changeFormat(final byte[] originalImage,
+                                    FileExtension outputFileExtension)
+      throws IOException {
+
+    AssertHelper.notNull(originalImage, outputFileExtension);
+
+    if (!outputFileExtension.getFileType().equals(FileType.IMAGE)) {
+      throw new IllegalArgumentException("outputFileExtension is not an image type");
+    }
+
+    ByteArrayInputStream byteArrayInputStream
+        = new ByteArrayInputStream(originalImage);
+
+    BufferedImage bufferedImage = ImageIO.read(byteArrayInputStream);
+
+
+    ByteArrayOutputStream byteArrayOutputStream
+        = new ByteArrayOutputStream();
+    ImageOutputStream imageOutputStream
+        = ImageIO.createImageOutputStream(byteArrayOutputStream);
+
+    ImageIO.write(bufferedImage, outputFileExtension
+        .getExtensions()[0], imageOutputStream);
+
+    return byteArrayOutputStream.toByteArray();
   }
 
   private static Font getSuitableFont(List<String> lines,
