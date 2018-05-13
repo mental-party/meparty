@@ -6,3 +6,4 @@ classes/
 /config/
 *.iml
 demo/
+out/

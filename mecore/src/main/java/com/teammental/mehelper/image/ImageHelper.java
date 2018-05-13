@@ -26,7 +26,6 @@ import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
-import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,10 +57,7 @@ public class ImageHelper {
     graphics2D.fillRect(0, 0, properties.getWidth(), properties.getHeight());
     graphics2D.dispose();
 
-    String formatType = properties.getFileExtension()
-        .getExtensions()[0];
-
-    return setDpi(formatType, bufferedImageType,
+    return setDpi(properties.getFileExtension(),
         properties.getDpi(),
         image);
 
@@ -120,16 +116,14 @@ public class ImageHelper {
     }
     g2d.dispose();
 
-    String formatType = properties.getFileExtension()
-        .getExtensions()[0];
-
-    return setDpi(formatType, bufferedImageType,
+    return setDpi(properties.getFileExtension(),
         properties.getDpi(), img);
   }
 
   /**
    * Changes format of given image data.
-   * @param originalImage original image
+   *
+   * @param originalImage       original image
    * @param outputFileExtension wanted format
    * @return formatted image data
    * @throws IOException exception
@@ -144,21 +138,154 @@ public class ImageHelper {
       throw new IllegalArgumentException("outputFileExtension is not an image type");
     }
 
+    BufferedImage bufferedImage = bytesToBufferedImage(originalImage);
+
+    return bufferedImageToBytes(bufferedImage, outputFileExtension);
+
+  }
+
+  /**
+   * Resizes given image.
+   *
+   * @param originalImageData original image.
+   * @param imageResolution   desired resoltion
+   * @param fileExtension     file extension
+   * @return resized image data
+   * @throws IOException exception
+   */
+  public static byte[] resize(final byte[] originalImageData,
+                              ImageResolution imageResolution,
+                              FileExtension fileExtension)
+      throws IOException {
+
+    AssertHelper.notNull(originalImageData, imageResolution);
+
+    BufferedImage originalImage = bytesToBufferedImage(originalImageData);
+
+    BufferedImage resizedImage = new BufferedImage(imageResolution.getWidth(),
+        imageResolution.getHeight(), originalImage.getType());
+
+    Graphics2D g = resizedImage.createGraphics();
+    g.drawImage(originalImage, 0, 0, imageResolution.getWidth(),
+        imageResolution.getHeight(), null);
+    g.dispose();
+
+    return bufferedImageToBytes(resizedImage, fileExtension);
+  }
+
+  /**
+   * Converts byte array of an image to BufferedImage.
+   *
+   * @param originalImage original data
+   * @return buffered image
+   * @throws IOException exception
+   */
+  public static BufferedImage bytesToBufferedImage(final byte[] originalImage)
+      throws IOException {
+
+    AssertHelper.notNull(originalImage);
+
     ByteArrayInputStream byteArrayInputStream
         = new ByteArrayInputStream(originalImage);
 
     BufferedImage bufferedImage = ImageIO.read(byteArrayInputStream);
 
+    return bufferedImage;
+  }
+
+  /**
+   * Converts BufferedImage to byte array.
+   *
+   * @param bufferedImage original image
+   * @param fileExtension file extension
+   * @return byte array
+   * @throws IOException exception
+   */
+  public static byte[] bufferedImageToBytes(BufferedImage bufferedImage,
+                                            FileExtension fileExtension)
+      throws IOException {
 
     ByteArrayOutputStream byteArrayOutputStream
         = new ByteArrayOutputStream();
     ImageOutputStream imageOutputStream
         = ImageIO.createImageOutputStream(byteArrayOutputStream);
 
-    ImageIO.write(bufferedImage, outputFileExtension
+    ImageIO.write(bufferedImage, fileExtension
         .getExtensions()[0], imageOutputStream);
 
     return byteArrayOutputStream.toByteArray();
+  }
+
+  /**
+   * Sets DPI value of given image.
+   *
+   * @param fileExtension file extension
+   * @param dpi           dpi value
+   * @param image         image
+   * @return byte array;
+   * @throws IOException exception
+   */
+  public static byte[] setDpi(FileExtension fileExtension,
+                              int dpi,
+                              byte[] image)
+      throws IOException {
+
+    BufferedImage bufferedImage = bytesToBufferedImage(image);
+
+    return setDpi(fileExtension, dpi, bufferedImage);
+  }
+
+  /**
+   * Sets DPI value of given image.
+   *
+   * @param fileExtension file extension
+   * @param dpi           dpi value
+   * @param image         image
+   * @return byte array;
+   * @throws IOException exception
+   */
+  public static byte[] setDpi(FileExtension fileExtension,
+                              int dpi,
+                              BufferedImage image)
+      throws IOException {
+
+    AssertHelper.notNull(fileExtension, image);
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+    String formatType = fileExtension.getExtensions()[0];
+
+    for (Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(formatType);
+        iw.hasNext(); ) {
+      ImageWriter writer = iw.next();
+      ImageWriteParam writeParam = writer.getDefaultWriteParam();
+      ImageTypeSpecifier typeSpecifier = ImageTypeSpecifier
+          .createFromBufferedImageType(image.getType());
+      IIOMetadata metadata = writer.getDefaultImageMetadata(typeSpecifier, writeParam);
+      if (metadata.isReadOnly() || !metadata.isStandardMetadataFormatSupported()) {
+        continue;
+      }
+
+      if (FileExtension.JPG.matches(formatType)) {
+        setJpgDpi(metadata, dpi);
+      } else {
+        setPngDpi(metadata, dpi);
+      }
+
+      try (ImageOutputStream stream = ImageIO.createImageOutputStream(output)) {
+        writer.setOutput(stream);
+        writer.write(metadata,
+            new IIOImage(image, null, metadata), writeParam);
+
+        break;
+
+      } catch (Exception ex) {
+        LOGGER.error(ex.getLocalizedMessage());
+        throw ex;
+      }
+    }
+
+    return output.toByteArray();
   }
 
   private static Font getSuitableFont(List<String> lines,
@@ -232,47 +359,6 @@ public class ImageHelper {
     g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_DEFAULT);
   }
 
-  private static byte[] setDpi(String formatType,
-                               int bufferedImageType,
-                               int dpi,
-                               BufferedImage image)
-      throws IOException {
-
-    ByteArrayOutputStream output = new ByteArrayOutputStream();
-
-
-    for (Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(formatType);
-        iw.hasNext(); ) {
-      ImageWriter writer = iw.next();
-      ImageWriteParam writeParam = writer.getDefaultWriteParam();
-      ImageTypeSpecifier typeSpecifier = ImageTypeSpecifier
-          .createFromBufferedImageType(bufferedImageType);
-      IIOMetadata metadata = writer.getDefaultImageMetadata(typeSpecifier, writeParam);
-      if (metadata.isReadOnly() || !metadata.isStandardMetadataFormatSupported()) {
-        continue;
-      }
-
-      if (FileExtension.JPG.matches(formatType)) {
-        setJpgDpi(metadata, dpi);
-      } else {
-        setPngDpi(metadata, dpi);
-      }
-
-      try (ImageOutputStream stream = ImageIO.createImageOutputStream(output)) {
-        writer.setOutput(stream);
-        writer.write(metadata,
-            new IIOImage(image, null, metadata), writeParam);
-
-        break;
-
-      } catch (Exception ex) {
-        LOGGER.error(ex.getLocalizedMessage());
-        throw ex;
-      }
-    }
-
-    return output.toByteArray();
-  }
 
   private static int getBufferedImageType(FileExtension fileExtension) {
 

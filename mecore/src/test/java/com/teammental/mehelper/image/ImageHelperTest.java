@@ -4,6 +4,9 @@ import com.teammental.mecore.enums.FileExtension;
 import com.teammental.mecore.enums.ImageColorType;
 import java.awt.Color;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.apache.sanselan.ImageInfo;
 import org.apache.sanselan.ImageReadException;
 import org.apache.sanselan.Sanselan;
@@ -102,4 +105,40 @@ public class ImageHelperTest {
       assertEquals(emptyImageProperties.getHeight(), height);
     }
   }
+
+  public static class ChangeFormatTest {
+
+    private final static Path ORIGINAL_IMAGE =
+        Paths.get("src", "test", "resources", "images", "image.jpg");
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowException_whenOriginalImageDataIsNull() throws IOException {
+
+      final byte[] originalData = null;
+
+      ImageHelper.changeFormat(originalData, FileExtension.JPG);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowException_whenFileExtensionIsNull() throws IOException {
+
+      final FileExtension fileExtension = null;
+
+      ImageHelper.changeFormat(new byte[0], fileExtension);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowException_whenOriginalDataIsNotImage() throws IOException {
+
+      ImageHelper.changeFormat(new byte[0], FileExtension.JPG);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowException_whenFileExtensionIsNotImage() throws IOException {
+
+      byte[] data = Files.readAllBytes(ORIGINAL_IMAGE);
+      ImageHelper.changeFormat(data, FileExtension.PDF);
+    }
+  }
+
 }

@@ -39,6 +39,11 @@ public enum FileExtension {
     return fileType;
   }
 
+  /**
+   * Checks if given extension is matching.
+   * @param extension extension
+   * @return true if matches
+   */
   public boolean matches(String extension) {
 
     return extension != null && Arrays.stream(extensions)
