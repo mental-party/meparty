@@ -78,7 +78,6 @@ public class EmptyImageProperties {
     @Override
     public Builder backgroundColor(Color backgroundColor) {
 
-      AssertHelper.notNull(backgroundColor);
       this.backgroundColor = backgroundColor;
       return this;
     }
@@ -86,7 +85,6 @@ public class EmptyImageProperties {
     @Override
     public Builder imageSize(ImageResolution imageResolution) {
 
-      AssertHelper.notNull(imageResolution);
       this.imageResolution = imageResolution;
       return this;
     }
@@ -94,19 +92,23 @@ public class EmptyImageProperties {
     @Override
     public Builder fileExtension(FileExtension fileExtension) {
 
-      AssertHelper.notNull(fileExtension);
-      if (!fileExtension.getFileType()
-          .equals(FileType.IMAGE)) {
 
-        throw new IllegalArgumentException(fileExtension.toString()
-            + " is not a valid Image extension.");
-      }
       this.fileExtension = fileExtension;
       return this;
     }
 
     @Override
     public EmptyImageProperties build() {
+      AssertHelper.notNull(backgroundColor);
+      AssertHelper.notNull(imageResolution);
+      AssertHelper.notNull(fileExtension);
+
+      if (!fileExtension.getFileType()
+          .equals(FileType.IMAGE)) {
+
+        throw new IllegalArgumentException(fileExtension.toString()
+            + " is not a valid Image extension.");
+      }
 
       return new EmptyImageProperties(backgroundColor,
           imageResolution.getWidth(),

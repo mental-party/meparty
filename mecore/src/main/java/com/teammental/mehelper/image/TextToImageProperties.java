@@ -4,6 +4,7 @@ import com.teammental.mecore.enums.FileExtension;
 import com.teammental.mecore.enums.FileType;
 import com.teammental.mecore.enums.FontType;
 import com.teammental.mehelper.AssertHelper;
+import com.teammental.mehelper.StringHelper;
 import java.awt.Color;
 
 public class TextToImageProperties {
@@ -16,6 +17,7 @@ public class TextToImageProperties {
   private int maxHeight;
   private int dpi;
   private FileExtension fileExtension;
+  private String text;
 
 
   TextToImageProperties(Color backgroundColor,
@@ -25,7 +27,8 @@ public class TextToImageProperties {
                         int maxWidth,
                         int maxHeight,
                         int dpi,
-                        FileExtension fileExtension) {
+                        FileExtension fileExtension,
+                        String text) {
 
     this.backgroundColor = backgroundColor;
 
@@ -36,6 +39,7 @@ public class TextToImageProperties {
     this.maxHeight = maxHeight;
     this.dpi = dpi;
     this.fileExtension = fileExtension;
+    this.text = text;
   }
 
   public Color getBackgroundColor() {
@@ -78,6 +82,11 @@ public class TextToImageProperties {
     return fileExtension;
   }
 
+  public String getText() {
+
+    return text;
+  }
+
   public static Builder builder() {
 
     return new DefaultBuilderImpl();
@@ -104,6 +113,8 @@ public class TextToImageProperties {
 
     Builder fileExtension(FileExtension fileExtension);
 
+    Builder text(String text);
+
     TextToImageProperties build();
   }
 
@@ -116,11 +127,11 @@ public class TextToImageProperties {
     private int maxFontSize;
     private ImageResolution imageResolution;
     private FileExtension fileExtension;
+    private String text;
 
     @Override
     public Builder backgroundColor(Color backgroundColor) {
 
-      AssertHelper.notNull(backgroundColor);
       this.backgroundColor = backgroundColor;
       return this;
     }
@@ -128,7 +139,6 @@ public class TextToImageProperties {
     @Override
     public Builder fontColor(Color fontColor) {
 
-      AssertHelper.notNull(fontColor);
       this.fontColor = fontColor;
       return this;
     }
@@ -136,7 +146,6 @@ public class TextToImageProperties {
     @Override
     public Builder fontType(FontType fontType) {
 
-      AssertHelper.notNull(fontType);
       this.fontType = fontType;
       return this;
     }
@@ -144,9 +153,7 @@ public class TextToImageProperties {
     @Override
     public Builder maxFontSize(int maxFontSize) {
 
-      if (maxFontSize < 1) {
-        throw new IllegalArgumentException("maxFontSize cannot be lower than 1");
-      }
+
       this.maxFontSize = maxFontSize;
       return this;
     }
@@ -154,7 +161,6 @@ public class TextToImageProperties {
     @Override
     public Builder imageSize(ImageResolution imageResolution) {
 
-      AssertHelper.notNull(imageResolution);
       this.imageResolution = imageResolution;
       return this;
     }
@@ -162,6 +168,29 @@ public class TextToImageProperties {
     @Override
     public Builder fileExtension(FileExtension fileExtension) {
 
+
+      this.fileExtension = fileExtension;
+      return this;
+    }
+
+    @Override
+    public Builder text(String text) {
+
+
+      this.text = text;
+      return this;
+    }
+
+    @Override
+    public TextToImageProperties build() {
+
+      AssertHelper.notNull(backgroundColor);
+      AssertHelper.notNull(fontColor);
+      AssertHelper.notNull(fontType);
+      if (maxFontSize < 1) {
+        throw new IllegalArgumentException("maxFontSize cannot be lower than 1");
+      }
+      AssertHelper.notNull(imageResolution);
       AssertHelper.notNull(fileExtension);
       if (!fileExtension.getFileType()
           .equals(FileType.IMAGE)) {
@@ -169,12 +198,13 @@ public class TextToImageProperties {
         throw new IllegalArgumentException(fileExtension.toString()
             + " is not a valid Image extension.");
       }
-      this.fileExtension = fileExtension;
-      return this;
-    }
-
-    @Override
-    public TextToImageProperties build() {
+      
+      if (text != null) {
+        text = text.trim();
+      }
+      if (StringHelper.isNullOrEmpty(text)) {
+        throw new IllegalArgumentException("text cannot be null or empty");
+      }
 
       return new TextToImageProperties(backgroundColor,
           fontColor,
@@ -183,7 +213,8 @@ public class TextToImageProperties {
           imageResolution.getWidth(),
           imageResolution.getHeight(),
           imageResolution.getDpi(),
-          fileExtension);
+          fileExtension,
+          text);
     }
   }
 }
