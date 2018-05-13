@@ -10,17 +10,45 @@ public class EmptyImageProperties {
   private Color backgroundColor;
   private int width;
   private int height;
+  private int dpi;
   private FileExtension fileExtension;
 
   EmptyImageProperties(Color backgroundColor,
                        int width,
                        int height,
+                       int dpi,
                        FileExtension fileExtension) {
 
     this.backgroundColor = backgroundColor;
     this.width = width;
     this.height = height;
+    this.dpi = dpi;
     this.fileExtension = fileExtension;
+  }
+
+  public Color getBackgroundColor() {
+
+    return backgroundColor;
+  }
+
+  public int getWidth() {
+
+    return width;
+  }
+
+  public int getHeight() {
+
+    return height;
+  }
+
+  public int getDpi() {
+
+    return dpi;
+  }
+
+  public FileExtension getFileExtension() {
+
+    return fileExtension;
   }
 
   public static Builder builder() {
@@ -33,7 +61,7 @@ public class EmptyImageProperties {
 
     Builder backgroundColor(Color backgroundColor);
 
-    Builder imageSize(ImageSize imageSize);
+    Builder imageSize(ImageResolution imageResolution);
 
     Builder fileExtension(FileExtension fileExtension);
 
@@ -44,7 +72,7 @@ public class EmptyImageProperties {
       implements Builder {
 
     private Color backgroundColor;
-    private ImageSize imageSize;
+    private ImageResolution imageResolution;
     private FileExtension fileExtension;
 
     @Override
@@ -56,10 +84,10 @@ public class EmptyImageProperties {
     }
 
     @Override
-    public Builder imageSize(ImageSize imageSize) {
+    public Builder imageSize(ImageResolution imageResolution) {
 
-      AssertHelper.notNull(imageSize);
-      this.imageSize = imageSize;
+      AssertHelper.notNull(imageResolution);
+      this.imageResolution = imageResolution;
       return this;
     }
 
@@ -81,8 +109,9 @@ public class EmptyImageProperties {
     public EmptyImageProperties build() {
 
       return new EmptyImageProperties(backgroundColor,
-          imageSize.getWidth(),
-          imageSize.getHeight(),
+          imageResolution.getWidth(),
+          imageResolution.getHeight(),
+          imageResolution.getDpi(),
           fileExtension);
     }
   }
