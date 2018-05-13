@@ -122,6 +122,7 @@ public class StringHelper {
    * otherwise returns defaultVal.
    *
    * @param strings String array
+   * @param defaultVal default String
    * @return first or defaultVal String
    */
   public static String getFirstOrDefault(String[] strings, String defaultVal) {
