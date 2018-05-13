@@ -40,8 +40,7 @@ public class ImageFactory {
         ? BufferedImage.TYPE_INT_RGB
         : BufferedImage.TYPE_INT_ARGB;
 
-    String formatType = properties.getFileExtension()
-        .getExtensions()[0];
+
 
     BufferedImage image = new BufferedImage(properties.getWidth(),
         properties.getHeight(), bufferedImageType);
@@ -67,6 +66,9 @@ public class ImageFactory {
 
     ByteArrayOutputStream output = new ByteArrayOutputStream();
 
+    String formatType = properties.getFileExtension()
+        .getExtensions()[0];
+
     for (Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(formatType);
         iw.hasNext(); ) {
       ImageWriter writer = iw.next();
@@ -89,11 +91,12 @@ public class ImageFactory {
         writer.write(metadata,
             new IIOImage(image, null, metadata), writeParam);
 
+        break;
+
       } catch (Exception ex) {
         LOGGER.error(ex.getLocalizedMessage());
         throw ex;
       }
-      break;
     }
 
     return output.toByteArray();
@@ -104,22 +107,24 @@ public class ImageFactory {
       throws IIOInvalidTreeException {
 
     String metadataFormat = "javax_imageio_jpeg_image_1.0";
+
+    IIOMetadataNode app0Jfif = new IIOMetadataNode("app0JFIF");
+    app0Jfif.setAttribute("majorVersion", "1");
+    app0Jfif.setAttribute("minorVersion", "2");
+    app0Jfif.setAttribute("thumbWidth", "0");
+    app0Jfif.setAttribute("thumbHeight", "0");
+    app0Jfif.setAttribute("resUnits", "01");
+    app0Jfif.setAttribute("Xdensity", String.valueOf(dpi));
+    app0Jfif.setAttribute("Ydensity", String.valueOf(dpi));
+
     IIOMetadataNode root = new IIOMetadataNode(metadataFormat);
+
     IIOMetadataNode jpegVariety = new IIOMetadataNode("JPEGvariety");
     IIOMetadataNode markerSequence = new IIOMetadataNode("markerSequence");
 
-    IIOMetadataNode app0JFIF = new IIOMetadataNode("app0JFIF");
-    app0JFIF.setAttribute("majorVersion", "1");
-    app0JFIF.setAttribute("minorVersion", "2");
-    app0JFIF.setAttribute("thumbWidth", "0");
-    app0JFIF.setAttribute("thumbHeight", "0");
-    app0JFIF.setAttribute("resUnits", "01");
-    app0JFIF.setAttribute("Xdensity", String.valueOf(dpi));
-    app0JFIF.setAttribute("Ydensity", String.valueOf(dpi));
-
     root.appendChild(jpegVariety);
     root.appendChild(markerSequence);
-    jpegVariety.appendChild(app0JFIF);
+    jpegVariety.appendChild(app0Jfif);
 
     metadata.mergeTree(metadataFormat, root);
   }
