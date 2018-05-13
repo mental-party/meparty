@@ -5,7 +5,6 @@ import com.teammental.mehelper.AssertHelper;
 import com.teammental.mehelper.ResolutionHelper;
 import com.teammental.mehelper.StringHelper;
 import com.teammental.mehelper.image.exception.TextToImageException;
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
@@ -16,6 +15,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageTypeSpecifier;
@@ -50,20 +50,7 @@ public class ImageFactory {
         properties.getHeight(), bufferedImageType);
 
     Graphics2D graphics2D = image.createGraphics();
-    graphics2D.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION,
-        RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-    graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-    graphics2D.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,
-        RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-    graphics2D.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
-    graphics2D.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
-        RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-    graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-        RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-    graphics2D.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-    graphics2D
-        .setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_DEFAULT);
-
+    setGraphics2dProperties(graphics2D);
     graphics2D.setColor(properties.getBackgroundColor());
     graphics2D.fillRect(0, 0, properties.getWidth(), properties.getHeight());
     graphics2D.dispose();
@@ -91,82 +78,18 @@ public class ImageFactory {
     AssertHelper.notNull(properties);
     int bufferedImageType = getBufferedImageType(properties.getFileExtension());
 
-    /*Because font metrics is based on a graphics context, we need to create
-           a small, temporary image so we can ascertain the width and height
-           of the final image.
-         */
-    BufferedImage img = new BufferedImage(1, 1, bufferedImageType);
-    Graphics2D g2d = img.createGraphics();
-
-    int fontSize = properties.getMaxFontSize();
     String text = properties.getText();
-    List<String> lines = Arrays.asList(text.split(" "));
+    List<String> lines = Arrays.stream(text.split(" "))
+        .filter(s -> !StringHelper.isNullOrEmpty(s))
+        .collect(Collectors.toList());
 
-    int height = 0;
-    int width = 0;
+    Font font = getSuitableFont(lines, properties, bufferedImageType);
 
-    Font font;
-    while (true) {
+    BufferedImage img = new BufferedImage(properties.getMaxWidth(),
+        properties.getMaxHeight(), bufferedImageType);
 
-      boolean valid = true;
-
-      font = new Font(properties.getFontType().toString(), Font.PLAIN, fontSize);
-      g2d.setFont(font);
-      FontMetrics fm = g2d.getFontMetrics();
-
-      for (String line :
-          lines) {
-        width = fm.stringWidth(line);
-        if (width >= properties.getMaxWidth()) {
-          valid = false;
-          break;
-        }
-      }
-
-      if (valid) {
-        height = (fm.getAscent() * lines.size()) + ((fm.getAscent() / 2) * (lines.size() + 1));
-
-        if (height >= properties.getMaxHeight()) {
-          valid = false;
-        }
-      }
-
-      if (valid) {
-        break;
-
-      } else {
-        fontSize = fontSize - 1;
-        if (fontSize == 0) {
-          throw new TextToImageException("Can not create image with given properties."
-              + " Please increase width or height.");
-        }
-      }
-
-
-    }
-
-    if (height == 0 || width == 0) {
-      throw new TextToImageException("Can not create image with given properties."
-          + " Please increase width or height.");
-    }
-
-    g2d.dispose();
-
-    img = new BufferedImage(width, height, bufferedImageType);
-
-    g2d = img.createGraphics();
-    g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION,
-        RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-    g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,
-        RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-    g2d.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
-    g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
-        RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-        RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-    g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-    g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_DEFAULT);
+    Graphics2D g2d = img.createGraphics();
+    setGraphics2dProperties(g2d);
     g2d.setFont(font);
 
     FontMetrics fm = g2d.getFontMetrics();
@@ -184,7 +107,7 @@ public class ImageFactory {
       int lineWidth = fm.stringWidth(line);
       int lineX = (properties.getMaxWidth() - lineWidth) / 2;
 
-      int lineY = ((fm.getAscent() / 2) * lineIndex) + (fm.getAscent() * lineIndex);
+      int lineY = (fm.getAscent() / 2) * lineIndex + fm.getAscent() * lineIndex;
       g2d.drawString(line, lineX, lineY);
 
       lineIndex++;
@@ -198,6 +121,76 @@ public class ImageFactory {
         properties.getDpi(), img);
   }
 
+  private static Font getSuitableFont(List<String> lines,
+                                      TextToImageProperties properties,
+                                      int bufferedImageType) throws TextToImageException {
+    /*Because font metrics is based on a graphics context, we need to create
+           a small, temporary image so we can ascertain the width and height
+           of the final image.
+         */
+    BufferedImage img = new BufferedImage(1, 1, bufferedImageType);
+    Graphics2D g2d = img.createGraphics();
+
+    int fontSize = properties.getMaxFontSize();
+
+
+    int height = 0;
+    int width = 0;
+
+    Font font;
+    while (true) {
+
+      if (fontSize == 0) {
+        throw new TextToImageException("Can not create image with given properties."
+            + " Please increase width or height.");
+      }
+
+      boolean valid = true;
+
+      font = new Font(properties.getFontType().toString(), Font.PLAIN, fontSize);
+      g2d.setFont(font);
+      FontMetrics fm = g2d.getFontMetrics();
+
+      for (String line :
+          lines) {
+        width = fm.stringWidth(line);
+        if (width >= properties.getMaxWidth()) {
+          valid = false;
+          break;
+        }
+      }
+
+      height = fm.getAscent() * lines.size() + (fm.getAscent() / 2) * (lines.size() + 1);
+
+      if (height >= properties.getMaxHeight()) {
+        valid = false;
+      }
+
+      if (valid) {
+        break;
+      }
+      fontSize = fontSize - 1;
+    }
+
+    g2d.dispose();
+    return font;
+  }
+
+  private static void setGraphics2dProperties(Graphics2D g2d) {
+
+    g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION,
+        RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,
+        RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+    g2d.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
+    g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+        RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+        RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+    g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+    g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_DEFAULT);
+  }
 
   private static byte[] setDpi(String formatType,
                                int bufferedImageType,
