@@ -35,21 +35,21 @@ public class ImageResolution {
     return new BuilderImpl();
   }
 
-  interface HeightBuilder {
+  public interface HeightBuilder {
 
     WidthBuilder height(int height);
 
     WidthBuilder height(double cm);
   }
 
-  interface WidthBuilder {
+  public interface WidthBuilder {
 
     ImageResolution width(int width);
 
     ImageResolution width(double cm);
   }
 
-  interface DpiBuilder {
+  public interface DpiBuilder {
 
     HeightBuilder dpi(int dpi);
   }
