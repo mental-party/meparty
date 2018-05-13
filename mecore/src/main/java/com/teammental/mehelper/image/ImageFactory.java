@@ -143,7 +143,7 @@ public class ImageFactory {
     Font font;
     while (true) {
 
-      if (fontSize == 0) {
+      if (fontSize < properties.getMinFontSize()) {
         throw new TextToImageException("Can not create image with given properties."
             + " Please increase width or height.");
       }

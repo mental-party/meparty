@@ -13,6 +13,7 @@ public class TextToImageProperties {
   private Color fontColor;
   private FontType fontType;
   private int maxFontSize;
+  private int minFontSize;
   private int maxWidth;
   private int maxHeight;
   private int dpi;
@@ -24,6 +25,7 @@ public class TextToImageProperties {
                         Color fontColor,
                         FontType fontType,
                         int maxFontSize,
+                        int minFontSize,
                         int maxWidth,
                         int maxHeight,
                         int dpi,
@@ -35,6 +37,7 @@ public class TextToImageProperties {
     this.fontColor = fontColor;
     this.fontType = fontType;
     this.maxFontSize = maxFontSize;
+    this.minFontSize = minFontSize;
     this.maxWidth = maxWidth;
     this.maxHeight = maxHeight;
     this.dpi = dpi;
@@ -60,6 +63,11 @@ public class TextToImageProperties {
   public int getMaxFontSize() {
 
     return maxFontSize;
+  }
+
+  public int getMinFontSize() {
+
+    return minFontSize;
   }
 
   public int getMaxWidth() {
@@ -103,12 +111,8 @@ public class TextToImageProperties {
 
     Builder maxFontSize(int maxFontSize);
 
-    /**
-     * Height and width properties are max value.
-     *
-     * @param imageResolution image resolution.
-     * @return builder.
-     */
+    Builder minFontSize(int minFontSize);
+
     Builder imageSize(ImageResolution imageResolution);
 
     Builder fileExtension(FileExtension fileExtension);
@@ -125,6 +129,7 @@ public class TextToImageProperties {
     private Color fontColor;
     private FontType fontType;
     private int maxFontSize;
+    private int minFontSize;
     private ImageResolution imageResolution;
     private FileExtension fileExtension;
     private String text;
@@ -153,8 +158,14 @@ public class TextToImageProperties {
     @Override
     public Builder maxFontSize(int maxFontSize) {
 
-
       this.maxFontSize = maxFontSize;
+      return this;
+    }
+
+    @Override
+    public Builder minFontSize(int minFontSize) {
+
+      this.minFontSize = minFontSize;
       return this;
     }
 
@@ -190,6 +201,12 @@ public class TextToImageProperties {
       if (maxFontSize < 1) {
         throw new IllegalArgumentException("maxFontSize cannot be lower than 1");
       }
+      if (minFontSize < 1) {
+        throw new IllegalArgumentException("minFontSize cannot be lower than 1");
+      }
+      if (minFontSize > maxFontSize) {
+        throw new IllegalArgumentException("minFontSize cannot be higher than maxFontSize");
+      }
       AssertHelper.notNull(imageResolution);
       AssertHelper.notNull(fileExtension);
       if (!fileExtension.getFileType()
@@ -198,7 +215,7 @@ public class TextToImageProperties {
         throw new IllegalArgumentException(fileExtension.toString()
             + " is not a valid Image extension.");
       }
-      
+
       if (text != null) {
         text = text.trim();
       }
@@ -210,6 +227,7 @@ public class TextToImageProperties {
           fontColor,
           fontType,
           maxFontSize,
+          minFontSize,
           imageResolution.getWidth(),
           imageResolution.getHeight(),
           imageResolution.getDpi(),
