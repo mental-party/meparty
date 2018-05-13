@@ -2,4 +2,8 @@ jar {
     baseName = 'mecore'
 }
 
+dependencies {
+    testCompile group: 'org.apache.sanselan', name: 'sanselan', version: '0.97-incubator'
+}
+
 apply from: 'deploy.gradle'
