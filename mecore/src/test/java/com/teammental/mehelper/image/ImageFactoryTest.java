@@ -35,8 +35,8 @@ public class ImageFactoryTest {
           = EmptyImageProperties.getBuilder()
           .imageSize(ImageResolution.getBuilder()
               .dpi(dpi)
-              .height(height)
-              .width(width))
+              .heightCm(height)
+              .widthCm(width))
           .backgroundColor(backgroundColor)
           .fileExtension(fileExtension)
           .build();

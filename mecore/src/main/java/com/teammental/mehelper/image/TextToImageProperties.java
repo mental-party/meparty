@@ -7,6 +7,7 @@ import com.teammental.mehelper.AssertHelper;
 import com.teammental.mehelper.StringHelper;
 import java.awt.Color;
 
+@SuppressWarnings({"PMD.ExcessiveParameterList"})
 public class TextToImageProperties {
 
   private Color backgroundColor;
