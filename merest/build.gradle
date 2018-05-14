@@ -8,6 +8,8 @@ dependencies {
 
     compile("org.springframework:spring-web:${springVersion}")
     compile("org.springframework:spring-webmvc:${springVersion}")
+    compile("org.springframework.security:spring-security-core:${springVersion}")
+
     compile("org.springframework.boot:spring-boot-autoconfigure:${springBootAutoConfigurationVersion}")
     compile("com.fasterxml.jackson.core:jackson-databind:${jacksonDatabindVersion}")
     // https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api
