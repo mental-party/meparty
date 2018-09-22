@@ -10,16 +10,17 @@ import java.awt.Color;
 @SuppressWarnings({"PMD.ExcessiveParameterList"})
 public class TextToImageProperties {
 
-  private Color backgroundColor;
-  private Color fontColor;
-  private FontType fontType;
-  private int maxFontSize;
-  private int minFontSize;
-  private int maxWidth;
-  private int maxHeight;
-  private int dpi;
-  private FileExtension fileExtension;
-  private String text;
+  private final Color backgroundColor;
+  private final Color fontColor;
+  private final FontType fontType;
+  private final int maxFontSize;
+  private final int minFontSize;
+  private final int maxWidth;
+  private final int maxHeight;
+  private final int dpi;
+  private final FileExtension fileExtension;
+  private final String text;
+  private final boolean splitTextToWordsEnabled;
 
 
   TextToImageProperties(Color backgroundColor,
@@ -31,7 +32,7 @@ public class TextToImageProperties {
                         int maxHeight,
                         int dpi,
                         FileExtension fileExtension,
-                        String text) {
+                        String text, boolean splitTextToWordsEnabled) {
 
     this.backgroundColor = backgroundColor;
 
@@ -44,6 +45,7 @@ public class TextToImageProperties {
     this.dpi = dpi;
     this.fileExtension = fileExtension;
     this.text = text;
+    this.splitTextToWordsEnabled = splitTextToWordsEnabled;
   }
 
   public Color getBackgroundColor() {
@@ -96,6 +98,11 @@ public class TextToImageProperties {
     return text;
   }
 
+  public boolean isSplitTextToWordsEnabled() {
+
+    return splitTextToWordsEnabled;
+  }
+
   public static Builder getBuilder() {
 
     return new DefaultBuilderImpl();
@@ -120,6 +127,8 @@ public class TextToImageProperties {
 
     Builder text(String text);
 
+    Builder splitTextToWordsEnabled(boolean splitTextToWordsEnabled);
+
     TextToImageProperties build();
   }
 
@@ -134,6 +143,7 @@ public class TextToImageProperties {
     private ImageResolution imageResolution;
     private FileExtension fileExtension;
     private String text;
+    private boolean splitTextToWordsEnabled;
 
     @Override
     public Builder backgroundColor(Color backgroundColor) {
@@ -194,6 +204,13 @@ public class TextToImageProperties {
     }
 
     @Override
+    public Builder splitTextToWordsEnabled(boolean splitTextToWordsEnabled) {
+
+      this.splitTextToWordsEnabled = splitTextToWordsEnabled;
+      return this;
+    }
+
+    @Override
     public TextToImageProperties build() {
 
       AssertHelper.notNull(backgroundColor);
@@ -233,7 +250,8 @@ public class TextToImageProperties {
           imageResolution.getHeight(),
           imageResolution.getDpi(),
           fileExtension,
-          text);
+          text,
+          splitTextToWordsEnabled);
     }
   }
 }

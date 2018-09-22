@@ -2,10 +2,13 @@ package com.teammental.mehelper.image;
 
 import com.teammental.mecore.enums.FileExtension;
 import com.teammental.mecore.enums.FileType;
+import com.teammental.mecore.enums.HorizontalAlignment;
+import com.teammental.mecore.enums.VerticalAlignment;
 import com.teammental.mehelper.AssertHelper;
 import com.teammental.mehelper.ResolutionHelper;
 import com.teammental.mehelper.StringHelper;
 import com.teammental.mehelper.image.exception.TextToImageException;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
@@ -78,9 +81,11 @@ public class ImageHelper {
     int bufferedImageType = getBufferedImageType(properties.getFileExtension());
 
     String text = properties.getText();
-    List<String> lines = Arrays.stream(text.split(" "))
+    List<String> lines = properties.isSplitTextToWordsEnabled()
+        ? Arrays.stream(text.split(" "))
         .filter(s -> !StringHelper.isNullOrEmpty(s))
-        .collect(Collectors.toList());
+        .collect(Collectors.toList())
+        : Arrays.asList(text);
 
     Font font = getSuitableFont(lines, properties, bufferedImageType);
 
@@ -145,32 +150,89 @@ public class ImageHelper {
   }
 
   /**
-   * Resizes given image.
+   * Modifies given image.
    *
-   * @param originalImageData original image.
-   * @param imageResolution   desired resoltion
-   * @param fileExtension     file extension
+   * @param modifyImageProperties properties.
    * @return resized image data
    * @throws IOException exception
    */
-  public static byte[] resize(final byte[] originalImageData,
-                              ImageResolution imageResolution,
-                              FileExtension fileExtension)
+  public static byte[] modify(ModifyImageProperties modifyImageProperties)
       throws IOException {
 
-    AssertHelper.notNull(originalImageData, imageResolution);
+    AssertHelper.notNull(modifyImageProperties);
 
-    BufferedImage originalImage = bytesToBufferedImage(originalImageData);
 
-    BufferedImage resizedImage = new BufferedImage(imageResolution.getWidth(),
-        imageResolution.getHeight(), originalImage.getType());
+    byte[] formattedOriginalImageData = changeFormat(modifyImageProperties.getOriginalImageData(),
+        modifyImageProperties.getFileExtension());
 
-    Graphics2D g = resizedImage.createGraphics();
-    g.drawImage(originalImage, 0, 0, imageResolution.getWidth(),
-        imageResolution.getHeight(), null);
-    g.dispose();
+    BufferedImage originalImage =
+        bytesToBufferedImage(formattedOriginalImageData);
 
-    return bufferedImageToBytes(resizedImage, fileExtension);
+
+    int desiredWidth = modifyImageProperties.getImageResolution().getWidth();
+    int desiredHeight = modifyImageProperties.getImageResolution().getHeight();
+
+    BufferedImage resizedImage = new BufferedImage(desiredWidth,
+        desiredHeight, getBufferedImageType(modifyImageProperties.getFileExtension()));
+
+    Graphics2D graphics2D = resizedImage.createGraphics();
+
+
+    int resizedWidth;
+    int resizedHeight;
+    int leftMargin;
+    int topMargin;
+
+    if (modifyImageProperties.isScaleDisabled()) {
+      resizedWidth = desiredWidth;
+      resizedHeight = desiredHeight;
+      topMargin = 0;
+      leftMargin = 0;
+
+      graphics2D.setColor(Color.WHITE);
+      graphics2D.fillRect(0, 0, desiredWidth,
+          desiredHeight);
+
+    } else {
+
+      resizedWidth = originalImage.getWidth();
+      resizedHeight = originalImage.getHeight();
+
+      if (resizedWidth > desiredWidth) {
+        double ratio = (double) desiredWidth / resizedWidth;
+
+        resizedWidth = desiredWidth;
+        resizedHeight = (int) Math.round(resizedHeight * ratio);
+      }
+
+      if (resizedHeight > desiredHeight) {
+        double ratio = (double) desiredHeight / resizedHeight;
+
+        resizedHeight = desiredHeight;
+        resizedWidth = (int) Math.round(resizedWidth * ratio);
+      }
+
+      leftMargin = calculateLeftMargin(modifyImageProperties
+          .getHorizontalAlignment(), desiredWidth, resizedWidth);
+
+      topMargin = calculateTopMargin(modifyImageProperties
+          .getVerticalAlignment(), desiredHeight, resizedHeight);
+
+
+      graphics2D.setColor(modifyImageProperties.getBackgroundColor());
+      graphics2D.fillRect(0, 0, desiredWidth,
+          desiredHeight);
+    }
+
+
+    graphics2D.drawImage(originalImage, leftMargin, topMargin, resizedWidth,
+        resizedHeight, null);
+    graphics2D.dispose();
+
+
+    return setDpi(modifyImageProperties.getFileExtension(),
+        modifyImageProperties.getImageResolution().getDpi(),
+        resizedImage);
   }
 
   /**
@@ -414,5 +476,46 @@ public class ImageHelper {
     root.appendChild(dim);
 
     metadata.mergeTree("javax_imageio_1.0", root);
+  }
+
+  private static int calculateLeftMargin(HorizontalAlignment horizontalAlignment,
+                                         int desiredWidth,
+                                         int resizedWidth) {
+
+    int leftMargin;
+    switch (horizontalAlignment) {
+      case LEFT:
+        leftMargin = 0;
+        break;
+      case RIGHT:
+        leftMargin = desiredWidth - resizedWidth;
+        break;
+      case CENTER:
+      default:
+        leftMargin = (desiredWidth - resizedWidth) / 2;
+        break;
+    }
+    return leftMargin;
+  }
+
+  private static int calculateTopMargin(VerticalAlignment verticalAlignment,
+                                        int desiredHeight,
+                                        int resizedHeight) {
+
+    int topMargin;
+    switch (verticalAlignment) {
+      case TOP:
+        topMargin = 0;
+        break;
+      case BOTTOM:
+        topMargin = desiredHeight - resizedHeight;
+        break;
+      case MIDDLE:
+      default:
+        topMargin = (desiredHeight - resizedHeight) / 2;
+        break;
+    }
+
+    return topMargin;
   }
 }
