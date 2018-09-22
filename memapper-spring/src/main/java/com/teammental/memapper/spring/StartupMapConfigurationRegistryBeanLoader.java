@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class StartupMapConfigurationRegistryBeanLoader {
 
-
   /**
    * Default Bean definition for MapConfigurationRegistry.
    * @return MapConfigurationRegistry.
