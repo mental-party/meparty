@@ -1,9 +1,11 @@
 package com.teammental.merest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teammental.mecore.stereotype.controller.RestApi;
+import com.teammental.mecore.stereotype.dto.PrincipalDto;
 import com.teammental.medto.FilterDto;
 import com.teammental.mehelper.CastHelper;
 import com.teammental.mehelper.PrimitiveHelper;
@@ -21,6 +23,7 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.GenericTypeResolver;
@@ -34,6 +37,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.InvalidMediaTypeException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticatedPrincipal;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -51,11 +57,6 @@ import org.springframework.web.client.RestTemplate;
 class RestApiProxyInvocationHandler
     implements InvocationHandler {
 
-  private Class<?> restApiClass;
-
-  public RestApiProxyInvocationHandler(Class<?> restApiClass) {
-    this.restApiClass = restApiClass;
-  }
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RestApiProxyInvocationHandler.class);
 
@@ -63,26 +64,99 @@ class RestApiProxyInvocationHandler
 
   private RestTemplate restTemplate = new RestTemplate();
 
+  private ObjectMapper objectMapper;
+
+  private Class<?> restApiClass;
+
+  public RestApiProxyInvocationHandler(Class<?> restApiClass) {
+
+    this.restApiClass = restApiClass;
+
+    objectMapper = new ObjectMapper();
+    objectMapper = objectMapper.disable(
+        DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES)
+        .disable(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE)
+        .disable(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES)
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .disable(DeserializationFeature.FAIL_ON_MISSING_EXTERNAL_TYPE_ID_PROPERTY)
+        .disable(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES)
+        .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+        .disable(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES)
+        .disable(DeserializationFeature.FAIL_ON_NUMBERS_FOR_ENUMS)
+        .disable(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY)
+        .disable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS)
+        .disable(DeserializationFeature.FAIL_ON_UNRESOLVED_OBJECT_IDS);
+  }
+
+
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
     RestExchangeProperties properties = prepareRestExchangeProperties(proxy, method, args);
 
     RestResponse<Object> restResponse;
+
+    String userInfo = null;
+    try {
+      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+      AuthenticatedPrincipal principal = (AuthenticatedPrincipal) authentication.getPrincipal();
+
+      if (principal == null) {
+        userInfo = null;
+      } else if (principal instanceof PrincipalDto) {
+        PrincipalDto principalDto = (PrincipalDto) principal;
+
+        userInfo = principalDto.getUsername();
+      } else {
+        userInfo = principal.getName();
+      }
+
+    } catch (Exception ex) {
+      LOGGER.info("User is Anonymous. Couldn't take username from authenticated principal."
+          + ex.getLocalizedMessage());
+    }
+
+    if (StringHelper.isNullOrEmpty(userInfo)) {
+      String randomUid = UUID.randomUUID().toString();
+      userInfo = "{Anonymous User: " + randomUid + "}";
+    } else {
+      userInfo = "{Username: " + userInfo + "}";
+    }
+
     try {
 
+      LOGGER.info(userInfo + " Rest exchange started with following properties: "
+          + properties.toString());
+
       restResponse = doRestExchange(properties);
+      LOGGER.info(userInfo + " Rest exchange ended with success.");
+
+      try {
+        String resultBody = objectMapper.writeValueAsString(restResponse.getBody());
+        LOGGER.info(userInfo + " Rest exchange result body is: " + resultBody);
+      } catch (Exception ex) {
+
+        LOGGER.info(userInfo + " Couldn't serialize rest exchange result body: "
+            + ex.getLocalizedMessage());
+      }
 
     } catch (HttpStatusCodeException exception) {
 
-      restResponse = handleHttpStatusCodeException(exception);
+      LOGGER.warn(userInfo + " Rest exchange didn't complete.");
+      LOGGER.warn(userInfo + " " + exception.getLocalizedMessage());
+
+      restResponse = handleHttpStatusCodeException(exception, userInfo);
     } catch (Exception exception) {
+
+      LOGGER.warn(userInfo + " Rest exchange didn't complete.");
+      LOGGER.warn(userInfo + " " + exception.getLocalizedMessage());
 
       HttpStatusCodeException statusCodeException =
           new HttpServerErrorException(HttpStatus.BAD_REQUEST, exception.getLocalizedMessage());
 
-      restResponse = handleHttpStatusCodeException(statusCodeException);
+      restResponse = handleHttpStatusCodeException(statusCodeException, userInfo);
     }
+
 
     return restResponse;
   }
@@ -151,28 +225,31 @@ class RestApiProxyInvocationHandler
     return properties;
   }
 
-  RestResponse<Object> handleHttpStatusCodeException(HttpStatusCodeException exception) {
+  RestResponse<Object> handleHttpStatusCodeException(HttpStatusCodeException exception,
+                                                     String userInfo) {
 
     HttpStatus status = exception.getStatusCode();
 
     RestResponse<Object> restResponse = new RestResponse<>(status);
 
-    ObjectMapper objectMapper = new ObjectMapper();
-
     ValidationResultDto validationResultDto;
+    LOGGER.info(userInfo + " Result status: " + exception.getStatusCode());
 
     try {
 
+      LOGGER.info(userInfo + " Trying to parse the result as ValidationResultDto, if it is.");
       validationResultDto = objectMapper
           .readValue(exception.getResponseBodyAsString(), ValidationResultDto.class);
 
     } catch (Exception ex) {
-      LOGGER.error(ex.getLocalizedMessage());
+      LOGGER.info(userInfo + " Result is not ValidationResultDto. " + ex.getLocalizedMessage());
 
       validationResultDto = null;
     }
 
     if (validationResultDto == null) {
+      LOGGER.info(userInfo + " Result body is: " + exception.getResponseBodyAsString());
+
       restResponse.setResponseMessage(exception.getResponseBodyAsString());
     } else {
       restResponse.setValidationResult(validationResultDto);
@@ -193,20 +270,6 @@ class RestApiProxyInvocationHandler
 
     Object returnBody = null;
 
-    ObjectMapper objectMapper = new ObjectMapper();
-    objectMapper = objectMapper.disable(
-        DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES)
-        .disable(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE)
-        .disable(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES)
-        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-        .disable(DeserializationFeature.FAIL_ON_MISSING_EXTERNAL_TYPE_ID_PROPERTY)
-        .disable(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES)
-        .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
-        .disable(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES)
-        .disable(DeserializationFeature.FAIL_ON_NUMBERS_FOR_ENUMS)
-        .disable(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY)
-        .disable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS)
-        .disable(DeserializationFeature.FAIL_ON_UNRESOLVED_OBJECT_IDS);
 
     String body = responseEntity.getBody();
 
@@ -280,11 +343,9 @@ class RestApiProxyInvocationHandler
   }
 
   /**
-   * Searches {@link RequestMapping RequestMapping}
-   * annotation on the given method argument and extracts
-   * If RequestMapping annotation is not found, NoRequestMappingFoundException is thrown.
-   * {@link HttpMethod HttpMethod} type equivalent to
-   * {@link RequestMethod RequestMethod} type
+   * Searches {@link RequestMapping RequestMapping} annotation on the given method argument and
+   * extracts If RequestMapping annotation is not found, NoRequestMappingFoundException is thrown.
+   * {@link HttpMethod HttpMethod} type equivalent to {@link RequestMethod RequestMethod} type
    *
    * @param element AnnotatedElement object to be examined.
    * @return Mapping object
@@ -441,6 +502,63 @@ class RestApiProxyInvocationHandler
 
       return rowReturnType;
     }
+
+    @Override
+    public String toString() {
+
+      StringBuilder stringBuilder = new StringBuilder();
+      stringBuilder = stringBuilder
+          .append("{").append("url: ").append(getUrl())
+          .append(", httpMethod: ").append(getHttpMethod().toString())
+          .append(", httpEntity: ").append(getHttpEntityString())
+          .append(", urlVariables: ")
+          .append(getUrlVariablesString())
+          .append(", pageReturnType: ").append(getPageReturnTypeString())
+          .append(", rowReturnType: ").append(getRowReturnTypeString());
+
+      return stringBuilder.toString();
+    }
+
+    private String getUrlVariablesString() {
+
+      StringBuilder stringBuilderUrlVariables
+          = new StringBuilder();
+
+      getUrlVariables().forEach((s, o) -> stringBuilderUrlVariables
+          .append("{").append(s)
+          .append(", ")
+          .append(o == null ? "null" : o.toString()).append("}"));
+
+      return stringBuilderUrlVariables.toString();
+    }
+
+    private String getHttpEntityString() {
+
+      HttpEntity entity = getHttpEntity();
+
+      if (entity == null) {
+        return "";
+      }
+
+      try {
+        return objectMapper.writeValueAsString(entity);
+      } catch (JsonProcessingException ex) {
+        LOGGER.warn("Could't serialize httpEntity: " + ex.getLocalizedMessage());
+        return "";
+      }
+    }
+
+    private String getPageReturnTypeString() {
+
+      return getPageReturnType() == null
+          ? "null" : getPageReturnType().getName();
+    }
+
+    private String getRowReturnTypeString() {
+
+      return getRowReturnType() == null
+          ? "null" : getRowReturnType().getName();
+    }
   }
 
   class Mapping {
@@ -471,4 +589,5 @@ class RestApiProxyInvocationHandler
       return mediaType;
     }
   }
+
 }
