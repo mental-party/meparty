@@ -1,4 +1,4 @@
-package com.teammental.memapper;
+package com.teammental.memapper.types;
 
 import java.util.List;
 

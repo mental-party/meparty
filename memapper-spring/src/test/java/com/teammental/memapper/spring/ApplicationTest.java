@@ -3,7 +3,7 @@ package com.teammental.memapper.spring;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import com.teammental.memapper.Mapper;
+import com.teammental.memapper.types.Mapper;
 import com.teammental.memapper.spring.to.TargetTo;
 import com.teammental.memapper.spring.to.SourceTo;
 import org.junit.Test;

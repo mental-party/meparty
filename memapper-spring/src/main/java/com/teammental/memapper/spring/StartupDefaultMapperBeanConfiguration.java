@@ -1,7 +1,7 @@
 package com.teammental.memapper.spring;
 
 import com.teammental.memapper.BeanMapper;
-import com.teammental.memapper.Mapper;
+import com.teammental.memapper.types.Mapper;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,5 +1,6 @@
 package com.teammental.memapper;
 
+import com.teammental.memapper.types.Mapper;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,8 @@ public class BeanMapper implements Mapper {
   @Override
   public <S, T> T map(S source, Class<T> targetType) {
 
-    return (T) MeMapper.from(source).to(targetType);
+    MeMapperTo<S, T> mapperTo = new MeMapperTo<>(source);
+    return mapperTo.to(targetType);
   }
 
   /**
@@ -20,12 +22,14 @@ public class BeanMapper implements Mapper {
   @Override
   public <S, T> Iterable<T> map(Iterable<S> sources, Class<T> targetType) {
 
-    Iterable<T> mapped = (Iterable<T>) MeMapper.from(sources).to(targetType);
-    if (mapped == null) {
-      mapped = new ArrayList<>();
+    MeMapperToList<S, T> mapperToList = new MeMapperToList<>(sources);
+    Iterable<T> targets = mapperToList.to(targetType);
+
+    if (targets == null) {
+      targets = new ArrayList<>();
     }
 
-    return mapped;
+    return targets;
   }
 
   /**
@@ -34,11 +38,6 @@ public class BeanMapper implements Mapper {
   @Override
   public <S, T> List<T> map(List<S> sources, Class<T> targetType) {
 
-    List<T> mapped = (List<T>) MeMapper.from(sources).to(targetType);
-    if (mapped == null) {
-      mapped = new ArrayList<>();
-    }
-
-    return mapped;
+    return (List<T>) map((Iterable<S>) sources, targetType);
   }
 }
