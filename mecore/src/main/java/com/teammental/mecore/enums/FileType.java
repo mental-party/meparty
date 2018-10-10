@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 public enum FileType {
 
-  IMAGE, VIDEO, AUDIO, DOCUMENT, COMPRESSED, TEXT;
+  IMAGE, VIDEO, AUDIO, DOCUMENT, COMPRESSED, TEXT, UNKNOWN;
 
   /**
    * Gets extensions of this FileType.

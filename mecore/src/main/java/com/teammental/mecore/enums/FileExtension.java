@@ -4,21 +4,22 @@ import java.util.Arrays;
 import java.util.Locale;
 
 public enum FileExtension {
-  JPG(FileType.IMAGE, 1, "jpg", "jpeg"),
-  PNG(FileType.IMAGE, 2, "png"),
-  GIF(FileType.IMAGE, 3, "gif"),
-  BMP(FileType.IMAGE, 4, "bmp"),
-  MP4(FileType.VIDEO, 5, "mp4"),
-  MP3(FileType.AUDIO, 6, "mp3"),
-  XLS(FileType.DOCUMENT, 7, "xls"),
-  XLSX(FileType.DOCUMENT, 8, "xlsx"),
-  DOC(FileType.DOCUMENT, 8, "doc"),
-  DOCX(FileType.DOCUMENT, 10, "docx"),
-  TXT(FileType.TEXT, 11, "txt"),
-  PDF(FileType.DOCUMENT, 12, "pdf"),
-  RTF(FileType.DOCUMENT, 13, "rtf"),
-  ZIP(FileType.COMPRESSED, 14, "zip"),
-  RAR(FileType.COMPRESSED, 15, "rar");
+  NONE(FileType.UNKNOWN, 1, "", "unknown"),
+  JPG(FileType.IMAGE, 2, "jpg", "jpeg"),
+  PNG(FileType.IMAGE, 3, "png"),
+  GIF(FileType.IMAGE, 4, "gif"),
+  BMP(FileType.IMAGE, 5, "bmp"),
+  MP4(FileType.VIDEO, 6, "mp4"),
+  MP3(FileType.AUDIO, 7, "mp3"),
+  XLS(FileType.DOCUMENT, 8, "xls"),
+  XLSX(FileType.DOCUMENT, 9, "xlsx"),
+  DOC(FileType.DOCUMENT, 10, "doc"),
+  DOCX(FileType.DOCUMENT, 11, "docx"),
+  TXT(FileType.TEXT, 12, "txt"),
+  PDF(FileType.DOCUMENT, 13, "pdf"),
+  RTF(FileType.DOCUMENT, 14, "rtf"),
+  ZIP(FileType.COMPRESSED, 15, "zip"),
+  RAR(FileType.COMPRESSED, 16, "rar");
 
   private String[] extensions;
   private FileType fileType;
@@ -42,6 +43,7 @@ public enum FileExtension {
   }
 
   public int getExtensionId() {
+
     return extensionId;
   }
 
