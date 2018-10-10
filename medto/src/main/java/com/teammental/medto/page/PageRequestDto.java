@@ -80,7 +80,7 @@ public class PageRequestDto implements Dto {
     this.sortDtos = sortDtos;
   }
 
-  public class SortDto {
+  public static class SortDto {
     private String property;
     private boolean sortAsc;
 
