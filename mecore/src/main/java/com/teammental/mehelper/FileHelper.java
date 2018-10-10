@@ -36,7 +36,7 @@ public class FileHelper {
   /**
    * Extracts {@link FileExtension} of the given fileName.
    *
-   * @param fileName
+   * @param fileName fileName
    * @return returns file extension, if extension is not known or empty returns {@link
    * FileExtension#UNKNOWN}
    */
@@ -47,6 +47,23 @@ public class FileHelper {
     return Arrays.stream(FileExtension.values())
         .filter(fileExtension -> fileExtension
             .matches(ext))
+        .findFirst()
+        .orElse(FileExtension.UNKNOWN);
+  }
+
+
+  /**
+   * Gets corresponding {@link FileExtension} of given extensionId.
+   *
+   * @param extensionId extension id
+   * @return returns related {@link FileExtension}, if not found returns {@link
+   * FileExtension#UNKNOWN}
+   */
+  public static FileExtension getFileExtension(int extensionId) {
+
+    return Arrays.stream(FileExtension.values())
+        .filter(fileExtension -> fileExtension
+            .getExtensionId() == extensionId)
         .findFirst()
         .orElse(FileExtension.UNKNOWN);
   }
