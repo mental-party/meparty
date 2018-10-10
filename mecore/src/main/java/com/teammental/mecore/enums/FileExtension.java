@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Locale;
 
 public enum FileExtension {
-  NONE(FileType.UNKNOWN, 1, "", "unknown"),
+  UNKNOWN(FileType.UNKNOWN, 1, "", "unknown"),
   JPG(FileType.IMAGE, 2, "jpg", "jpeg"),
   PNG(FileType.IMAGE, 3, "png"),
   GIF(FileType.IMAGE, 4, "gif"),
