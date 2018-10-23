@@ -16,6 +16,15 @@ public interface Mapper {
   <S, T> T map(S source, Class<T> targetType);
 
   /**
+   * Maps the given source of S object to target object.
+   *
+   * @param source source object
+   * @param target target object
+   * @return TargetT
+   */
+  <S, T> T map(S source, T target);
+
+  /**
    * Maps the given sources of S object to a newly instantiated objects of the given targetType.
    *
    * @param sources    source objects

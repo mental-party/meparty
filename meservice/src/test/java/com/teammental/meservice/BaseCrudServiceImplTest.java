@@ -10,6 +10,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import com.teammental.meexception.dto.DtoCrudException;
+import com.teammental.memapper.spring.StartupDefaultMapperBeanConfiguration;
+import com.teammental.memapper.types.Mapper;
+import com.teammental.meservice.testapp.TestCrudService;
+import com.teammental.meservice.testapp.TestCrudServiceImpl;
+import com.teammental.meservice.testapp.TestDto;
+import com.teammental.meservice.testapp.TestEntity;
+import com.teammental.meservice.testapp.TestRepository;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,25 +28,27 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import com.teammental.meexception.dto.DtoCrudException;
-import com.teammental.memapper.MeMapper;
-import com.teammental.meservice.testapp.TestCrudService;
-import com.teammental.meservice.testapp.TestCrudServiceImpl;
-import com.teammental.meservice.testapp.TestDto;
-import com.teammental.meservice.testapp.TestEntity;
-import com.teammental.meservice.testapp.TestRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
+@ImportAutoConfiguration(StartupDefaultMapperBeanConfiguration.class)
 public class BaseCrudServiceImplTest {
 
   @MockBean
   private TestRepository testRepository;
 
+  @Spy
+  @Autowired
+  private Mapper mapper;
+
   @InjectMocks
   private TestCrudService testCrudService = new TestCrudServiceImpl();
+
 
   @Before
   public void setUp() {
@@ -54,8 +64,7 @@ public class BaseCrudServiceImplTest {
     final TestEntity testEntity1 = TestEntity.buildRandom();
     final TestEntity testEntity2 = TestEntity.buildRandom();
     final List<TestEntity> testEntities = Arrays.asList(testEntity1, testEntity2);
-    final List<TestDto> expectedDtos = (List<TestDto>) MeMapper.getMapperFromList(testEntities)
-        .mapToList(TestDto.class).get();
+    final List<TestDto> expectedDtos = mapper.map(testEntities, TestDto.class);
     final String expectedDtoString = expectedDtos.stream()
         .map(testDto -> testDto.toString())
         .reduce("", String::concat);
@@ -102,8 +111,7 @@ public class BaseCrudServiceImplTest {
 
     final TestEntity testEntity = TestEntity.buildRandom();
     final Integer id = testEntity.getId();
-    final TestDto expectedDto = (TestDto) MeMapper.getMapperFrom(testEntity)
-        .mapTo(TestDto.class).get();
+    final TestDto expectedDto = mapper.map(testEntity, TestDto.class);
 
     when(testRepository.findById(id))
         .thenReturn(Optional.of(testEntity));
@@ -162,8 +170,7 @@ public class BaseCrudServiceImplTest {
 
     final TestEntity expectedEntity = TestEntity.buildRandom();
     final Integer expectedId = expectedEntity.getId();
-    final TestDto expectedDto = (TestDto) MeMapper.from(expectedEntity)
-        .to(TestDto.class);
+    final TestDto expectedDto = mapper.map(expectedEntity, TestDto.class);
     expectedDto.setId(null);
 
     when(testRepository.save(anyObject()))
@@ -190,8 +197,7 @@ public class BaseCrudServiceImplTest {
     final TestEntity updatedEntity = TestEntity.buildRandom();
     updatedEntity.setId(originalEntity.getId());
 
-    final TestDto updatedDto = (TestDto) MeMapper.getMapperFrom(updatedEntity)
-        .mapTo(TestDto.class).get();
+    final TestDto updatedDto = mapper.map(updatedEntity, TestDto.class);
 
     when(testRepository.findById(anyInt()))
         .thenReturn(Optional.of(originalEntity));

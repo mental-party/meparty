@@ -1,15 +1,15 @@
 package com.teammental.memapper.abstractmapper;
 
+import static junit.framework.TestCase.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNull;
+
 import com.teammental.memapper.BeanMapperRegistry;
 import com.teammental.memapper.to.EnumGender;
 import com.teammental.memapper.to.abstractmapper.SourceTo;
 import com.teammental.memapper.to.abstractmapper.TargetTo;
 import org.junit.Test;
-
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertNotNull;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNull;
 
 public class BeanMapperRegistryTest {
 
@@ -32,6 +32,7 @@ public class BeanMapperRegistryTest {
     assertEquals(CustomAbstractMapper.MALE_SURNAME, targetTo.getNameTo().getLastName());
     assertEquals(CustomAbstractMapper.NO, targetTo.getNo());
   }
+
 
   @Test
   public void shouldUseCustomMapper_test2_whenHasCustomMapper() {

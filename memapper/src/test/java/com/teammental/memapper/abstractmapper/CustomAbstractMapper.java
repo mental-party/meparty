@@ -1,10 +1,10 @@
 package com.teammental.memapper.abstractmapper;
 
-import com.teammental.memapper.AbstractMapper;
 import com.teammental.memapper.to.EnumGender;
 import com.teammental.memapper.to.NameTo;
 import com.teammental.memapper.to.abstractmapper.SourceTo;
 import com.teammental.memapper.to.abstractmapper.TargetTo;
+import com.teammental.memapper.types.AbstractMapper;
 
 public class CustomAbstractMapper extends AbstractMapper<SourceTo, TargetTo> {
 
@@ -15,16 +15,14 @@ public class CustomAbstractMapper extends AbstractMapper<SourceTo, TargetTo> {
   public static final String FEMALE_SURNAME = "Doee";
 
   @Override
-  protected boolean supports(Class<?> sourceClazz, Class<?> targetClazz) {
+  protected boolean checkSupports(Class<?> sourceClazz, Class<?> targetClazz) {
 
     return sourceClazz.isAssignableFrom(SourceTo.class)
         && targetClazz.isAssignableFrom(TargetTo.class);
   }
 
   @Override
-  protected TargetTo doMap(SourceTo sourceTo) {
-
-    TargetTo targetTo = new TargetTo();
+  protected TargetTo doMap(SourceTo sourceTo, TargetTo targetTo) {
 
     NameTo nameTo;
     if (sourceTo.getEnumGender()

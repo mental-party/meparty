@@ -20,6 +20,15 @@ public class BeanMapper implements Mapper {
    * {@inheritDoc}
    */
   @Override
+  public <S, T> T map(S source, T target) {
+    MeMapperTo<S, T> mapperTo = new MeMapperTo<>(source);
+    return mapperTo.to(target);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public <S, T> Iterable<T> map(Iterable<S> sources, Class<T> targetType) {
 
     MeMapperToList<S, T> mapperToList = new MeMapperToList<>(sources);

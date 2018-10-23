@@ -1,19 +1,20 @@
 package com.teammental.memapper;
 
-import com.teammental.memapper.types.Mapper;
+import com.teammental.memapper.types.AbstractMapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class BeanMapperRegistry implements Mapper {
+public class BeanMapperRegistry extends BeanMapper {
 
-  private List<AbstractMapper> customMappers;
+  private final List<AbstractMapper> customMappers;
 
   public BeanMapperRegistry() {
 
-    customMappers = new ArrayList<>();
+    this.customMappers = new ArrayList<>();
   }
+
 
   /**
    * {@inheritDoc}
@@ -30,14 +31,38 @@ public class BeanMapperRegistry implements Mapper {
     if (hasCustomMapper(sourceType, targetType)) {
       AbstractMapper mapper = getCustomMapper(sourceType, targetType);
 
-      T target = doCustomMap(source, mapper);
+      T target = doCustomMap(source, mapper, null);
 
       if (target != null) {
         return target;
       }
     }
 
-    return (T) MeMapper.from(source).to(targetType);
+    return super.map(source, targetType);
+  }
+
+  @Override
+  public <S, T> T map(S source, T target) {
+
+    if (source == null || target == null) {
+      return null;
+    }
+
+    Class<?> sourceType = source.getClass();
+    Class<?> targetType = target.getClass();
+
+    if (hasCustomMapper(sourceType, targetType)) {
+      AbstractMapper mapper = getCustomMapper(sourceType, targetType);
+
+      T targetResult = doCustomMap(source, mapper, target);
+
+      if (targetResult != null) {
+
+        return targetResult;
+      }
+    }
+
+    return super.map(source, target);
   }
 
   /**
@@ -69,13 +94,7 @@ public class BeanMapperRegistry implements Mapper {
       }
     }
 
-
-    Iterable<T> mapped = (Iterable<T>) MeMapper.from(sources).to(targetType);
-    if (mapped == null) {
-      mapped = new ArrayList<>();
-    }
-
-    return mapped;
+    return super.map(sources, targetType);
   }
 
   /**
@@ -97,9 +116,9 @@ public class BeanMapperRegistry implements Mapper {
     customMappers.add(mapper);
   }
 
-  private <S, T> T doCustomMap(S source, AbstractMapper mapper) {
+  private <S, T> T doCustomMap(S source, AbstractMapper mapper, T target) {
 
-    return (T) mapper.doMap(source);
+    return (T) mapper.map(source, target);
   }
 
   private <S, T> Iterable<T> doCustomMap(Iterable<S> sources,
@@ -109,7 +128,7 @@ public class BeanMapperRegistry implements Mapper {
 
     for (S source
         : sources) {
-      targets.add(doCustomMap(source, mapper));
+      targets.add(doCustomMap(source, mapper, null));
     }
 
     return targets;

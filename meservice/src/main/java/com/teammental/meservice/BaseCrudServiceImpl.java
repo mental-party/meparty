@@ -8,24 +8,25 @@ import com.teammental.meexception.dto.DtoCrudException;
 import com.teammental.meexception.dto.DtoDeleteException;
 import com.teammental.meexception.dto.DtoNotFoundException;
 import com.teammental.meexception.dto.DtoUpdateException;
-import com.teammental.memapper.MeMapper;
-import com.teammental.memapper.util.mapping.MapByFieldNameUtil;
+import com.teammental.memapper.types.Mapper;
 import com.teammental.merepository.BaseJpaRepository;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.transaction.annotation.Transactional;
-
 
 @Transactional
 public abstract class BaseCrudServiceImpl<DtoT extends IdDto<IdT>, IdT extends Serializable>
     implements BaseCrudService<DtoT, IdT> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(BaseCrudServiceImpl.class);
+
+  @Autowired
+  private Mapper mapper;
 
   // region override methods
 
@@ -127,40 +128,36 @@ public abstract class BaseCrudServiceImpl<DtoT extends IdDto<IdT>, IdT extends S
       entities = getRepository().findAll(filterDto.getPage().toPageRequest());
     }
 
-    Optional<List<DtoT>> optionalDtos = MeMapper.from(entities)
-        .toOptional(getDtoClass());
-
-    if (!optionalDtos.isPresent() || optionalDtos.get().isEmpty()) {
+    if (!entities.hasContent()) {
       throw new DtoNotFoundException();
     }
 
-    return new PageImpl<>(optionalDtos.get());
+    return (Page<DtoT>) entities.map(p -> mapper.map(p, getDtoClass()));
   }
 
   protected DtoT doFindById(final IdT id) throws DtoCrudException {
 
     Optional optionalEntity = getRepository().findById(id);
 
-    Optional<DtoT> dto = MeMapper.from(optionalEntity.orElse(null)).toOptional(getDtoClass());
-
-    if (!dto.isPresent()) {
+    if (!optionalEntity.isPresent()) {
       throw new DtoNotFoundException();
     }
+    return mapper.map(optionalEntity.get(), getDtoClass());
 
-    return dto.get();
   }
 
   protected IdT doCreate(final DtoT dto) throws DtoCrudException {
 
-    Optional optionalEntity = MeMapper.from(dto)
-        .toOptional(getEntityClass());
-
     try {
-      Object entity = getRepository().save(optionalEntity.get());
-      Optional<DtoT> optionalDto = MeMapper.from(entity)
-          .toOptional(getDtoClass());
 
-      return optionalDto.get().getId();
+      Object entity = mapper.map(dto, getEntityClass());
+
+      entity = getRepository().save(entity);
+
+      DtoT dtoResult = mapper.map(entity, getDtoClass());
+
+      return dtoResult.getId();
+
     } catch (Exception ex) {
       throw new DtoCreateException(dto, ex);
     }
@@ -174,14 +171,14 @@ public abstract class BaseCrudServiceImpl<DtoT extends IdDto<IdT>, IdT extends S
       throw new DtoNotFoundException();
     }
 
-    Object entity = MapByFieldNameUtil.map(dto, optionalEntity.get());
+    Object entity = mapper.map(dto, optionalEntity.get());
 
     try {
       Object resultEntity = getRepository().save(entity);
-      Optional<DtoT> optionalDto = MeMapper.from(resultEntity)
-          .toOptional(getDtoClass());
 
-      return optionalDto.get().getId();
+      DtoT dtoResult = mapper.map(resultEntity, getDtoClass());
+
+      return dtoResult.getId();
     } catch (Exception ex) {
       throw new DtoUpdateException(dto, ex);
     }
