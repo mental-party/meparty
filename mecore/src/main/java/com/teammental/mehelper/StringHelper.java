@@ -46,13 +46,25 @@ public class StringHelper {
   }
 
   /**
-   * Checks if a String object is null or empty.
+   * Checks if a String object is null or empty or has only whitespace chars.
    *
    * @param str String object which will be checked
    * @return true if str is empty or null, false if not
    */
   public static boolean isNullOrEmpty(final String str) {
-    return str == null || str.length() == 0;
+    return isNullOrEmpty(str, true);
+  }
+
+  /**
+   * Checks if a String object is null or empty.
+   *
+   * @param str  String object which will be checked
+   * @param trim if true, str object will be trimmed before checking emptiness.
+   * @return true if str is empty or null, false if not
+   */
+  public static boolean isNullOrEmpty(final String str, final boolean trim) {
+    return str == null
+        || (trim ? str.trim().length() == 0 : str.length() == 0);
   }
 
 
@@ -121,7 +133,7 @@ public class StringHelper {
    * Returns first element in an array unless it has a value;
    * otherwise returns defaultVal.
    *
-   * @param strings String array
+   * @param strings    String array
    * @param defaultVal default String
    * @return first or defaultVal String
    */

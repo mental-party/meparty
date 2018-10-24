@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.junit.Test;
 
 /**
@@ -71,6 +70,28 @@ public class StringHelperTest {
       boolean isNullOrEmpty = StringHelper.isNullOrEmpty(str);
 
       assertEquals(expectedResult, isNullOrEmpty);
+    }
+
+    @Test
+    public void shouldReturnFalse_whenStringIsWhiteSpaceAndTrimIsFalse() {
+      final String str = " ";
+      final boolean expectedResult = false;
+      final boolean trim = false;
+
+      boolean actualResult = StringHelper.isNullOrEmpty(str, trim);
+
+      assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    public void shouldReturnFalse_whenStringIsWhiteSpaceAndTrimIsTrue() {
+      final String str = " ";
+      final boolean expectedResult = true;
+      final boolean trim = true;
+
+      boolean actualResult = StringHelper.isNullOrEmpty(str, trim);
+
+      assertEquals(expectedResult, actualResult);
     }
 
   }
