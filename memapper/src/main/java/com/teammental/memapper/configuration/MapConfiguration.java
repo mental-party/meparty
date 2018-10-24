@@ -9,6 +9,7 @@ public class MapConfiguration {
   private Class<?> sourceType;
   private Class<?> targetType;
   private boolean oneWayMapping;
+  private boolean hybridMappingEnabled;
 
   boolean isOneWayMapping() {
     return oneWayMapping;
@@ -17,14 +18,15 @@ public class MapConfiguration {
   MapConfiguration(Map<Field, Field> fieldMap,
                    Class<?> sourceType,
                    Class<?> targetType,
-                   boolean oneWayMapping) {
+                   boolean oneWayMapping,
+                   boolean hybridMappingEnabled) {
 
     this.fieldMap = fieldMap;
     this.sourceType = sourceType;
     this.targetType = targetType;
     this.oneWayMapping = oneWayMapping;
+    this.hybridMappingEnabled = hybridMappingEnabled;
   }
-
 
   public Map<Field, Field> getFieldMap() {
     return fieldMap;
@@ -39,6 +41,9 @@ public class MapConfiguration {
     return targetType;
   }
 
+  public boolean isHybridMappingEnabled() {
+    return hybridMappingEnabled;
+  }
 
   @Override
   public int hashCode() {
@@ -70,7 +75,10 @@ public class MapConfiguration {
 
     MapConfiguration configuration =
         new MapConfiguration(reverseMap,
-            reverseSourceType, reverseTargetType, this.isOneWayMapping());
+            reverseSourceType,
+            reverseTargetType,
+            this.isOneWayMapping(),
+            this.isHybridMappingEnabled());
 
     return configuration;
   }

@@ -6,17 +6,23 @@ import com.teammental.memapper.exception.FieldTypesAreNotAssignableException;
 import com.teammental.memapper.exception.NoSuchFieldException;
 import com.teammental.memapper.util.FieldUtil;
 import com.teammental.memapper.util.mapping.CommonMapUtil;
-
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("PMD.TooManyMethods")
 public class MapConfigurationBuilder<S, T>
     implements ConfigurationBetween<S>,
     ConfigurationAnd<T>,
     ConfigurationMapField,
     ConfigurationMapWith {
+
+  private static final Logger LOGGER
+      = LoggerFactory.getLogger(MapConfigurationBuilder.class);
 
   private MapConfigurationBuilder(boolean oneWayMapping) {
 
@@ -31,6 +37,7 @@ public class MapConfigurationBuilder<S, T>
   private String tempSourceFieldName;
   private List<Field> sourceFields;
   private List<Field> targetFields;
+  private boolean hybridMappingEnabled;
 
   public boolean isOneWayMapping() {
 
@@ -59,6 +66,18 @@ public class MapConfigurationBuilder<S, T>
   }
 
   @Override
+  public ConfigurationBetween enableHybridMapping() {
+    this.hybridMappingEnabled = true;
+    return this;
+  }
+
+  @Override
+  public ConfigurationBetween disableHybridMapping() {
+    this.hybridMappingEnabled = false;
+    return this;
+  }
+
+  @Override
   public ConfigurationMapField and(Class<T> targetType) {
 
     AssertHelper.notNull(targetType);
@@ -73,7 +92,7 @@ public class MapConfigurationBuilder<S, T>
 
     AssertHelper.notNull(sourceFieldName);
 
-    if (!sourceFields.stream().anyMatch(field -> field.getName().equals(sourceFieldName))) {
+    if (sourceFields.stream().noneMatch(field -> field.getName().equals(sourceFieldName))) {
       throw new NoSuchFieldException(sourceFieldName, sourceType);
     }
     this.tempSourceFieldName = sourceFieldName;
@@ -86,21 +105,34 @@ public class MapConfigurationBuilder<S, T>
 
     AssertHelper.notNull(targetFieldName);
 
-    if (!targetFields.stream().anyMatch(field -> field.getName().equals(targetFieldName))) {
+    if (targetFields.stream().noneMatch(field -> field.getName().equals(targetFieldName))) {
       throw new NoSuchFieldException(targetFieldName, targetType);
     }
 
+    addFieldMapItem(tempSourceFieldName, targetFieldName);
+
+    this.tempSourceFieldName = null;
+    return this;
+  }
+
+  private void addFieldMapItem(String sourceFieldName, String targetFieldName) {
     Field sourceField = sourceFields.stream()
-        .filter(field -> field.getName().equals(tempSourceFieldName))
+        .filter(field -> field.getName().equals(sourceFieldName))
         .findFirst().get();
 
-    if (!FieldUtil.hasPublicGetMethod(sourceField)) {
-      throw new FieldIsNotAccessible(sourceField, false);
-    }
 
     Field targetField = targetFields.stream()
         .filter(field -> field.getName().equals(targetFieldName))
         .findFirst().get();
+
+    addFieldMapItem(sourceField, targetField);
+  }
+
+  private void addFieldMapItem(Field sourceField, Field targetField) {
+
+    if (!FieldUtil.hasPublicGetMethod(sourceField)) {
+      throw new FieldIsNotAccessible(sourceField, false);
+    }
 
     if (!FieldUtil.hasPublicSetMethod(targetField)) {
       throw new FieldIsNotAccessible(targetField, true);
@@ -111,22 +143,55 @@ public class MapConfigurationBuilder<S, T>
       throw new FieldTypesAreNotAssignableException(sourceField, targetField);
     }
 
-
     fieldMap.put(sourceField, targetField);
-
-    this.tempSourceFieldName = null;
-    return this;
   }
 
 
   @Override
   public MapConfiguration build() {
 
+    if (this.hybridMappingEnabled) {
+      addHybridMappings();
+    }
+
     if (fieldMap.isEmpty()) {
       throw new IllegalArgumentException("You should add at least one field mapping");
     }
 
-    return new MapConfiguration(fieldMap, sourceType, targetType, oneWayMapping);
+    return new MapConfiguration(fieldMap,
+        sourceType,
+        targetType,
+        oneWayMapping,
+        hybridMappingEnabled);
+  }
+
+  private void addHybridMappings() {
+
+    for (Field sourceField
+        : sourceFields) {
+
+      if (fieldMap.containsKey(sourceField)) {
+        continue;
+      }
+
+      Optional<Field> optionalTargetField
+          = targetFields
+          .stream()
+          .filter(field -> field.getName()
+              .equalsIgnoreCase(sourceField.getName()))
+          .findFirst();
+
+      if (optionalTargetField.isPresent()
+          && !fieldMap.containsValue(optionalTargetField.get())) {
+        try {
+          addFieldMapItem(sourceField, optionalTargetField.get());
+
+        } catch (Exception ex) {
+
+          LOGGER.debug(ex.getLocalizedMessage());
+        }
+      }
+    }
   }
 
 
