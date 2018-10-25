@@ -115,6 +115,7 @@ public class HybridMappingTest {
     target = (TargetPersonTo) worker.map();
 
     assertNotEquals(source.getTitle2(), target.getTitle2());
+    assertEquals(source.getTitle(), target.getTitle2());
   }
 
   @After
