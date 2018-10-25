@@ -1,0 +1,12 @@
+ext {
+    packageDescription = 'Mental Party Proxy Library'
+    packageName = 'com.teammental.meproxy'
+    packageTitle = 'Mental Core'
+    repoUrl = 'https://github.com/mental-party/meparty/tree/master/meproxy'
+    repoVcsUrl = 'https://github.com/mental-party/meparty.git'
+    packageLabels = ['spring', 'spring-web', 'spring-webmvc', 'java']
+    packageGroupId = 'com.teammental'
+    packageArtifactId = 'meproxy'
+}
+
+apply from: "${rootDir}/deploy.subprojects.gradle"

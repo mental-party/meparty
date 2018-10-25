@@ -1,0 +1,12 @@
+jar {
+    baseName = 'meproxy'
+}
+
+dependencies {
+    compile project(':medto')
+    compile project(':memapper')
+
+    compile("com.fasterxml.jackson.core:jackson-databind:${jacksonDatabindVersion}")
+}
+
+apply from: 'deploy.gradle'

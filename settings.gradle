@@ -12,5 +12,6 @@ include 'merest'
 include 'meservice'
 include 'mevalidation'
 include 'mestarter'
+include 'meproxy'
 
 rootProject.name = 'meparty'
