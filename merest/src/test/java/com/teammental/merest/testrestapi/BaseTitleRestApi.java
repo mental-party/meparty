@@ -1,7 +1,8 @@
-package com.teammental.merest.testapp;
+package com.teammental.merest.testrestapi;
 
 import com.teammental.medto.FilterDto;
 import com.teammental.merest.RestResponse;
+import com.teammental.merest.testapp.TestDto;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.DeleteMapping;

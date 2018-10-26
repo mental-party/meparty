@@ -3,20 +3,17 @@ package com.teammental.merest;
 import static org.junit.Assert.*;
 
 import com.teammental.medto.FilterDto;
-import com.teammental.merest.testapp.BaseTitleRestApi;
 import com.teammental.merest.testapp.TestDto;
-import com.teammental.merest.testapp.TestRestApi;
+import com.teammental.merest.testrestapi.TestRestApi;
 import java.lang.reflect.Method;
 
 import com.teammental.merest.exception.NoRequestMappingFoundException;
 import com.teammental.merest.testapp.Config;
-import com.teammental.merest.testapp.SuperRestApi_Annotations;
+import com.teammental.merest.testrestapi.SuperRestApi_Annotations;
 import com.teammental.merest.testapp.ChildRestApi_Annotations;
 import java.lang.reflect.Type;
 import org.junit.Test;
-import org.springframework.core.GenericTypeResolver;
 import org.springframework.http.HttpMethod;
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 public class RestApiProxyInvocationHandlerTest {
 

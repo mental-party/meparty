@@ -1,5 +1,6 @@
 package com.teammental.merest.testapp;
 
+import com.teammental.merest.testrestapi.SuperRestApi_Annotations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

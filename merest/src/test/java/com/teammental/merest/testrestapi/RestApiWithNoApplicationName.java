@@ -1,4 +1,4 @@
-package com.teammental.merest.testapp;
+package com.teammental.merest.testrestapi;
 
 import com.teammental.mecore.stereotype.controller.Controller;
 import com.teammental.mecore.stereotype.controller.RestApi;

@@ -1,8 +1,10 @@
 package com.teammental.merest.testapp;
 
+import com.teammental.mecore.stereotype.controller.Controller;
 import com.teammental.medto.FilterDto;
 import com.teammental.merest.RestResponse;
 
+import com.teammental.merest.testrestapi.BaseTitleRestApi;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,14 +15,16 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class TestRestApiController implements TestRestApi {
+@RequestMapping(Config.TESTRESTAPI_ROOTURL)
+public class TestRestApiController implements BaseTitleRestApi<TestDto, Integer>, Controller {
 
-  @Override
   public RestResponse<List<TestDto>> getAll() {
 
     TestDto testDto1 = new TestDto(1, "1");
@@ -86,8 +90,7 @@ public class TestRestApiController implements TestRestApi {
     return RestResponse.of(ResponseEntity.ok(testDto));
   }
 
-
-  @Override
+  @GetMapping("/getunknownproperty")
   public RestResponse<UnknownPropertyTo> getUnknownPropertyTo() {
 
     UnknownPropertyTo to = new UnknownPropertyTo();

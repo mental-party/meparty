@@ -1,8 +1,11 @@
-package com.teammental.merest.testapp;
+package com.teammental.merest.testrestapi;
 
 import com.teammental.mecore.stereotype.controller.Controller;
 import com.teammental.mecore.stereotype.controller.RestApi;
 import com.teammental.merest.RestResponse;
+import com.teammental.merest.testapp.Config;
+import com.teammental.merest.testapp.TestDto;
+import com.teammental.merest.testapp.UnknownPropertyTo;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 

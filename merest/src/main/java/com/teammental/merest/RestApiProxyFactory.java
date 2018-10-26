@@ -11,6 +11,12 @@ import java.lang.reflect.Proxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Deprecated since 1.2.4.
+ * Use {@link EnableRestApi} to enable auto-configuration
+ * for {@link RestApi} interfaces.
+ */
+@Deprecated
 public class RestApiProxyFactory {
 
   private static final String MOCK_IMPL_SUFFIX = "MockImpl";

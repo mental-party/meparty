@@ -3,10 +3,10 @@ package com.teammental.merest;
 import static org.junit.Assert.assertTrue;
 
 import com.teammental.merest.testapp.Config;
-import com.teammental.merest.testapp.MockRestApi;
+import com.teammental.merest.testrestapi.MockRestApi;
 import com.teammental.merest.testapp.MockRestApiMockImpl;
 import com.teammental.merest.testapp.TestApplication;
-import com.teammental.merest.testapp.TestRestApi;
+import com.teammental.merest.testrestapi.TestRestApi;
 import java.lang.reflect.Proxy;
 import org.junit.After;
 import org.junit.Before;

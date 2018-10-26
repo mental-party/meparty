@@ -4,58 +4,54 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import com.teammental.merest.exception.ApplicationNameCannotBeNullOrEmptyException;
-import com.teammental.merest.exception.RestApiAnnotationIsMissingException;
-import com.teammental.merest.testrestapi.NoRestApiAnnotation;
-import com.teammental.merest.testrestapi.RestApiWithNoApplicationName;
-
-import java.util.List;
-
 import com.teammental.merest.testapp.Config;
 import com.teammental.merest.testapp.TestApplication;
+import com.teammental.merest.testrestapi.TestApplicationEnableRestApi;
 import com.teammental.merest.testapp.TestDto;
 import com.teammental.merest.testrestapi.TestRestApi;
-
+import java.util.List;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    classes = {TestApplication.class})
-public class RestApiProxyFactoryTest {
+    classes = {TestApplicationEnableRestApi.class})
+public class RestApiProxyBeanFactoryTest {
 
-  @LocalServerPort
-  private int port;
+  private static SpringApplicationBuilder apiApplication;
 
-  private TestRestApi testRestApi = RestApiProxyFactory.createProxy(TestRestApi.class);
+  @Autowired
+  private TestRestApi testRestApi;
 
-  private ApplicationExplorer applicationExplorer = ApplicationExplorer.getInstance();
+  private static ApplicationExplorer applicationExplorer = ApplicationExplorer.getInstance();
 
-  @Before
-  public void setUp() {
+  @BeforeClass
+  public static void setUp() {
 
-    applicationExplorer.addApplication(Config.TESTAPPLICATIONNAME, "http://localhost:" + port);
+    int apiPort = 8090;
+    apiApplication = new SpringApplicationBuilder(TestApplication.class)
+        .properties("server.port=" + apiPort);
+
+    apiApplication.run();
+
+    applicationExplorer.addApplication(Config.TESTAPPLICATIONNAME, "http://localhost:" + apiPort);
   }
 
-  @Test(expected = RestApiAnnotationIsMissingException.class)
-  public void shouldThrowException_whenRestApiAnnotationIsMissing() {
-
-    NoRestApiAnnotation noRestApiAnnotation = RestApiProxyFactory
-        .createProxy(NoRestApiAnnotation.class);
-  }
-
-  @Test(expected = ApplicationNameCannotBeNullOrEmptyException.class)
-  public void shouldThrowException_whenApplicationNameIsMissing() {
-
-    RestApiWithNoApplicationName restApi = RestApiProxyFactory
-        .createProxy(RestApiWithNoApplicationName.class);
+  @Test
+  public void testRestApi_shouldNotBeNull() {
+    assertNotNull(testRestApi);
   }
 
   @Test
@@ -83,7 +79,7 @@ public class RestApiProxyFactoryTest {
 
     Integer expectedId = 1;
     String expectedName = "name";
-    ResponseEntity<TestDto> responseEntity =  testRestApi.getById(1);
+    ResponseEntity<TestDto> responseEntity = testRestApi.getById(1);
     assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     assertEquals(expectedId, responseEntity.getBody().getId());
     assertEquals(expectedName, responseEntity.getBody().getName());
@@ -124,9 +120,10 @@ public class RestApiProxyFactoryTest {
     assertTrue(restResponse.getHeaders().containsKey("Location"));
   }
 
-  @After
-  public void cleanUp() {
+  @AfterClass
+  public static void cleanUp() {
 
+    apiApplication.context().close();
     applicationExplorer.clean();
   }
 }

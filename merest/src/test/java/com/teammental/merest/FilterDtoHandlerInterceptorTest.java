@@ -5,7 +5,7 @@ import com.teammental.medto.page.PageRequestDto;
 import com.teammental.merest.testapp.Config;
 import com.teammental.merest.testapp.TestApplication;
 import com.teammental.merest.testapp.TestDto;
-import com.teammental.merest.testapp.TestRestApi;
+import com.teammental.merest.testrestapi.TestRestApi;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
