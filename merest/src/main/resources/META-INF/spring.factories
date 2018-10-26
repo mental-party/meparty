@@ -1,4 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.teammental.merest.ApplicationConfiguration,\
-  com.teammental.merest.StartupApplicationConfiguration,\
+  com.teammental.merest.autoconfiguration.ApplicationConfiguration,\
   com.teammental.merest.autoconfiguration.FilterDtoConverterRegistrar

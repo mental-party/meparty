@@ -1,33 +1,37 @@
 package com.teammental.merest;
 
+import static org.junit.Assert.assertEquals;
+
 import com.teammental.medto.impl.FilterDtoImpl;
 import com.teammental.medto.page.PageRequestDto;
+import com.teammental.merest.autoconfiguration.ApplicationExplorer;
 import com.teammental.merest.testapp.Config;
-import com.teammental.merest.testapp.TestApplication;
 import com.teammental.merest.testapp.TestDto;
+import com.teammental.merest.testrestapi.TestApplicationEnableRestApi;
 import com.teammental.merest.testrestapi.TestRestApi;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.Assert.assertEquals;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    classes = {TestApplication.class})
+    classes = {TestApplicationEnableRestApi.class})
 public class FilterDtoHandlerInterceptorTest {
 
   @LocalServerPort
   private int port;
 
-  private TestRestApi testRestApi = RestApiProxyFactory.createProxy(TestRestApi.class);
+  @Autowired
+  private TestRestApi testRestApi;
 
-  private ApplicationExplorer applicationExplorer = ApplicationExplorer.getInstance();
+  @Autowired
+  private ApplicationExplorer applicationExplorer;
 
   @Before
   public void setUp() {

@@ -1,4 +1,4 @@
-package com.teammental.merest;
+package com.teammental.merest.autoconfiguration;
 
 import java.util.HashMap;
 import java.util.Map;

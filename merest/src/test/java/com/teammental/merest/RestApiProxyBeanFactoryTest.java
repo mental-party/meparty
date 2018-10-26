@@ -4,26 +4,23 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.teammental.merest.autoconfiguration.ApplicationExplorer;
 import com.teammental.merest.testapp.Config;
 import com.teammental.merest.testapp.TestApplication;
-import com.teammental.merest.testrestapi.TestApplicationEnableRestApi;
 import com.teammental.merest.testapp.TestDto;
+import com.teammental.merest.testrestapi.TestApplicationEnableRestApi;
 import com.teammental.merest.testrestapi.TestRestApi;
 import java.util.List;
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
@@ -35,7 +32,8 @@ public class RestApiProxyBeanFactoryTest {
   @Autowired
   private TestRestApi testRestApi;
 
-  private static ApplicationExplorer applicationExplorer = ApplicationExplorer.getInstance();
+  @Autowired
+  private static ApplicationExplorer applicationExplorer;
 
   @BeforeClass
   public static void setUp() {

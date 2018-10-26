@@ -4,6 +4,7 @@ import com.teammental.mecore.stereotype.controller.Controller;
 import com.teammental.mecore.stereotype.controller.RestApi;
 import com.teammental.mehelper.AssertHelper;
 import com.teammental.mehelper.StringHelper;
+import com.teammental.merest.autoconfiguration.ApplicationExplorer;
 import com.teammental.merest.exception.ApplicationNameCannotBeNullOrEmptyException;
 import com.teammental.merest.exception.RestApiAnnotationIsMissingException;
 import java.lang.reflect.InvocationHandler;
@@ -12,9 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Deprecated since 1.2.4.
- * Use {@link EnableRestApi} to enable auto-configuration
- * for {@link RestApi} interfaces.
+ * @see EnableRestApi.
+ * @deprecated since 1.2.4.
+ * Use {@link EnableRestApi} to enable auto-configuration for {@link RestApi} interfaces.
  */
 @Deprecated
 public class RestApiProxyFactory {

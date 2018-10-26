@@ -10,6 +10,7 @@ import com.teammental.medto.FilterDto;
 import com.teammental.mehelper.CastHelper;
 import com.teammental.mehelper.PrimitiveHelper;
 import com.teammental.mehelper.StringHelper;
+import com.teammental.merest.autoconfiguration.ApplicationExplorer;
 import com.teammental.merest.exception.NoRequestMappingFoundException;
 import com.teammental.mevalidation.dto.ValidationResultDto;
 import java.io.IOException;
@@ -54,6 +55,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
+@Deprecated
 class RestApiProxyInvocationHandler
     implements InvocationHandler {
 

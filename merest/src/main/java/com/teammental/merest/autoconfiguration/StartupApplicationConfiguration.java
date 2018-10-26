@@ -1,4 +1,4 @@
-package com.teammental.merest;
+package com.teammental.merest.autoconfiguration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,8 +13,11 @@ import org.springframework.stereotype.Component;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class StartupApplicationConfiguration {
 
-  @Autowired
+  @Autowired(required = false)
   private ApplicationConfiguration applicationConfiguration;
+
+  @Autowired
+  private ApplicationExplorer applicationExplorer;
 
   private static final Logger LOGGER =
       LoggerFactory.getLogger(StartupApplicationConfiguration.class);
@@ -28,18 +31,20 @@ public class StartupApplicationConfiguration {
 
     if (applicationConfiguration == null) {
       LOGGER.info("Couldn't register applications from resources");
-      return;
+    } else {
+
+      for (String key :
+          applicationConfiguration.getApplications().keySet()) {
+        applicationExplorer.addApplication(key,
+            applicationConfiguration.getApplications().get(key));
+      }
+
+      if (applicationConfiguration.getUseMockImpl() != null) {
+        applicationExplorer
+            .setUseMockImpl(applicationConfiguration.getUseMockImpl());
+      }
     }
 
-    for (String key :
-        applicationConfiguration.getApplications().keySet()) {
-      ApplicationExplorer.getInstance().addApplication(key,
-          applicationConfiguration.getApplications().get(key));
-    }
-
-    if (applicationConfiguration.getUseMockImpl() != null) {
-      ApplicationExplorer.getInstance()
-          .setUseMockImpl(applicationConfiguration.getUseMockImpl());
-    }
+    ApplicationExplorer.setInstance(applicationExplorer);
   }
 }

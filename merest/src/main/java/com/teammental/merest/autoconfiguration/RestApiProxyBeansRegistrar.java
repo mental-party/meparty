@@ -77,7 +77,6 @@ public class RestApiProxyBeansRegistrar
 
     return basePackages;
 
-    //https://stackoverflow.com/questions/39507736/dynamic-proxy-bean-with-autowiring-capability?noredirect=1&lq=1
   }
 
   private void createRestApiProxies(String basePackage,

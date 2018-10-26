@@ -10,6 +10,7 @@ import com.teammental.medto.FilterDto;
 import com.teammental.mehelper.CastHelper;
 import com.teammental.mehelper.PrimitiveHelper;
 import com.teammental.mehelper.StringHelper;
+import com.teammental.merest.autoconfiguration.ApplicationExplorer;
 import com.teammental.merest.exception.NoRequestMappingFoundException;
 import com.teammental.mevalidation.dto.ValidationResultDto;
 import java.io.IOException;
@@ -26,6 +27,7 @@ import java.util.Map;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -57,15 +59,24 @@ import org.springframework.web.client.RestTemplate;
 public class RestApiProxy
     implements InvocationHandler {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(RestApiProxyInvocationHandler.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(RestApiProxy.class);
 
-  private ApplicationExplorer applicationExplorer = ApplicationExplorer.getInstance();
+  @Autowired
+  private ApplicationExplorer applicationExplorer;
 
-  private RestTemplate restTemplate = new RestTemplate();
+  private RestTemplate restTemplate;
 
   private ObjectMapper objectMapper;
 
-  public RestApiProxy() {
+  /**
+   * Constructor.
+   *
+   * @param restTemplate restTemplate to be used with HTTP operations.
+   */
+  @Autowired
+  public RestApiProxy(RestTemplate restTemplate) {
+
+    this.restTemplate = restTemplate;
 
     objectMapper = new ObjectMapper();
     objectMapper = objectMapper.disable(

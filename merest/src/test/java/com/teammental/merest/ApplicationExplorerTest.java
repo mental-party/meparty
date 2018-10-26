@@ -2,22 +2,23 @@ package com.teammental.merest;
 
 import static org.junit.Assert.assertEquals;
 
-import com.teammental.merest.testapp.TestApplication;
-import org.junit.Ignore;
+import com.teammental.merest.autoconfiguration.ApplicationExplorer;
+import com.teammental.merest.testrestapi.TestApplicationEnableRestApi;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    classes = {TestApplication.class})
+    classes = {TestApplicationEnableRestApi.class})
 public class ApplicationExplorerTest {
 
-  private ApplicationExplorer applicationExplorer = ApplicationExplorer.getInstance();
+  @Autowired
+  private ApplicationExplorer applicationExplorer;
 
   @Test
-  @Ignore
   public void shouldContainApplicationsInResources() {
     String testApp2Url = applicationExplorer.getApplication("testapp2");
     String testApp3Url = applicationExplorer.getApplication("testapp3");

@@ -12,6 +12,14 @@ public class RestApiProxyBeanFactory {
     this.restApiProxy = restApiProxy;
   }
 
+  /**
+   * Creates a proxy bean implementation for given RestApi interface type.
+   *
+   * @param classLoader class loader
+   * @param clazz       class
+   * @param <RestApiT>  RestApi type
+   * @return proxy implementation
+   */
   @SuppressWarnings("unchecked")
   public <RestApiT> RestApiT createRestApiProxyBean(ClassLoader classLoader,
                                                     Class<RestApiT> clazz) {

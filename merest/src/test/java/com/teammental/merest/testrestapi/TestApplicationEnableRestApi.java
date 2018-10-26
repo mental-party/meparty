@@ -1,8 +1,8 @@
 package com.teammental.merest.testrestapi;
 
-import com.teammental.merest.ApplicationConfiguration;
+import com.teammental.merest.autoconfiguration.ApplicationConfiguration;
 import com.teammental.merest.EnableRestApi;
-import com.teammental.merest.StartupApplicationConfiguration;
+import com.teammental.merest.autoconfiguration.StartupApplicationConfiguration;
 import com.teammental.merest.autoconfiguration.FilterDtoConverterRegistrar;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
