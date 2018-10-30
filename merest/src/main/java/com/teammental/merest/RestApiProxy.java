@@ -56,6 +56,12 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * Proxy Invocation Handler implement for RestApi's.
+ *
+ * @see RestApi
+ * @see EnableRestApi
+ */
 public class RestApiProxy
     implements InvocationHandler {
 
