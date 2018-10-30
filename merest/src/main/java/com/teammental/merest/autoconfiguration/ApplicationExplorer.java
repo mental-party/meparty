@@ -3,6 +3,11 @@ package com.teammental.merest.autoconfiguration;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Deprecated since 1.2.3.
+ * @see
+ */
+@Deprecated
 public class ApplicationExplorer {
 
   public ApplicationExplorer() {

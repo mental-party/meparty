@@ -19,6 +19,12 @@ public class StartupApplicationConfiguration {
   @Autowired
   private ApplicationExplorer applicationExplorer;
 
+  @Autowired
+  private RestApiApplicationRegistry restApiApplicationRegistry;
+
+  @Autowired
+  private RestApiApplicationConfigurationProperties restApiApplicationConfigurationProperties;
+
   private static final Logger LOGGER =
       LoggerFactory.getLogger(StartupApplicationConfiguration.class);
 
@@ -29,6 +35,27 @@ public class StartupApplicationConfiguration {
   @EventListener(ContextRefreshedEvent.class)
   public void contextRefreshEvent() {
 
+    mergeRestApiApplicationExplorerWithConfigurationProperties();
+    
+    mergeApplicationExplorerWithConfigurationProperties();
+  }
+
+  private void mergeRestApiApplicationExplorerWithConfigurationProperties() {
+
+    if (restApiApplicationConfigurationProperties == null
+        || restApiApplicationConfigurationProperties
+        .getRestApiApplications() == null) {
+      LOGGER.info("Couldn't register rest api applications from resources");
+      return;
+    }
+
+    restApiApplicationRegistry
+        .registerRestApiApplications(restApiApplicationConfigurationProperties
+            .getRestApiApplications());
+
+  }
+
+  private void mergeApplicationExplorerWithConfigurationProperties() {
     if (applicationConfiguration == null) {
       LOGGER.info("Couldn't register applications from resources");
     } else {

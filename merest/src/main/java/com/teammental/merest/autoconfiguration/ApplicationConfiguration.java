@@ -7,9 +7,15 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+/**
+ * Deprecated since 1.2.3.
+ *
+ * @see RestApiApplicationConfigurationProperties
+ */
 @Component
 @ConfigurationProperties("com.teammental.merest")
 @Order(Ordered.HIGHEST_PRECEDENCE)
+@Deprecated
 public class ApplicationConfiguration {
 
   private Map<String, String> applications = new HashMap<>();

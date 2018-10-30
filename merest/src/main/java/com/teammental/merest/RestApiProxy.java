@@ -10,8 +10,10 @@ import com.teammental.medto.FilterDto;
 import com.teammental.mehelper.CastHelper;
 import com.teammental.mehelper.PrimitiveHelper;
 import com.teammental.mehelper.StringHelper;
-import com.teammental.merest.autoconfiguration.ApplicationExplorer;
+import com.teammental.merest.autoconfiguration.RestApiApplication;
+import com.teammental.merest.autoconfiguration.RestApiApplicationRegistry;
 import com.teammental.merest.exception.NoRequestMappingFoundException;
+import com.teammental.merest.exception.RestApiApplicationIsNotRegisteredException;
 import com.teammental.mevalidation.dto.ValidationResultDto;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -24,6 +26,7 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +71,7 @@ public class RestApiProxy
   private static final Logger LOGGER = LoggerFactory.getLogger(RestApiProxy.class);
 
   @Autowired
-  private ApplicationExplorer applicationExplorer;
+  private RestApiApplicationRegistry restApiApplicationRegistry;
 
   private RestTemplate restTemplate;
 
@@ -177,7 +180,16 @@ public class RestApiProxy
     RestApi restApiAnnotation = AnnotationUtils.findAnnotation(proxy.getClass(), RestApi.class);
     String applicationName = restApiAnnotation.value();
 
-    String url = applicationExplorer.getApplication(applicationName);
+    Optional<RestApiApplication> optionalRestApiApplication
+        = restApiApplicationRegistry.getRestApiApplication(applicationName);
+
+    if (!optionalRestApiApplication.isPresent()) {
+      throw new RestApiApplicationIsNotRegisteredException();
+    }
+
+    RestApiApplication restApiApplication = optionalRestApiApplication.get();
+
+    String url = restApiApplication.getUrl();
 
     Mapping classLevelMapping = extractMapping(proxy.getClass());
     String classLevelUrl = classLevelMapping.getUrl();

@@ -26,9 +26,19 @@ subprojects {
 buildscript {
     repositories {
         jcenter()
+        maven { url 'http://repo.spring.io/plugins-release' }
     }
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
+        classpath 'io.spring.gradle:propdeps-plugin:0.0.9.RELEASE'
     }
 }
+
+configure(allprojects) {
+    apply plugin: 'propdeps'
+    apply plugin: 'propdeps-maven'
+    apply plugin: 'propdeps-idea'
+    apply plugin: 'propdeps-eclipse'
+}
+
 apply from: "deploy.gradle"

@@ -1,5 +1,6 @@
 package com.teammental.merest;
 
+import com.teammental.merest.autoconfiguration.RestApiApplicationConfigurationProperties;
 import com.teammental.merest.autoconfiguration.RestApiProxyBeansRegistrar;
 import com.teammental.merest.autoconfiguration.RestApiProxyConfiguration;
 import com.teammental.merest.autoconfiguration.StartupApplicationConfiguration;
@@ -23,7 +24,8 @@ import org.springframework.core.annotation.AliasFor;
 @Target(ElementType.TYPE)
 @Import({StartupApplicationConfiguration.class,
     RestApiProxyConfiguration.class,
-    RestApiProxyBeansRegistrar.class})
+    RestApiProxyBeansRegistrar.class,
+    RestApiApplicationConfigurationProperties.class})
 public @interface EnableRestApi {
 
   /**

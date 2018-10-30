@@ -20,6 +20,11 @@ public class RestApiProxyConfiguration {
   }
 
   @Bean
+  public RestApiApplicationRegistry restApiApplicationExplorer() {
+    return new RestApiApplicationRegistry();
+  }
+
+  @Bean
   public ApplicationExplorer applicationExplorer() {
     return new ApplicationExplorer();
   }
