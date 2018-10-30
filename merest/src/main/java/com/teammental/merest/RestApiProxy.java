@@ -12,6 +12,7 @@ import com.teammental.mehelper.PrimitiveHelper;
 import com.teammental.mehelper.StringHelper;
 import com.teammental.merest.autoconfiguration.RestApiApplication;
 import com.teammental.merest.autoconfiguration.RestApiApplicationRegistry;
+import com.teammental.merest.autoconfiguration.RestApiBasicAuthProperties;
 import com.teammental.merest.exception.NoRequestMappingFoundException;
 import com.teammental.merest.exception.RestApiApplicationIsNotRegisteredException;
 import com.teammental.mevalidation.dto.ValidationResultDto;
@@ -23,11 +24,13 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -231,8 +234,7 @@ public class RestApiProxy
       }
     }
 
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(methodLevelMapping.getMediaType());
+    HttpHeaders headers = createHeaders(restApiApplication, methodLevelMapping);
 
     HttpEntity httpEntity = requestBody == null ? null : new HttpEntity<>(requestBody, headers);
 
@@ -246,6 +248,41 @@ public class RestApiProxy
         httpMethod, httpEntity, urlVariables, parameterizedReturnType, rowReturnType);
 
     return properties;
+  }
+
+  private HttpHeaders createHeaders(RestApiApplication restApiApplication,
+                                    Mapping methodLevelMapping) {
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(methodLevelMapping.getMediaType());
+
+    checkAndPrepareForBasicAuth(restApiApplication
+        .getBasicAuth(), headers);
+
+    return headers;
+  }
+
+  private boolean checkAndPrepareForBasicAuth(RestApiBasicAuthProperties basicAuthProperties,
+                                              HttpHeaders headers) {
+    if (basicAuthProperties == null
+        || StringHelper.isNullOrEmpty(basicAuthProperties
+        .getUsername())
+        || StringHelper.isNullOrEmpty(basicAuthProperties
+        .getPassword())) {
+
+      return false;
+    }
+
+    String auth = basicAuthProperties.getUsername()
+        + ":" + basicAuthProperties.getPassword();
+
+    byte[] encodedAuth = Base64.encodeBase64(auth
+        .getBytes(Charset.forName("US-ASCII")));
+
+    String authHeader = "Basic " + new String(encodedAuth);
+    headers.add("Authorization", authHeader);
+
+    return true;
   }
 
   RestResponse<Object> handleHttpStatusCodeException(HttpStatusCodeException exception,
