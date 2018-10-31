@@ -1,5 +1,8 @@
 package com.teammental.mecore.enums;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 /**
  * Time units.
  *
@@ -18,7 +21,6 @@ public enum TimeUnit {
   CENTURY(9, "century"),
   MILLENNIUM(10, "millennium");
 
-  private static String messageCodePrefix = "timeunit.";
   private int timeUnitId;
   private String messageCode;
 
@@ -45,6 +47,24 @@ public enum TimeUnit {
    */
   public String getMessageCode() {
 
+    String messageCodePrefix = "timeunit.";
     return messageCodePrefix + messageCode;
+  }
+
+  /**
+   * Resolve by timeUnitId.
+   *
+   * @param timeUnitId timeUnitId
+   * @return optional of TimeUnit
+   */
+  public Optional<TimeUnit> resolve(Integer timeUnitId) {
+
+    if (timeUnitId == null) {
+      return Optional.empty();
+    }
+
+    return Arrays.stream(TimeUnit.values())
+        .filter(timeUnit -> timeUnit.getTimeUnitId() == timeUnitId)
+        .findFirst();
   }
 }
