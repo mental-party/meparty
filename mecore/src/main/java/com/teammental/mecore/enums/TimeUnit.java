@@ -57,7 +57,7 @@ public enum TimeUnit {
    * @param timeUnitId timeUnitId
    * @return optional of TimeUnit
    */
-  public Optional<TimeUnit> resolve(Integer timeUnitId) {
+  public static Optional<TimeUnit> resolve(Integer timeUnitId) {
 
     if (timeUnitId == null) {
       return Optional.empty();
