@@ -227,7 +227,8 @@ public class RestApiProxyHandler
 
     HttpHeaders headers = createHeaders(restApiApplication, methodLevelMapping);
 
-    HttpEntity httpEntity = requestBody == null ? null : new HttpEntity<>(requestBody, headers);
+    HttpEntity httpEntity = requestBody == null ?
+        new HttpEntity<>(headers) : new HttpEntity<>(requestBody, headers);
 
     Class<?> parameterizedReturnType = extractReturnType(method.getGenericReturnType(),
         true, proxy.getClass());

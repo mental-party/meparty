@@ -1,5 +1,6 @@
 package com.teammental.merest;
 
+import com.teammental.merest.autoconfiguration.FilterDtoConverterRegistrar;
 import com.teammental.merest.autoconfiguration.RestApiApplicationConfigurationProperties;
 import com.teammental.merest.autoconfiguration.RestApiApplicationRegistry;
 import com.teammental.merest.autoconfiguration.RestApiProxyBeansRegistrar;
@@ -27,7 +28,8 @@ import org.springframework.core.annotation.AliasFor;
     StartupApplicationConfiguration.class,
     RestApiApplicationConfigurationProperties.class,
     RestApiProxyConfiguration.class,
-    RestApiProxyBeansRegistrar.class})
+    RestApiProxyBeansRegistrar.class,
+    FilterDtoConverterRegistrar.class})
 public @interface EnableRestApiProxy {
 
   /**

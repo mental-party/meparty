@@ -6,6 +6,12 @@ com.teammental.merest:
     - name: testrestapi2
       url: http://testrestapi2.com
       use-mock-impl: false
+    - name: testrestapi-basic
+      url: http://localhost:8099
+      use-mock-impl: false
+      basic-auth:
+        username: user1
+        password: password1
   applications:
     testapp: http://testapp.com
     testapp2: http://testapp2.com

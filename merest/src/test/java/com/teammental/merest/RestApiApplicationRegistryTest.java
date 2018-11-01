@@ -33,7 +33,7 @@ public class RestApiApplicationRegistryTest {
     final int restApiApplicationSize = restApiApplicationRegistry
         .getRestApiApplications().size();
 
-    final int expected = 2;
+    final int expected = 3;
 
     assertEquals(expected, restApiApplicationSize);
   }
