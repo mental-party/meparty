@@ -16,7 +16,7 @@ import org.junit.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 
-public class RestApiProxyTest {
+public class RestApiProxyHandlerTest {
 
   public static class HttpMethods {
 
@@ -31,7 +31,7 @@ public class RestApiProxyTest {
     public void requestMapping_shouldExtractHttpMethod() throws NoSuchMethodException {
       Method method = ChildRestApi_Annotations.class.getMethod("requestMapping_post");
 
-      RestApiProxy handler = new RestApiProxy(restTemplate);
+      RestApiProxyHandler handler = new RestApiProxyHandler(restTemplate);
       HttpMethod httpMethod = handler.extractMapping(method).getHttpMethod();
 
       assertEquals(httpMethod, HttpMethod.POST);
@@ -41,7 +41,7 @@ public class RestApiProxyTest {
     public void requestMapping_shouldExtract_HttpMethodGet_whenNoRequestMethodIsSet() throws NoSuchMethodException {
       Method method = ChildRestApi_Annotations.class.getMethod("requestMapping_noRequestMethodIsSet");
 
-      RestApiProxy handler = new RestApiProxy(restTemplate);
+      RestApiProxyHandler handler = new RestApiProxyHandler(restTemplate);
       HttpMethod httpMethod = handler.extractMapping(method).getHttpMethod();
 
       assertEquals(httpMethod, HttpMethod.GET);
@@ -51,7 +51,7 @@ public class RestApiProxyTest {
     public void shouldThrowException_whenNoRequestMappingFound() throws NoSuchMethodException {
       Method method = ChildRestApi_Annotations.class.getMethod("noRequestMappingAnnotation");
 
-      RestApiProxy handler = new RestApiProxy(restTemplate);
+      RestApiProxyHandler handler = new RestApiProxyHandler(restTemplate);
       HttpMethod httpMethod = handler.extractMapping(method).getHttpMethod();
     }
 
@@ -59,7 +59,7 @@ public class RestApiProxyTest {
     public void getMapping_shouldExtract_HttpMethodGet() throws NoSuchMethodException {
       Method method = ChildRestApi_Annotations.class.getMethod("getMapping");
 
-      RestApiProxy handler = new RestApiProxy(restTemplate);
+      RestApiProxyHandler handler = new RestApiProxyHandler(restTemplate);
       HttpMethod httpMethod = handler.extractMapping(method).getHttpMethod();
 
       assertEquals(httpMethod, HttpMethod.GET);
@@ -69,7 +69,7 @@ public class RestApiProxyTest {
     public void postMapping_shouldExtract_HttpMethodPost() throws NoSuchMethodException {
       Method method = ChildRestApi_Annotations.class.getMethod("postMapping");
 
-      RestApiProxy handler = new RestApiProxy(restTemplate);
+      RestApiProxyHandler handler = new RestApiProxyHandler(restTemplate);
       HttpMethod httpMethod = handler.extractMapping(method).getHttpMethod();
 
       assertEquals(httpMethod, HttpMethod.POST);
@@ -79,7 +79,7 @@ public class RestApiProxyTest {
     public void putMapping_shouldExtract_HttpMethodPut() throws NoSuchMethodException {
       Method method = ChildRestApi_Annotations.class.getMethod("putMapping");
 
-      RestApiProxy handler = new RestApiProxy(restTemplate);
+      RestApiProxyHandler handler = new RestApiProxyHandler(restTemplate);
       HttpMethod httpMethod = handler.extractMapping(method).getHttpMethod();
 
       assertEquals(httpMethod, HttpMethod.PUT);
@@ -89,7 +89,7 @@ public class RestApiProxyTest {
     public void deleteMapping_shouldExtract_HttpMethodDelete() throws NoSuchMethodException {
       Method method = ChildRestApi_Annotations.class.getMethod("deleteMapping");
 
-      RestApiProxy handler = new RestApiProxy(restTemplate);
+      RestApiProxyHandler handler = new RestApiProxyHandler(restTemplate);
       HttpMethod httpMethod = handler.extractMapping(method).getHttpMethod();
 
       assertEquals(httpMethod, HttpMethod.DELETE);
@@ -99,7 +99,7 @@ public class RestApiProxyTest {
     public void patchMapping_shouldExtract_HttpMethodPatch() throws NoSuchMethodException {
       Method method = ChildRestApi_Annotations.class.getMethod("patchMapping");
 
-      RestApiProxy handler = new RestApiProxy(restTemplate);
+      RestApiProxyHandler handler = new RestApiProxyHandler(restTemplate);
       HttpMethod httpMethod = handler.extractMapping(method).getHttpMethod();
 
       assertEquals(httpMethod, HttpMethod.PATCH);
@@ -118,7 +118,7 @@ public class RestApiProxyTest {
     @Test
     public void shouldExtractSuperRootUrl() throws NoSuchMethodException {
 
-      RestApiProxy handler = new RestApiProxy(restTemplate);
+      RestApiProxyHandler handler = new RestApiProxyHandler(restTemplate);
       String url = handler.extractMapping(ChildRestApi_Annotations.class).getUrl();
 
       assertEquals(Config.SUPERRESTAPI_ROOTURL, url);
@@ -127,7 +127,7 @@ public class RestApiProxyTest {
     @Test
     public void shouldExtractCurrentRootUrl() throws NoSuchMethodException {
 
-      RestApiProxy handler = new RestApiProxy(restTemplate);
+      RestApiProxyHandler handler = new RestApiProxyHandler(restTemplate);
       String url = handler.extractMapping(SuperRestApi_Annotations.class).getUrl();
 
       assertEquals(Config.SUPERRESTAPI_ROOTURL, url);
@@ -147,7 +147,7 @@ public class RestApiProxyTest {
     public void shouldExtractMethodUrl() throws NoSuchMethodException {
 
       Method method = ChildRestApi_Annotations.class.getMethod("testMethod");
-      RestApiProxy handler = new RestApiProxy(restTemplate);
+      RestApiProxyHandler handler = new RestApiProxyHandler(restTemplate);
       String url = handler.extractMapping(method).getUrl();
 
       assertEquals(Config.TESTMETHOD_URL, url);
@@ -157,7 +157,7 @@ public class RestApiProxyTest {
     public void shouldExtractMethodUrl_whenDeleteMapping() throws NoSuchMethodException {
 
       Method method = ChildRestApi_Annotations.class.getMethod("deleteMapping");
-      RestApiProxy handler = new RestApiProxy(restTemplate);
+      RestApiProxyHandler handler = new RestApiProxyHandler(restTemplate);
       String url = handler.extractMapping(method).getUrl();
 
       assertEquals("/{id}", url);
@@ -178,7 +178,7 @@ public class RestApiProxyTest {
     public void shouldExtractActualType_whenMethodIsFromSuperAndReturnyTypeIsGeneric() throws NoSuchMethodException {
 
       Method method = TestRestApi.class.getMethod("getOneGenericType", Integer.class);
-      RestApiProxy handler = new RestApiProxy(restTemplate);
+      RestApiProxyHandler handler = new RestApiProxyHandler(restTemplate);
       Type genericReturnType = method.getGenericReturnType();
 
       Class<?> extractedType = handler.extractReturnType(genericReturnType,
@@ -193,7 +193,7 @@ public class RestApiProxyTest {
     public void shouldExtractActualType_whenMethodIsFromSuperAndReturnTypeIsPrimitive() throws NoSuchMethodException {
 
       Method method = TestRestApi.class.getMethod("update", TestDto.class);
-      RestApiProxy handler = new RestApiProxy(restTemplate);
+      RestApiProxyHandler handler = new RestApiProxyHandler(restTemplate);
       Type genericReturnType = method.getGenericReturnType();
 
       Class<?> extractedType = handler.extractReturnType(genericReturnType,
@@ -210,7 +210,7 @@ public class RestApiProxyTest {
     public void shouldExtractRestResponsePageImplType_whenMethodReturnsPage() throws NoSuchMethodException {
 
       Method method = TestRestApi.class.getMethod("filterAll", FilterDto.class);
-      RestApiProxy handler = new RestApiProxy(restTemplate);
+      RestApiProxyHandler handler = new RestApiProxyHandler(restTemplate);
       Type genericReturnType = method.getGenericReturnType();
 
       Class<?> extractedType = handler.extractReturnType(genericReturnType,

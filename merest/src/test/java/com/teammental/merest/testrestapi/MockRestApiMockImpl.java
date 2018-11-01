@@ -1,4 +1,4 @@
-package com.teammental.merest.testapp;
+package com.teammental.merest.testrestapi;
 
 import com.teammental.merest.testrestapi.MockRestApi;
 

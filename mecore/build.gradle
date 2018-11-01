@@ -3,6 +3,8 @@ jar {
 }
 
 dependencies {
+    compile("org.springframework:spring-core:${springVersion}")
+
     testCompile group: 'org.apache.sanselan', name: 'sanselan', version: '0.97-incubator'
 }
 

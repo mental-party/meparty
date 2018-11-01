@@ -1,7 +1,8 @@
 package com.teammental.merest.autoconfiguration;
 
 import com.teammental.mecore.stereotype.controller.RestApi;
-import com.teammental.merest.EnableRestApi;
+import com.teammental.mecore.stereotype.controller.RestApiProxy;
+import com.teammental.merest.EnableRestApiProxy;
 import com.teammental.merest.RestApiAnnotationClassPathScanner;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
@@ -19,6 +21,7 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.MultiValueMap;
 
 @Configuration
+@AutoConfigureAfter(StartupApplicationConfiguration.class)
 public class RestApiProxyBeansRegistrar
     implements ImportBeanDefinitionRegistrar,
     BeanClassLoaderAware {
@@ -29,9 +32,16 @@ public class RestApiProxyBeansRegistrar
   private RestApiAnnotationClassPathScanner restApiAnnotationClassPathScanner;
   private ClassLoader classLoader;
 
+  /**
+   * Constructor method.
+   */
   public RestApiProxyBeansRegistrar() {
-    restApiAnnotationClassPathScanner = new RestApiAnnotationClassPathScanner(false);
-    restApiAnnotationClassPathScanner.addIncludeFilter(new AnnotationTypeFilter(RestApi.class));
+    restApiAnnotationClassPathScanner
+        = new RestApiAnnotationClassPathScanner(false);
+    restApiAnnotationClassPathScanner
+        .addIncludeFilter(new AnnotationTypeFilter(RestApiProxy.class));
+    restApiAnnotationClassPathScanner
+        .addIncludeFilter(new AnnotationTypeFilter(RestApi.class));
   }
 
   @Override
@@ -61,7 +71,7 @@ public class RestApiProxyBeansRegistrar
 
     MultiValueMap<String, Object> allAnnotationAttributes
         = importingClassMetadata
-        .getAllAnnotationAttributes(EnableRestApi.class.getName());
+        .getAllAnnotationAttributes(EnableRestApiProxy.class.getName());
 
     if (allAnnotationAttributes != null
         && allAnnotationAttributes.containsKey("basePackages")) {
@@ -89,9 +99,6 @@ public class RestApiProxyBeansRegistrar
 
         Class<?> clazz = Class.forName(beanDefinition.getBeanClassName());
 
-        String beanName
-            = ClassUtils.getShortNameAsProperty(clazz);
-
         GenericBeanDefinition proxyBeanDefinition
             = new GenericBeanDefinition();
         proxyBeanDefinition.setBeanClass(clazz);
@@ -105,6 +112,9 @@ public class RestApiProxyBeansRegistrar
         proxyBeanDefinition.setConstructorArgumentValues(constructorArgumentValues);
         proxyBeanDefinition.setFactoryBeanName("restApiProxyBeanFactory");
         proxyBeanDefinition.setFactoryMethodName("createRestApiProxyBean");
+
+        String beanName
+            = ClassUtils.getShortNameAsProperty(clazz);
 
         registry.registerBeanDefinition(beanName, proxyBeanDefinition);
 

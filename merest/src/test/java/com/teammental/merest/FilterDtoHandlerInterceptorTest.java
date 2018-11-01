@@ -4,8 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.teammental.medto.impl.FilterDtoImpl;
 import com.teammental.medto.page.PageRequestDto;
-import com.teammental.merest.autoconfiguration.ApplicationExplorer;
-import com.teammental.merest.testapp.Config;
+import com.teammental.merest.testapp.TestApplication;
 import com.teammental.merest.testapp.TestDto;
 import com.teammental.merest.testrestapi.TestApplicationEnableRestApi;
 import com.teammental.merest.testrestapi.TestRestApi;
@@ -14,29 +13,29 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.embedded.LocalServerPort;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK,
     classes = {TestApplicationEnableRestApi.class})
 public class FilterDtoHandlerInterceptorTest {
 
-  @LocalServerPort
-  private int port;
+  private SpringApplicationBuilder apiApplication;
 
   @Autowired
   private TestRestApi testRestApi;
 
-  @Autowired
-  private ApplicationExplorer applicationExplorer;
-
   @Before
   public void setUp() {
 
-    applicationExplorer.addApplication(Config.TESTAPPLICATIONNAME, "http://localhost:" + port);
+    int apiPort = 8090;
+    apiApplication = new SpringApplicationBuilder(TestApplication.class)
+        .properties("server.port=" + apiPort);
+
+    apiApplication.run();
   }
 
   @Test
@@ -58,6 +57,6 @@ public class FilterDtoHandlerInterceptorTest {
   @After
   public void cleanUp() {
 
-    applicationExplorer.clean();
+    apiApplication.context().close();
   }
 }

@@ -4,8 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Deprecated since 1.2.3.
- * @see
+ * Deprecated since 1.4.
+ *
+ * @see RestApiApplicationRegistry
  */
 @Deprecated
 public class ApplicationExplorer {

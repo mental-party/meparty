@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.teammental.mecore.stereotype.controller.RestApi;
 import com.teammental.mecore.stereotype.dto.PrincipalDto;
 import com.teammental.medto.FilterDto;
 import com.teammental.mehelper.CastHelper;
@@ -15,6 +14,7 @@ import com.teammental.merest.autoconfiguration.RestApiApplicationRegistry;
 import com.teammental.merest.autoconfiguration.RestApiBasicAuthProperties;
 import com.teammental.merest.exception.NoRequestMappingFoundException;
 import com.teammental.merest.exception.RestApiApplicationIsNotRegisteredException;
+import com.teammental.merest.util.RestApiProxyUtil;
 import com.teammental.mevalidation.dto.ValidationResultDto;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -63,15 +63,15 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * Proxy Invocation Handler implement for RestApi's.
+ * Proxy Invocation Handler implement for RestApiProxy's.
  *
- * @see RestApi
- * @see EnableRestApi
+ * @see RestApiProxyHandler
+ * @see EnableRestApiProxy
  */
-public class RestApiProxy
+public class RestApiProxyHandler
     implements InvocationHandler {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(RestApiProxy.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(RestApiProxyHandler.class);
 
   @Autowired
   private RestApiApplicationRegistry restApiApplicationRegistry;
@@ -86,7 +86,7 @@ public class RestApiProxy
    * @param restTemplate restTemplate to be used with HTTP operations.
    */
   @Autowired
-  public RestApiProxy(RestTemplate restTemplate) {
+  public RestApiProxyHandler(RestTemplate restTemplate) {
 
     this.restTemplate = restTemplate;
 
@@ -180,17 +180,7 @@ public class RestApiProxy
 
   RestExchangeProperties prepareRestExchangeProperties(Object proxy, Method method, Object[] args) {
 
-    RestApi restApiAnnotation = AnnotationUtils.findAnnotation(proxy.getClass(), RestApi.class);
-    String applicationName = restApiAnnotation.value();
-
-    Optional<RestApiApplication> optionalRestApiApplication
-        = restApiApplicationRegistry.getRestApiApplication(applicationName);
-
-    if (!optionalRestApiApplication.isPresent()) {
-      throw new RestApiApplicationIsNotRegisteredException();
-    }
-
-    RestApiApplication restApiApplication = optionalRestApiApplication.get();
+    RestApiApplication restApiApplication = getRestApiApplication(proxy);
 
     String url = restApiApplication.getUrl();
 
@@ -234,6 +224,7 @@ public class RestApiProxy
       }
     }
 
+
     HttpHeaders headers = createHeaders(restApiApplication, methodLevelMapping);
 
     HttpEntity httpEntity = requestBody == null ? null : new HttpEntity<>(requestBody, headers);
@@ -248,6 +239,22 @@ public class RestApiProxy
         httpMethod, httpEntity, urlVariables, parameterizedReturnType, rowReturnType);
 
     return properties;
+  }
+
+  private RestApiApplication getRestApiApplication(Object proxy) {
+
+    String applicationName = RestApiProxyUtil.getRestApiApplicationName(proxy.getClass());
+
+    Optional<RestApiApplication> optionalRestApiApplication
+        = restApiApplicationRegistry.getRestApiApplication(applicationName);
+
+    if (!optionalRestApiApplication.isPresent()) {
+      throw new RestApiApplicationIsNotRegisteredException();
+    }
+
+    RestApiApplication restApiApplication = optionalRestApiApplication.get();
+
+    return restApiApplication;
   }
 
   private HttpHeaders createHeaders(RestApiApplication restApiApplication,
@@ -277,9 +284,10 @@ public class RestApiProxy
         + ":" + basicAuthProperties.getPassword();
 
     byte[] encodedAuth = Base64.encodeBase64(auth
-        .getBytes(Charset.forName("US-ASCII")));
+        .getBytes(Charset.forName("UTF-8")));
 
-    String authHeader = "Basic " + new String(encodedAuth);
+    String authHeader = "Basic " + new String(encodedAuth,
+        Charset.forName("UTF-8"));
     headers.add("Authorization", authHeader);
 
     return true;

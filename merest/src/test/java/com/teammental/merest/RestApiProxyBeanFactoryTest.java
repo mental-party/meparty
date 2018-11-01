@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import com.teammental.merest.autoconfiguration.ApplicationExplorer;
-import com.teammental.merest.testapp.Config;
 import com.teammental.merest.testapp.TestApplication;
 import com.teammental.merest.testapp.TestDto;
 import com.teammental.merest.testrestapi.TestApplicationEnableRestApi;
@@ -23,7 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK,
     classes = {TestApplicationEnableRestApi.class})
 public class RestApiProxyBeanFactoryTest {
 
@@ -31,9 +29,6 @@ public class RestApiProxyBeanFactoryTest {
 
   @Autowired
   private TestRestApi testRestApi;
-
-  @Autowired
-  private static ApplicationExplorer applicationExplorer;
 
   @BeforeClass
   public static void setUp() {
@@ -44,7 +39,6 @@ public class RestApiProxyBeanFactoryTest {
 
     apiApplication.run();
 
-    applicationExplorer.addApplication(Config.TESTAPPLICATIONNAME, "http://localhost:" + apiPort);
   }
 
   @Test
@@ -55,7 +49,7 @@ public class RestApiProxyBeanFactoryTest {
   @Test
   public void getAll_shouldReturnStatusOk() {
 
-    RestResponse<List<TestDto>> responseEntity = (RestResponse<List<TestDto>>) testRestApi.getAll();
+    RestResponse<List<TestDto>> responseEntity = testRestApi.getAll();
 
     assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
   }
@@ -63,7 +57,7 @@ public class RestApiProxyBeanFactoryTest {
   @Test
   public void getAll_shouldReturnAsList() {
 
-    RestResponse<List<TestDto>> responseEntity = (RestResponse<List<TestDto>>) testRestApi.getAll();
+    RestResponse<List<TestDto>> responseEntity = testRestApi.getAll();
 
     List<TestDto> list = responseEntity.getBody();
 
@@ -86,14 +80,14 @@ public class RestApiProxyBeanFactoryTest {
   @Test
   public void getById_shouldReturn404_whenNotFound() {
 
-    RestResponse<TestDto> responseEntity = (RestResponse<TestDto>) testRestApi.getById(5);
+    RestResponse<TestDto> responseEntity = testRestApi.getById(5);
 
     assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
   }
 
   @Test
   public void delete_shouldReturn204_whenSuccess() {
-    RestResponse restResponse = (RestResponse) testRestApi.delete(1);
+    RestResponse restResponse = testRestApi.delete(1);
 
     assertEquals(HttpStatus.NO_CONTENT, restResponse.getStatusCode());
   }
@@ -102,7 +96,7 @@ public class RestApiProxyBeanFactoryTest {
   public void post_shouldExtractValidationDto_whenApiResponseWithValidationDto() {
     TestDto testDto = new TestDto();
 
-    RestResponse restResponse = (RestResponse) testRestApi.create(testDto);
+    RestResponse restResponse = testRestApi.create(testDto);
 
     assertEquals(HttpStatus.BAD_REQUEST, restResponse.getStatusCode());
     assertNotNull(restResponse.getValidationResult());
@@ -112,7 +106,7 @@ public class RestApiProxyBeanFactoryTest {
   public void post_shouldReturn201_whenSuccess() {
     TestDto testDto = new TestDto(null, "name");
 
-    RestResponse restResponse = (RestResponse) testRestApi.create(testDto);
+    RestResponse restResponse = testRestApi.create(testDto);
 
     assertEquals(HttpStatus.CREATED, restResponse.getStatusCode());
     assertTrue(restResponse.getHeaders().containsKey("Location"));
@@ -122,6 +116,5 @@ public class RestApiProxyBeanFactoryTest {
   public static void cleanUp() {
 
     apiApplication.context().close();
-    applicationExplorer.clean();
   }
 }

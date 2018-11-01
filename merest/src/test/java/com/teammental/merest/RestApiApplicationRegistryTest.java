@@ -42,7 +42,7 @@ public class RestApiApplicationRegistryTest {
   public void shouldContainApplicationsInResources() {
 
     final boolean expectedUseMockImpl1 = true;
-    final String expectedUrl1 = "http://testrestapi1.com";
+    final String expectedUrl1 = "http://localhost:8090";
     final String name1 = "testrestapi1";
 
     Optional<RestApiApplication> restApiApplicationOptional1

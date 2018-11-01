@@ -1,15 +1,11 @@
 package com.teammental.merest.testapp;
 
-import com.teammental.merest.autoconfiguration.ApplicationConfiguration;
-import com.teammental.merest.autoconfiguration.FilterDtoConverterRegistrar;
+import com.teammental.merest.EnableRestApiServer;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@ImportAutoConfiguration({ApplicationConfiguration.class,
-    FilterDtoConverterRegistrar.class,
-})
+@EnableRestApiServer
 public class TestApplication {
 
   public static void main(String[] args) {

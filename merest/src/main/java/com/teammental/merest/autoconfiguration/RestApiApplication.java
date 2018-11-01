@@ -20,6 +20,30 @@ public class RestApiApplication {
   private Boolean useMockImpl;
   private RestApiBasicAuthProperties basicAuth;
 
+  public RestApiApplication() {
+  }
+
+  public RestApiApplication(@NotBlank String name,
+                            @NotBlank String url) {
+    this.name = name;
+    this.url = url;
+  }
+
+  /**
+   * Constructor.
+   *
+   * @param name        restApiApplicationRegistry
+   * @param url         url
+   * @param useMockImpl useMockImpl
+   */
+  public RestApiApplication(@NotBlank String name,
+                            @NotBlank String url,
+                            Boolean useMockImpl) {
+    this.name = name;
+    this.url = url;
+    this.useMockImpl = useMockImpl;
+  }
+
   public String getName() {
     return name;
   }

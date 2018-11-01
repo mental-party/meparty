@@ -1,13 +1,12 @@
-com:
-  teammental:
-    merest:
-      rest-api-applications:
-        - name: testrestapi1
-          url: http://testrestapi1.com
-          use-mock-impl: true
-        - name: testrestapi2
-          url: http://testrestapi2.com
-          use-mock-impl: false
-      applications:
-        testapp2: http://testapp2.com
-        testapp3: http://testapp3.com
+com.teammental.merest:
+  rest-api-applications:
+    - name: testrestapi1
+      url: http://localhost:8090
+      use-mock-impl: true
+    - name: testrestapi2
+      url: http://testrestapi2.com
+      use-mock-impl: false
+  applications:
+    testapp: http://testapp.com
+    testapp2: http://testapp2.com
+    testapp3: http://testapp3.com

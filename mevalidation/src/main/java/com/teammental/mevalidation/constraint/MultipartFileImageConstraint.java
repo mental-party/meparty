@@ -46,7 +46,7 @@ public @interface MultipartFileImageConstraint {
   /**
    * Image's color type constraint.
    *
-   * @return
+   * @return color type
    */
   ImageColorType colorType() default ImageColorType.OTHER;
 
@@ -54,7 +54,7 @@ public @interface MultipartFileImageConstraint {
    * Image's maximum height constraint.
    * Defaults to 0, meaning no height limit.
    *
-   * @return
+   * @return max height
    */
   int maxHeight() default 0;
 
@@ -62,7 +62,7 @@ public @interface MultipartFileImageConstraint {
    * Image's minimum height constraint.
    * Defaults to 0, meaning no height limit.
    *
-   * @return
+   * @return min height
    */
   int minHeight() default 0;
 
@@ -70,7 +70,7 @@ public @interface MultipartFileImageConstraint {
    * Image's maximum width constraint.
    * Defaults to 0, meaning no width limit.
    *
-   * @return
+   * @return max width
    */
   int maxWidth() default 0;
 
@@ -78,7 +78,7 @@ public @interface MultipartFileImageConstraint {
    * Image's minimum width constraint.
    * Defaults to 0, meaning no width limit.
    *
-   * @return
+   * @return min width
    */
   int minWidth() default 0;
 

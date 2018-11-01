@@ -6,16 +6,18 @@ import com.teammental.mehelper.AssertHelper;
 import com.teammental.mehelper.StringHelper;
 import com.teammental.merest.autoconfiguration.ApplicationExplorer;
 import com.teammental.merest.exception.ApplicationNameCannotBeNullOrEmptyException;
-import com.teammental.merest.exception.RestApiAnnotationIsMissingException;
+import com.teammental.merest.exception.RestApiProxyAnnotationIsMissingException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @see EnableRestApi.
- * @deprecated since 1.2.4.
- * Use {@link EnableRestApi} to enable auto-configuration for {@link RestApi} interfaces.
+ * Deprecated.
+ * Use {@link EnableRestApiProxy} to enable auto-configuration for {@link RestApi} interfaces.
+ *
+ * @see EnableRestApiProxy .
+ * @deprecated since 1.2.4 .
  */
 @Deprecated
 public class RestApiProxyFactory {
@@ -35,7 +37,7 @@ public class RestApiProxyFactory {
     AssertHelper.notNull(restApiClass);
 
     if (!restApiClass.isAnnotationPresent(RestApi.class)) {
-      throw new RestApiAnnotationIsMissingException(restApiClass);
+      throw new RestApiProxyAnnotationIsMissingException(restApiClass);
     }
 
     RestApi restApiAnnotation = restApiClass.getAnnotation(RestApi.class);

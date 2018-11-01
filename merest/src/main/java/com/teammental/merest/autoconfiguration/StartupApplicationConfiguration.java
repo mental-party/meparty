@@ -3,40 +3,57 @@ package com.teammental.merest.autoconfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.EventListener;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.context.annotation.Configuration;
 
-@Component
-@Order(Ordered.HIGHEST_PRECEDENCE)
+@Configuration
+@AutoConfigureAfter(RestApiApplicationRegistry.class)
 public class StartupApplicationConfiguration {
 
-  @Autowired(required = false)
-  private ApplicationConfiguration applicationConfiguration;
 
-  @Autowired
-  private ApplicationExplorer applicationExplorer;
+  private final ApplicationConfiguration applicationConfiguration;
 
-  @Autowired
-  private RestApiApplicationRegistry restApiApplicationRegistry;
+  private final ApplicationExplorer applicationExplorer;
 
-  @Autowired
+  private final RestApiApplicationRegistry restApiApplicationRegistry;
+
   private RestApiApplicationConfigurationProperties restApiApplicationConfigurationProperties;
+
+  /**
+   * Constructor.
+   * @param restApiApplicationConfigurationProperties restApiApplicationConfigurationProperties
+   * @param applicationConfiguration applicationConfiguration
+   * @param applicationExplorer applicationExplorer
+   * @param restApiApplicationRegistry restApiApplicationRegistry
+   */
+  @Autowired
+  public StartupApplicationConfiguration(RestApiApplicationConfigurationProperties
+                                             restApiApplicationConfigurationProperties,
+                                         ApplicationConfiguration applicationConfiguration,
+                                         ApplicationExplorer applicationExplorer,
+                                         RestApiApplicationRegistry restApiApplicationRegistry) {
+
+    this.restApiApplicationConfigurationProperties
+        = restApiApplicationConfigurationProperties;
+
+    this.applicationConfiguration = applicationConfiguration;
+    this.applicationExplorer = applicationExplorer;
+    this.restApiApplicationRegistry = restApiApplicationRegistry;
+
+    contextRefreshEvent();
+  }
 
   private static final Logger LOGGER =
       LoggerFactory.getLogger(StartupApplicationConfiguration.class);
 
   /**
-   * On context refreshed event, merges singleton instance
+   * Merges singleton instance
    * of the applications with custom bean instance of the applications.
    */
-  @EventListener(ContextRefreshedEvent.class)
   public void contextRefreshEvent() {
 
     mergeRestApiApplicationExplorerWithConfigurationProperties();
-    
+
     mergeApplicationExplorerWithConfigurationProperties();
   }
 
@@ -74,4 +91,5 @@ public class StartupApplicationConfiguration {
 
     ApplicationExplorer.setInstance(applicationExplorer);
   }
+
 }

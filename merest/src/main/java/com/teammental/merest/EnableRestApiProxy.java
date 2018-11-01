@@ -1,6 +1,7 @@
 package com.teammental.merest;
 
 import com.teammental.merest.autoconfiguration.RestApiApplicationConfigurationProperties;
+import com.teammental.merest.autoconfiguration.RestApiApplicationRegistry;
 import com.teammental.merest.autoconfiguration.RestApiProxyBeansRegistrar;
 import com.teammental.merest.autoconfiguration.RestApiProxyConfiguration;
 import com.teammental.merest.autoconfiguration.StartupApplicationConfiguration;
@@ -12,24 +13,25 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AliasFor;
 
 /**
- * Enables {@link com.teammental.mecore.stereotype.controller.RestApi}
+ * Enables {@link com.teammental.mecore.stereotype.controller.RestApiProxy}
  * proxy bean auto-configuration.
  * You should use this annotation on a Spring configuration class.
- * Proxy beans for {@link com.teammental.mecore.stereotype.controller.RestApi} annotated
+ * Proxy beans for {@link com.teammental.mecore.stereotype.controller.RestApiProxy} annotated
  * interfaces will be created automatically.
  *
- * @since 1.2.3
+ * @since 1.4.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@Import({StartupApplicationConfiguration.class,
+@Import({RestApiApplicationRegistry.class,
+    StartupApplicationConfiguration.class,
+    RestApiApplicationConfigurationProperties.class,
     RestApiProxyConfiguration.class,
-    RestApiProxyBeansRegistrar.class,
-    RestApiApplicationConfigurationProperties.class})
-public @interface EnableRestApi {
+    RestApiProxyBeansRegistrar.class})
+public @interface EnableRestApiProxy {
 
   /**
-   * Names of packages to be scanned for RestApi's
+   * Names of packages to be scanned for RestApiProxy's.
    *
    * @return package names
    */
@@ -37,7 +39,10 @@ public @interface EnableRestApi {
   String[] value() default {};
 
   /**
-   * @see #value()
+   * Names of packages to be scanned for RestApiProxy's.
+   *
+   * @return package names.
+   * @see #value() .
    */
   @AliasFor("value")
   String[] basePackages() default {};

@@ -16,6 +16,12 @@ public class RestApiApplicationRegistry {
     return restApiApplications;
   }
 
+  /**
+   * Gets {@link RestApiApplication} with given name.
+   *
+   * @param name application name
+   * @return optional of {@link RestApiApplication}
+   */
   public Optional<RestApiApplication> getRestApiApplication(String name) {
 
     return restApiApplications
@@ -52,4 +58,14 @@ public class RestApiApplicationRegistry {
       registerRestApiApplication(restApiApplication);
     }
   }
+
+  /**
+   * Removes previously registered restApiApplication by name.
+   *
+   * @param name application name
+   */
+  public void removeRestApiApplication(String name) {
+    restApiApplications.removeIf(app -> app.getName().equalsIgnoreCase(name));
+  }
+
 }

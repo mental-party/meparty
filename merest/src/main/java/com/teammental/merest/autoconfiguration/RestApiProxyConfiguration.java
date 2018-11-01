@@ -1,12 +1,13 @@
 package com.teammental.merest.autoconfiguration;
 
-import com.teammental.merest.RestApiProxy;
 import com.teammental.merest.RestApiProxyBeanFactory;
+import com.teammental.merest.RestApiProxyHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
@@ -20,13 +21,13 @@ public class RestApiProxyConfiguration {
   }
 
   @Bean
-  public RestApiApplicationRegistry restApiApplicationExplorer() {
-    return new RestApiApplicationRegistry();
+  public ApplicationExplorer applicationExplorer() {
+    return new ApplicationExplorer();
   }
 
   @Bean
-  public ApplicationExplorer applicationExplorer() {
-    return new ApplicationExplorer();
+  public RestApiApplicationRegistry restApiApplicationRegistry() {
+    return new RestApiApplicationRegistry();
   }
 
   @Bean
@@ -36,11 +37,13 @@ public class RestApiProxyConfiguration {
   }
 
   @Bean
-  public RestApiProxy restApiProxy() {
-    return new RestApiProxy(restTemplate());
+  @DependsOn("restApiApplicationRegistry")
+  public RestApiProxyHandler restApiProxy() {
+    return new RestApiProxyHandler(restTemplate());
   }
 
   @Bean(name = "restApiProxyBeanFactory")
+  @DependsOn("restApiApplicationRegistry")
   public RestApiProxyBeanFactory restApiProxyBeanFactory() {
     return new RestApiProxyBeanFactory(restApiProxy());
   }

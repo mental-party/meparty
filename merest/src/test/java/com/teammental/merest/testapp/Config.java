@@ -6,5 +6,5 @@ public class Config {
 
   public static final String TESTRESTAPI_ROOTURL = "/root";
 
-  public static final String TESTAPPLICATIONNAME = "testapp";
+  public static final String TESTAPPLICATIONNAME = "testrestapi1";
 }

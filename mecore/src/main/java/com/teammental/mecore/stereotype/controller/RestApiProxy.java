@@ -4,23 +4,28 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.springframework.core.annotation.AliasFor;
 
-/**
- * Deprecated since 1.4.
- *
- * @see RestApiProxy
- */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@Deprecated
-public @interface RestApi {
+public @interface RestApiProxy {
 
   /**
    * Application name.
    * Must be same with the Spring application name.
    *
-   * @return string
+   * @return application name
    */
+  @AliasFor("applicationName")
   String value() default "";
+
+  /**
+   * Application name.
+   *
+   * @return application name
+   * @see #value() .
+   */
+  @AliasFor("value")
+  String applicationName() default "";
 
 }
