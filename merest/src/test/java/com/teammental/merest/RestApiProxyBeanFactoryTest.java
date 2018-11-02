@@ -112,6 +112,24 @@ public class RestApiProxyBeanFactoryTest {
     assertTrue(restResponse.getHeaders().containsKey("Location"));
   }
 
+  @Test
+  public void shouldAddAllRequestParamsCorrectly() {
+    final String param1 = "value1";
+    final String param2 = "value2";
+    final String param3 = "value3";
+    final String expectedParams = param1 + param2 + param3;
+
+    RestResponse<List<String>> result
+        = testRestApi.returnRequestParamValues(param1, param2, param3);
+
+    String actualParams = result
+        .getBody()
+        .stream()
+        .reduce("", String::concat);
+
+    assertEquals(expectedParams, actualParams);
+  }
+
   @AfterClass
   public static void cleanUp() {
 

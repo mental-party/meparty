@@ -3,11 +3,10 @@ package com.teammental.merest.testapp;
 import com.teammental.mecore.stereotype.controller.Controller;
 import com.teammental.medto.FilterDto;
 import com.teammental.merest.RestResponse;
-
 import com.teammental.merest.testrestapi.BaseTitleRestApi;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -70,14 +70,14 @@ public class TestRestApiController implements BaseTitleRestApi<TestDto, Integer>
 
   @Override
   public RestResponse<Page<TestDto>> filterAll(@RequestBody(required = false)
-                                                     FilterDto filterDto) {
+                                                   FilterDto filterDto) {
 
     TestDto testDto1 = new TestDto(1, "1");
     TestDto testDto2 = new TestDto(2, "2");
 
     List<TestDto> list = Arrays.asList(testDto1, testDto2);
 
-    Page<TestDto> page = new PageImpl<>(list, new PageRequest(0,2,
+    Page<TestDto> page = new PageImpl<>(list, new PageRequest(0, 2,
         Sort.by(Sort.Direction.ASC, "id")), 2);
 
     return RestResponse.of(ResponseEntity.ok(page));
@@ -85,7 +85,7 @@ public class TestRestApiController implements BaseTitleRestApi<TestDto, Integer>
 
   @Override
   public RestResponse<TestDto> getOneGenericType(Integer id) {
-    TestDto testDto = new TestDto(1,"name");
+    TestDto testDto = new TestDto(1, "name");
 
     return RestResponse.of(ResponseEntity.ok(testDto));
   }
@@ -96,5 +96,20 @@ public class TestRestApiController implements BaseTitleRestApi<TestDto, Integer>
     UnknownPropertyTo to = new UnknownPropertyTo();
     to.setId(1);
     return RestResponse.of(ResponseEntity.ok(to));
+  }
+
+  @GetMapping("/returnRequestParamValues")
+  public RestResponse<List<String>> returnRequestParamValues(
+      @RequestParam("param1") String param1,
+      @RequestParam("param2") String param2,
+      @RequestParam("param3") String param3
+  ) {
+
+    List<String> params = new ArrayList<>();
+    params.add(param1);
+    params.add(param2);
+    params.add(param3);
+
+    return RestResponse.of(ResponseEntity.ok(params));
   }
 }

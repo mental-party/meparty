@@ -61,6 +61,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * Proxy Invocation Handler implement for RestApiProxy's.
@@ -195,6 +196,8 @@ public class RestApiProxyHandler
     HttpMethod httpMethod = methodLevelMapping.getHttpMethod();
 
     Map<String, Object> urlVariables = new HashMap<>();
+    Map<String, Object> queryParams = new HashMap<>();
+
     Object requestBody = null;
     Parameter[] parameters = method.getParameters();
     for (int i = 0; i < parameters.length; i++) {
@@ -208,7 +211,7 @@ public class RestApiProxyHandler
       } else if (parameter.isAnnotationPresent(RequestParam.class)) {
         RequestParam requestParam = parameter.getAnnotation(RequestParam.class);
         String name = requestParam.value();
-        urlVariables.put(name, value);
+        queryParams.put(name, value);
       } else if (parameter.isAnnotationPresent(RequestBody.class)) {
 
         if (parameter.getType().isAssignableFrom(FilterDto.class)
@@ -224,6 +227,7 @@ public class RestApiProxyHandler
       }
     }
 
+    url = mergeQueryParamsWithUrl(queryParams, url);
 
     HttpHeaders headers = createHeaders(restApiApplication, methodLevelMapping);
 
@@ -241,6 +245,25 @@ public class RestApiProxyHandler
         httpMethod, httpEntity, urlVariables, parameterizedReturnType, rowReturnType);
 
     return properties;
+  }
+
+  private String mergeQueryParamsWithUrl(Map<String, Object> queryParams,
+                                         String url) {
+    if (!queryParams.isEmpty()) {
+      UriComponentsBuilder builder
+          = UriComponentsBuilder
+          .fromHttpUrl(url);
+
+      for (String param
+          : queryParams.keySet()) {
+        builder = builder
+            .queryParam(param, queryParams.get(param));
+      }
+
+      url = builder.toUriString();
+    }
+
+    return url;
   }
 
   private RestApiApplication getRestApiApplication(Object proxy) {
