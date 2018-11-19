@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Deprecated since 1.4.
+ * Deprecated since 1.3.
  *
  * @see RestApiApplicationRegistry
  */

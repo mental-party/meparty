@@ -8,7 +8,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
- * Deprecated since 1.4.
+ * Deprecated since 1.3.
  *
  * @see RestApiApplicationConfigurationProperties
  */

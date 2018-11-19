@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Deprecated since 1.4.
+ * Deprecated since 1.3.
  *
  * @see RestApiProxy
  */

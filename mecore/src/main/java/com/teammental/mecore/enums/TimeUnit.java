@@ -6,7 +6,7 @@ import java.util.Optional;
 /**
  * Time units.
  *
- * @since 1.4.
+ * @since 1.3.
  */
 public enum TimeUnit {
 

@@ -20,7 +20,7 @@ import org.springframework.core.annotation.AliasFor;
  * Proxy beans for {@link com.teammental.mecore.stereotype.controller.RestApiProxy} annotated
  * interfaces will be created automatically.
  *
- * @since 1.4.
+ * @since 1.3.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
